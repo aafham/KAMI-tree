@@ -549,6 +549,32 @@ input[type="file"].input {
   background: rgba(79, 138, 106, 0.12);
 }
 
+.relationship-finder {
+  display: grid;
+  gap: 8px;
+}
+
+.relationship-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.relationship-output {
+  min-height: 22px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.relationship-output:empty {
+  display: none;
+}
+
 .control-row {
   display: flex;
   gap: 10px;
@@ -1634,6 +1660,10 @@ body.compact .person-name {
   box-shadow: 0 0 0 2px rgba(139, 184, 212, 0.6), var(--shadow);
 }
 
+.person-card.is-relationship-target {
+  box-shadow: 0 0 0 4px rgba(196, 122, 122, 0.5), var(--shadow-strong);
+}
+
 .person-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-strong);
@@ -2207,6 +2237,10 @@ body.hide-tags .person-tags {
 
   .search-row {
     flex-direction: column;
+  }
+
+  .relationship-grid {
+    grid-template-columns: 1fr;
   }
 
   input[type="search"],

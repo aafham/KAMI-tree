@@ -48,6 +48,15 @@
             <label for="branch-filter" class="label" data-i18n="branchLabel">Tapis cabang</label>
             <select id="branch-filter" class="select"></select>
           </div>
+          <div class="control-group relationship-finder" id="relationship-finder">
+            <label class="label" data-i18n="relationshipTitle">Cari hubungan keluarga</label>
+            <div class="relationship-grid">
+              <select id="relationship-person-a" class="select"></select>
+              <select id="relationship-person-b" class="select"></select>
+              <button id="relationship-find" class="btn ghost small" type="button" data-i18n="relationshipFind">Cari Hubungan</button>
+            </div>
+            <div id="relationship-output" class="relationship-output" aria-live="polite"></div>
+          </div>
           <div class="mobile-actions" aria-label="Aksi mudah alih">
             <div class="control-row mobile-quick">
               <button class="btn ghost" id="m-focus-self" data-action="focus-self" data-i18n="focusSelfShort">Saya</button>

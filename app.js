@@ -34,6 +34,10 @@ const controlsToggleBtn = document.getElementById("controls-toggle");
 const mobilePanelBtn = document.getElementById("mobile-panel-btn");
 const generationControls = document.getElementById("generation-controls");
 const branchFilter = document.getElementById("branch-filter");
+const relationshipPersonA = document.getElementById("relationship-person-a");
+const relationshipPersonB = document.getElementById("relationship-person-b");
+const relationshipFindBtn = document.getElementById("relationship-find");
+const relationshipOutput = document.getElementById("relationship-output");
 const viewToggle = document.getElementById("view-toggle");
 const storyPanel = document.getElementById("story-panel");
 const storyTitle = document.getElementById("story-title");
@@ -225,6 +229,21 @@ const i18n = {
     exportPng: "Image (JPEG)",
     exportPdf: "File (PDF)",
     branchLabel: "Tapis cabang",
+    relationshipTitle: "Cari hubungan keluarga",
+    relationshipFind: "Cari Hubungan",
+    relationshipPick: "Pilih nama...",
+    relationshipSame: "Pilih dua orang yang berbeza.",
+    relationshipNoData: "Hubungan belum dapat dikenal pasti daripada data semasa.",
+    relationshipSelf: "{a} ialah orang yang sama dengan {b}.",
+    relationshipSpouse: "{a} ialah pasangan kepada {b}.",
+    relationshipParent: "{a} ialah ibu/bapa kepada {b}.",
+    relationshipChild: "{a} ialah anak kepada {b}.",
+    relationshipSibling: "{a} ialah adik-beradik kepada {b}.",
+    relationshipGrandparent: "{a} ialah atok/nenek kepada {b}.",
+    relationshipGrandchild: "{a} ialah cucu kepada {b}.",
+    relationshipUncleAunt: "{a} ialah pakcik/makcik kepada {b}.",
+    relationshipNephewNiece: "{a} ialah anak saudara kepada {b}.",
+    relationshipCousin: "{a} ialah sepupu kepada {b}.",
     generationLabel: "Generasi (Lipat/Buka)",
     legendParentChild: "Garis sambungan ibu bapa \u2192 anak",
     legendCouple: "Pasangan ditunjukkan secara selari",
@@ -388,6 +407,21 @@ const i18n = {
     exportPng: "Image (JPEG)",
     exportPdf: "File (PDF)",
     branchLabel: "Filter branch",
+    relationshipTitle: "Find family relationship",
+    relationshipFind: "Find Relationship",
+    relationshipPick: "Choose a name...",
+    relationshipSame: "Choose two different people.",
+    relationshipNoData: "The relationship could not be identified from the current data.",
+    relationshipSelf: "{a} is the same person as {b}.",
+    relationshipSpouse: "{a} is the spouse of {b}.",
+    relationshipParent: "{a} is a parent of {b}.",
+    relationshipChild: "{a} is a child of {b}.",
+    relationshipSibling: "{a} is a sibling of {b}.",
+    relationshipGrandparent: "{a} is a grandparent of {b}.",
+    relationshipGrandchild: "{a} is a grandchild of {b}.",
+    relationshipUncleAunt: "{a} is an uncle/aunt of {b}.",
+    relationshipNephewNiece: "{a} is a nephew/niece of {b}.",
+    relationshipCousin: "{a} is a cousin of {b}.",
     generationLabel: "Generation (Collapse/Expand)",
     legendParentChild: "Parent \u2192 child connection",
     legendCouple: "Partners shown side by side",
@@ -864,6 +898,135 @@ function updateTimelineMoreState(nextState) {
 function updateViewSwitch() {
   if (viewTreeBtn) viewTreeBtn.classList.toggle("is-active", viewMode === "tree");
   if (viewTimelineBtn) viewTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
+}
+
+function populateRelationshipFinder() {
+  if (!relationshipPersonA || !relationshipPersonB || !treeData?.people) return;
+  const t = i18n[lang] || i18n.ms;
+  const currentA = relationshipPersonA.value;
+  const currentB = relationshipPersonB.value;
+  const people = [...treeData.people].sort((a, b) => formatDisplayName(a.name).localeCompare(formatDisplayName(b.name)));
+
+  const fill = (select, current) => {
+    select.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = t.relationshipPick;
+    select.appendChild(placeholder);
+    people.forEach((person) => {
+      const option = document.createElement("option");
+      option.value = person.id;
+      option.textContent = formatDisplayName(person.name);
+      select.appendChild(option);
+    });
+    if (current && peopleById.has(current)) select.value = current;
+  };
+
+  fill(relationshipPersonA, currentA);
+  fill(relationshipPersonB, currentB);
+}
+
+function getParentIds(personId) {
+  const union = getParentUnion(personId);
+  return union ? [union.partner1, union.partner2].filter(Boolean) : [];
+}
+
+function getSiblingIds(personId) {
+  const union = getParentUnion(personId);
+  return union ? (union.children || []).filter((id) => id !== personId) : [];
+}
+
+function getSpouseIds(personId) {
+  const result = [];
+  (treeData?.unions || []).forEach((union) => {
+    if (union.partner1 === personId && union.partner2) result.push(union.partner2);
+    if (union.partner2 === personId && union.partner1) result.push(union.partner1);
+  });
+  return [...new Set(result)];
+}
+
+function getChildIds(personId) {
+  const result = [];
+  (treeData?.unions || []).forEach((union) => {
+    if (union.partner1 === personId || union.partner2 === personId) {
+      (union.children || []).forEach((childId) => result.push(childId));
+    }
+  });
+  return [...new Set(result)];
+}
+
+function getGrandparentIds(personId) {
+  const result = [];
+  getParentIds(personId).forEach((parentId) => {
+    getParentIds(parentId).forEach((grandparentId) => result.push(grandparentId));
+  });
+  return [...new Set(result)];
+}
+
+function getGrandchildIds(personId) {
+  const result = [];
+  getChildIds(personId).forEach((childId) => {
+    getChildIds(childId).forEach((grandchildId) => result.push(grandchildId));
+  });
+  return [...new Set(result)];
+}
+
+function getUncleAuntIds(personId) {
+  const result = [];
+  getParentIds(personId).forEach((parentId) => {
+    getSiblingIds(parentId).forEach((siblingId) => result.push(siblingId));
+  });
+  return [...new Set(result)];
+}
+
+function getNephewNieceIds(personId) {
+  const result = [];
+  getSiblingIds(personId).forEach((siblingId) => {
+    getChildIds(siblingId).forEach((childId) => result.push(childId));
+  });
+  return [...new Set(result)];
+}
+
+function getCousinIds(personId) {
+  const result = [];
+  getUncleAuntIds(personId).forEach((uncleAuntId) => {
+    getChildIds(uncleAuntId).forEach((childId) => result.push(childId));
+  });
+  return [...new Set(result)];
+}
+
+function describeRelationship(aId, bId) {
+  const t = i18n[lang] || i18n.ms;
+  const a = peopleById.get(aId);
+  const b = peopleById.get(bId);
+  if (!a || !b) return "";
+  const vars = { a: formatDisplayName(a.name), b: formatDisplayName(b.name) };
+  if (aId === bId) return formatText(t.relationshipSelf, vars);
+  if (getSpouseIds(aId).includes(bId)) return formatText(t.relationshipSpouse, vars);
+  if (getChildIds(aId).includes(bId)) return formatText(t.relationshipParent, vars);
+  if (getParentIds(aId).includes(bId)) return formatText(t.relationshipChild, vars);
+  if (getSiblingIds(aId).includes(bId)) return formatText(t.relationshipSibling, vars);
+  if (getGrandchildIds(aId).includes(bId)) return formatText(t.relationshipGrandparent, vars);
+  if (getGrandparentIds(aId).includes(bId)) return formatText(t.relationshipGrandchild, vars);
+  if (getNephewNieceIds(aId).includes(bId)) return formatText(t.relationshipUncleAunt, vars);
+  if (getUncleAuntIds(aId).includes(bId)) return formatText(t.relationshipNephewNiece, vars);
+  if (getCousinIds(aId).includes(bId)) return formatText(t.relationshipCousin, vars);
+  return t.relationshipNoData;
+}
+
+function clearRelationshipHighlight() {
+  document.querySelectorAll(".person-card.is-relationship-target")
+    .forEach((el) => el.classList.remove("is-relationship-target"));
+}
+
+function applyRelationshipHighlight(ids) {
+  clearRelationshipHighlight();
+  ids.forEach((id) => {
+    const group = elementByPersonId.get(id);
+    if (!group) return;
+    const card = group.querySelector(`.person-card[data-person-id="${id}"]`);
+    if (card) card.classList.add("is-relationship-target");
+  });
 }
 
 function getPersonDepthMap() {
@@ -1407,6 +1570,7 @@ function rebuildFromData() {
   buildLayout();
   updateStats();
   populateTimelineFilters();
+  populateRelationshipFinder();
   buildGenerationControls();
   buildBranchFilter();
   renderScene();
@@ -2554,6 +2718,35 @@ if (mobileActionGo) {
   });
 }
 
+if (relationshipFindBtn) {
+  relationshipFindBtn.addEventListener("click", () => {
+    const t = i18n[lang] || i18n.ms;
+    const aId = relationshipPersonA?.value || "";
+    const bId = relationshipPersonB?.value || "";
+    if (!relationshipOutput) return;
+    if (!aId || !bId) {
+      relationshipOutput.textContent = t.relationshipPick;
+      return;
+    }
+    if (aId === bId) {
+      relationshipOutput.textContent = t.relationshipSame;
+      applyRelationshipHighlight([aId]);
+      focusPerson(aId, false, false);
+      return;
+    }
+    relationshipOutput.textContent = describeRelationship(aId, bId);
+    if (viewMode !== "tree") {
+      viewMode = "tree";
+      applyViewMode();
+      updateViewSwitch();
+    }
+    renderScene();
+    applyZoom();
+    applyRelationshipHighlight([aId, bId]);
+    focusPerson(aId, false, false);
+  });
+}
+
 if (zoomInBtn) {
   zoomInBtn.addEventListener("click", () => {
     scale = Math.min(2.2, scale + 0.1);
@@ -3268,8 +3461,9 @@ if (settingsCardScale) {
     applyCardScale();
     buildLayout();
     updateStats();
-    populateTimelineFilters();
-    renderScene();
+  populateTimelineFilters();
+  populateRelationshipFinder();
+  renderScene();
     savePrefs();
   });
 }
@@ -3665,6 +3859,7 @@ function focusGeneralView(animate = true) {
   }
   selectedPersonId = "";
   clearSelectionHighlight();
+  clearRelationshipHighlight();
   if (storyPanel) storyPanel.hidden = true;
   setStoryPanelOpen(false);
   const rootNode = layoutRoot?.children?.[0];
@@ -3837,6 +4032,7 @@ function applyLanguage() {
   if (timelineMonthSelect) timelineMonthSelect.value = timelineFilters.month;
   if (timelineGenderSelect) timelineGenderSelect.value = timelineFilters.gender;
   if (timelineSortSelect) timelineSortSelect.value = timelineFilters.sort;
+  populateRelationshipFinder();
   populateTimelineFilters();
   updateTimelineMoreState();
   updateTimelineActiveFilters();

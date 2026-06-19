@@ -16,6 +16,7 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - Timeline dengan penapis generasi, bulan lahir, jantina, dan susunan.
 - Panel cerita/profil ahli keluarga.
 - Salasilah individu dalam panel ahli: atok/nenek, mak/ayah, adik-beradik, pasangan, dan anak.
+- Relationship Finder untuk pilih dua ahli dan cari hubungan keluarga asas.
 - Tetapan paparan seperti tema, bahasa BM/EN, compact mode, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Eksport tree kepada JPEG/PDF.
 
@@ -130,7 +131,7 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - [x] Semak dan baiki kemungkinan horizontal overflow pada mobile view.
 - [x] Auto-focus root selepas tree selesai load.
 - [x] Tambah butang "Pilih/Fokus Diri Saya" yang simpan pilihan per browser/device.
-- [ ] Tambah relationship/path finder untuk cari hubungan antara dua ahli.
+- [x] Tambah relationship finder asas untuk cari hubungan antara dua ahli.
 - [ ] Tambah carian lanjutan ikut nama, nama panggilan, hubungan, cabang, dan generasi.
 
 ### Keutamaan sederhana
