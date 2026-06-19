@@ -1274,10 +1274,17 @@ body[data-view="timeline"].story-open .timeline-section {
 
 .birthday-tools {
   display: grid;
-  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 360px) auto minmax(0, 1fr);
   gap: 14px;
   align-items: start;
   margin-bottom: 18px;
+}
+
+.birthday-toggle-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-self: end;
+  flex-wrap: wrap;
 }
 
 .birthday-search-results {
@@ -1333,6 +1340,11 @@ body[data-view="timeline"].story-open .timeline-section {
   border-color: color-mix(in srgb, var(--primary) 45%, transparent);
 }
 
+.birthday-day.has-birthday.is-open {
+  background: var(--primary);
+  color: #fff;
+}
+
 .birthday-day.has-birthday::after {
   content: "";
   position: absolute;
@@ -1343,6 +1355,10 @@ body[data-view="timeline"].story-open .timeline-section {
   border-radius: 50%;
   background: var(--primary);
   transform: translateX(-50%);
+}
+
+.birthday-day.has-birthday.is-open::after {
+  background: #fff;
 }
 
 .birthday-day i {

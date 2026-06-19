@@ -63,6 +63,8 @@ const timelineList = document.getElementById("timeline-list");
 const birthdaySection = document.getElementById("birthday-section");
 const birthdayBackBtn = document.getElementById("birthday-back");
 const birthdaySearchInput = document.getElementById("birthday-search");
+const birthdayOpenAllBtn = document.getElementById("birthday-open-all");
+const birthdayCloseAllBtn = document.getElementById("birthday-close-all");
 const birthdaySearchResults = document.getElementById("birthday-search-results");
 const birthdayCalendar = document.getElementById("birthday-calendar");
 const birthdayMonthLists = document.getElementById("birthday-month-lists");
@@ -202,6 +204,7 @@ let timelineFilters = {
 };
 let timelineMoreOpen = false;
 let initialFocusDone = false;
+let openBirthdayDates = new Set();
 
 const prefs = loadPrefs();
 const i18n = {
@@ -258,6 +261,8 @@ const i18n = {
     birthdaySearchPlaceholder: "Cari nama...",
     birthdayNoSearch: "Tiada nama ditemui.",
     birthdayNoDate: "Tiada birthday direkodkan.",
+    birthdayOpenAll: "Buka Semua",
+    birthdayCloseAll: "Tutup Semua",
     generationLabel: "Generasi (Lipat/Buka)",
     legendParentChild: "Garis sambungan ibu bapa \u2192 anak",
     legendCouple: "Pasangan ditunjukkan secara selari",
@@ -443,6 +448,8 @@ const i18n = {
     birthdaySearchPlaceholder: "Search name...",
     birthdayNoSearch: "No names found.",
     birthdayNoDate: "No birthdays recorded.",
+    birthdayOpenAll: "Open All",
+    birthdayCloseAll: "Close All",
     generationLabel: "Generation (Collapse/Expand)",
     legendParentChild: "Parent \u2192 child connection",
     legendCouple: "Partners shown side by side",
@@ -2274,9 +2281,10 @@ function renderBirthdayPage() {
     const dayButtons = [];
     for (let day = 1; day <= daysInMonth; day += 1) {
       const dayEntries = byDate.get(`${monthIndex}-${day}`) || [];
-      const names = dayEntries.map((entry) => formatDisplayName(entry.person.name)).join(", ");
+      const key = `${monthIndex}-${day}`;
+      const isOpen = openBirthdayDates.has(key);
       dayButtons.push(`
-        <button class="birthday-day${dayEntries.length ? " has-birthday" : ""}" type="button" data-birthday-date="${monthIndex}-${day}" ${dayEntries.length ? "" : "disabled"}>
+        <button class="birthday-day${dayEntries.length ? " has-birthday" : ""}${isOpen ? " is-open" : ""}" type="button" data-birthday-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
           <span>${day}</span>
           ${dayEntries.length ? `<i>${dayEntries.length}</i>` : ""}
         </button>
@@ -2288,6 +2296,7 @@ function renderBirthdayPage() {
       <div class="birthday-day-detail" data-birthday-detail="${monthIndex}"></div>
     `;
     birthdayCalendar.appendChild(monthCard);
+    renderBirthdayMonthDetail(monthIndex, byDate);
 
     const listCard = document.createElement("section");
     listCard.className = "birthday-list-card";
@@ -2308,24 +2317,40 @@ function renderBirthdayPage() {
 
   birthdayCalendar.querySelectorAll("[data-birthday-date]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const [monthStr, dayStr] = btn.dataset.birthdayDate.split("-");
-      const month = Number(monthStr);
-      const day = Number(dayStr);
-      const detail = birthdayCalendar.querySelector(`[data-birthday-detail="${month}"]`);
-      const dayEntries = byDate.get(`${month}-${day}`) || [];
-      if (!detail) return;
-      detail.innerHTML = dayEntries.map((entry) => `
-        <button class="birthday-person compact" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-          <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
-          <span>${escapeHtml(formatBirthdayDate(entry))}</span>
-        </button>
-      `).join("");
-      bindPersonLinkClicks(detail);
+      const key = btn.dataset.birthdayDate;
+      const [monthStr] = key.split("-");
+      if (openBirthdayDates.has(key)) {
+        openBirthdayDates.delete(key);
+      } else {
+        openBirthdayDates.add(key);
+      }
+      btn.classList.toggle("is-open", openBirthdayDates.has(key));
+      btn.setAttribute("aria-expanded", openBirthdayDates.has(key) ? "true" : "false");
+      renderBirthdayMonthDetail(Number(monthStr), byDate);
     });
   });
 
   bindPersonLinkClicks(birthdayMonthLists);
   renderBirthdaySearchResults();
+}
+
+function renderBirthdayMonthDetail(monthIndex, byDate) {
+  if (!birthdayCalendar) return;
+  const detail = birthdayCalendar.querySelector(`[data-birthday-detail="${monthIndex}"]`);
+  if (!detail) return;
+  const keys = [...openBirthdayDates]
+    .filter((key) => key.startsWith(`${monthIndex}-`))
+    .sort((a, b) => Number(a.split("-")[1]) - Number(b.split("-")[1]));
+  detail.innerHTML = keys.map((key) => {
+    const dayEntries = byDate.get(key) || [];
+    return dayEntries.map((entry) => `
+      <button class="birthday-person compact" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+        <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+        <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+      </button>
+    `).join("");
+  }).join("");
+  bindPersonLinkClicks(detail);
 }
 
 function renderBirthdaySearchResults() {
@@ -2940,6 +2965,20 @@ if (birthdayBackBtn) {
 
 if (birthdaySearchInput) {
   birthdaySearchInput.addEventListener("input", renderBirthdaySearchResults);
+}
+
+if (birthdayOpenAllBtn) {
+  birthdayOpenAllBtn.addEventListener("click", () => {
+    openBirthdayDates = new Set(getBirthdayEntries().map((entry) => `${entry.month}-${entry.day}`));
+    renderBirthdayPage();
+  });
+}
+
+if (birthdayCloseAllBtn) {
+  birthdayCloseAllBtn.addEventListener("click", () => {
+    openBirthdayDates.clear();
+    renderBirthdayPage();
+  });
 }
 
 if (zoomInBtn) {
