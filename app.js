@@ -60,6 +60,12 @@ const panelEditNote = document.getElementById("panel-edit-note");
 const panelEditStory = document.getElementById("panel-edit-story");
 const timelineSection = document.getElementById("timeline-section");
 const timelineList = document.getElementById("timeline-list");
+const birthdaySection = document.getElementById("birthday-section");
+const birthdayBackBtn = document.getElementById("birthday-back");
+const birthdaySearchInput = document.getElementById("birthday-search");
+const birthdaySearchResults = document.getElementById("birthday-search-results");
+const birthdayCalendar = document.getElementById("birthday-calendar");
+const birthdayMonthLists = document.getElementById("birthday-month-lists");
 const zoomFitBtn = document.getElementById("zoom-fit");
 const langToggleBtn = document.getElementById("lang-toggle");
 const clearCacheBtn = document.getElementById("clear-cache");
@@ -101,6 +107,7 @@ const statMale = document.getElementById("stat-male");
 const statFemale = document.getElementById("stat-female");
 const statCucu = document.getElementById("stat-cucu");
 const statCicit = document.getElementById("stat-cicit");
+const birthdayCard = document.getElementById("birthday-card");
 const statUpcomingName = document.getElementById("stat-upcoming-name");
 const statUpcomingMeta = document.getElementById("stat-upcoming-meta");
 const themePresetSelect = document.getElementById("theme-preset");
@@ -244,6 +251,13 @@ const i18n = {
     relationshipUncleAunt: "{a} ialah pakcik/makcik kepada {b}.",
     relationshipNephewNiece: "{a} ialah anak saudara kepada {b}.",
     relationshipCousin: "{a} ialah sepupu kepada {b}.",
+    birthdayBack: "Back ke Home",
+    birthdayKicker: "Kalendar Keluarga",
+    birthdayTitle: "Semua Birthday",
+    birthdaySearchLabel: "Cari nama birthday",
+    birthdaySearchPlaceholder: "Cari nama...",
+    birthdayNoSearch: "Tiada nama ditemui.",
+    birthdayNoDate: "Tiada birthday direkodkan.",
     generationLabel: "Generasi (Lipat/Buka)",
     legendParentChild: "Garis sambungan ibu bapa \u2192 anak",
     legendCouple: "Pasangan ditunjukkan secara selari",
@@ -422,6 +436,13 @@ const i18n = {
     relationshipUncleAunt: "{a} is an uncle/aunt of {b}.",
     relationshipNephewNiece: "{a} is a nephew/niece of {b}.",
     relationshipCousin: "{a} is a cousin of {b}.",
+    birthdayBack: "Back to Home",
+    birthdayKicker: "Family Calendar",
+    birthdayTitle: "All Birthdays",
+    birthdaySearchLabel: "Search birthdays",
+    birthdaySearchPlaceholder: "Search name...",
+    birthdayNoSearch: "No names found.",
+    birthdayNoDate: "No birthdays recorded.",
     generationLabel: "Generation (Collapse/Expand)",
     legendParentChild: "Parent \u2192 child connection",
     legendCouple: "Partners shown side by side",
@@ -1634,15 +1655,25 @@ function applyViewMode() {
     document.body.dataset.view = "tree";
     return;
   }
-  if (viewMode === "timeline") {
+  if (viewMode === "birthday") {
+    document.body.dataset.view = "birthday";
+    if (timelineSection) timelineSection.hidden = true;
+    if (birthdaySection) birthdaySection.hidden = false;
+    if (treeWrap) treeWrap.hidden = true;
+    if (storyPanel) storyPanel.hidden = true;
+    setStoryPanelOpen(false);
+    renderBirthdayPage();
+  } else if (viewMode === "timeline") {
     document.body.dataset.view = "timeline";
-    timelineSection.hidden = false;
-    treeWrap.hidden = true;
+    if (timelineSection) timelineSection.hidden = false;
+    if (birthdaySection) birthdaySection.hidden = true;
+    if (treeWrap) treeWrap.hidden = true;
     renderTimeline();
   } else {
     document.body.dataset.view = "tree";
-    timelineSection.hidden = true;
-    treeWrap.hidden = false;
+    if (timelineSection) timelineSection.hidden = true;
+    if (birthdaySection) birthdaySection.hidden = true;
+    if (treeWrap) treeWrap.hidden = false;
   }
   applyLanguage();
 }
@@ -1657,6 +1688,10 @@ function scheduleRender() {
 }
 
 function renderScene() {
+  if (viewMode === "birthday") {
+    renderBirthdayPage();
+    return;
+  }
   if (viewMode === "timeline") {
     if (!timelineSection) {
       viewMode = "tree";
@@ -2214,6 +2249,108 @@ function renderTimeline() {
   updateTimelineActiveFilters();
 }
 
+function renderBirthdayPage() {
+  if (!birthdayCalendar || !birthdayMonthLists) return;
+  const t = i18n[lang] || i18n.ms;
+  const entries = getBirthdayEntries();
+  const months = getMonthLabels();
+  const byMonth = Array.from({ length: 12 }, () => []);
+  const byDate = new Map();
+
+  entries.forEach((entry) => {
+    byMonth[entry.month].push(entry);
+    const key = `${entry.month}-${entry.day}`;
+    if (!byDate.has(key)) byDate.set(key, []);
+    byDate.get(key).push(entry);
+  });
+
+  birthdayCalendar.innerHTML = "";
+  birthdayMonthLists.innerHTML = "";
+
+  months.forEach((monthName, monthIndex) => {
+    const monthCard = document.createElement("section");
+    monthCard.className = "birthday-month-card";
+    const daysInMonth = new Date(new Date().getFullYear(), monthIndex + 1, 0).getDate();
+    const dayButtons = [];
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const dayEntries = byDate.get(`${monthIndex}-${day}`) || [];
+      const names = dayEntries.map((entry) => formatDisplayName(entry.person.name)).join(", ");
+      dayButtons.push(`
+        <button class="birthday-day${dayEntries.length ? " has-birthday" : ""}" type="button" data-birthday-date="${monthIndex}-${day}" ${dayEntries.length ? "" : "disabled"}>
+          <span>${day}</span>
+          ${dayEntries.length ? `<i>${dayEntries.length}</i>` : ""}
+        </button>
+      `);
+    }
+    monthCard.innerHTML = `
+      <h3>${escapeHtml(monthName)}</h3>
+      <div class="birthday-days">${dayButtons.join("")}</div>
+      <div class="birthday-day-detail" data-birthday-detail="${monthIndex}"></div>
+    `;
+    birthdayCalendar.appendChild(monthCard);
+
+    const listCard = document.createElement("section");
+    listCard.className = "birthday-list-card";
+    const monthEntries = byMonth[monthIndex];
+    listCard.innerHTML = `
+      <h3>${escapeHtml(monthName)}</h3>
+      <div class="birthday-list">
+        ${monthEntries.length ? monthEntries.map((entry) => `
+          <button class="birthday-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+            <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+            <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+          </button>
+        `).join("") : `<div class="birthday-empty">${escapeHtml(t.birthdayNoDate)}</div>`}
+      </div>
+    `;
+    birthdayMonthLists.appendChild(listCard);
+  });
+
+  birthdayCalendar.querySelectorAll("[data-birthday-date]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const [monthStr, dayStr] = btn.dataset.birthdayDate.split("-");
+      const month = Number(monthStr);
+      const day = Number(dayStr);
+      const detail = birthdayCalendar.querySelector(`[data-birthday-detail="${month}"]`);
+      const dayEntries = byDate.get(`${month}-${day}`) || [];
+      if (!detail) return;
+      detail.innerHTML = dayEntries.map((entry) => `
+        <button class="birthday-person compact" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+          <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+          <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+        </button>
+      `).join("");
+      bindPersonLinkClicks(detail);
+    });
+  });
+
+  bindPersonLinkClicks(birthdayMonthLists);
+  renderBirthdaySearchResults();
+}
+
+function renderBirthdaySearchResults() {
+  if (!birthdaySearchInput || !birthdaySearchResults) return;
+  const t = i18n[lang] || i18n.ms;
+  const query = birthdaySearchInput.value.trim().toLowerCase();
+  birthdaySearchResults.innerHTML = "";
+  if (!query) return;
+  const matches = getBirthdayEntries().filter((entry) => {
+    return formatDisplayName(entry.person.name).toLowerCase().includes(query)
+      || String(entry.person.name || "").toLowerCase().includes(query);
+  });
+  if (!matches.length) {
+    birthdaySearchResults.innerHTML = `<div class="birthday-empty">${escapeHtml(t.birthdayNoSearch)}</div>`;
+    return;
+  }
+  birthdaySearchResults.innerHTML = matches.map((entry) => `
+    <button class="birthday-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+      <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+      <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+    </button>
+  `).join("");
+  bindPersonLinkClicks(birthdaySearchResults);
+}
+
 function parseYear(value) {
   if (!value) return null;
   const match = String(value).match(/(\d{4})/);
@@ -2242,6 +2379,34 @@ function parseDateValue(value) {
   }
   const dt = new Date(str);
   return Number.isNaN(dt.getTime()) ? null : dt;
+}
+
+function getMonthLabels() {
+  const monthsMs = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogos", "Sep", "Okt", "Nov", "Dis"];
+  const monthsEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return lang === "en" ? monthsEn : monthsMs;
+}
+
+function getBirthdayEntries() {
+  if (!treeData?.people) return [];
+  return treeData.people
+    .map((person) => {
+      const birthDate = parseDateValue(person.birth);
+      if (!birthDate) return null;
+      return {
+        person,
+        month: birthDate.getMonth(),
+        day: birthDate.getDate(),
+        date: birthDate
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.month - b.month || a.day - b.day || formatDisplayName(a.person.name).localeCompare(formatDisplayName(b.person.name)));
+}
+
+function formatBirthdayDate(entry) {
+  const months = getMonthLabels();
+  return `${entry.day} ${months[entry.month]}`;
 }
 
 function formatDateDisplay(value) {
@@ -2745,6 +2910,36 @@ if (relationshipFindBtn) {
     applyRelationshipHighlight([aId, bId]);
     focusPerson(aId, false, false);
   });
+}
+
+if (birthdayCard) {
+  birthdayCard.addEventListener("click", () => {
+    viewMode = "birthday";
+    applyViewMode();
+    updateViewSwitch();
+    savePrefs();
+  });
+  birthdayCard.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    viewMode = "birthday";
+    applyViewMode();
+    updateViewSwitch();
+    savePrefs();
+  });
+}
+
+if (birthdayBackBtn) {
+  birthdayBackBtn.addEventListener("click", () => {
+    viewMode = "tree";
+    applyViewMode();
+    updateViewSwitch();
+    savePrefs();
+  });
+}
+
+if (birthdaySearchInput) {
+  birthdaySearchInput.addEventListener("input", renderBirthdaySearchResults);
 }
 
 if (zoomInBtn) {
@@ -4036,6 +4231,7 @@ function applyLanguage() {
   populateTimelineFilters();
   updateTimelineMoreState();
   updateTimelineActiveFilters();
+  if (viewMode === "birthday") renderBirthdayPage();
   updateViewSwitch();
 
   const branchOptions = branchFilter?.options || [];

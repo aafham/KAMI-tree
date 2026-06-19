@@ -894,6 +894,16 @@ input[type="file"].input {
   white-space: pre-line;
 }
 
+.stat-card--birthday {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card--birthday:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
 .legend-dot {
   width: 14px;
   height: 14px;
@@ -1011,6 +1021,13 @@ input[type="file"].input {
 
 body[data-view="timeline"] .content-grid {
   grid-template-columns: 1fr;
+}
+
+body[data-view="birthday"] .stats,
+body[data-view="birthday"] .view-switch,
+body[data-view="birthday"] .content-grid,
+body[data-view="birthday"] .timeline-section {
+  display: none;
 }
 
 body[data-view="timeline"] .story-panel {
@@ -1231,6 +1248,162 @@ body[data-view="timeline"].story-open .timeline-section {
 .timeline-section h2 {
   margin: 0 0 16px;
   font-family: "Fraunces", serif;
+}
+
+.birthday-section {
+  margin-top: 28px;
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.birthday-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.birthday-head h2 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+}
+
+.birthday-tools {
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+
+.birthday-search-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.birthday-calendar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.birthday-month-card,
+.birthday-list-card {
+  background: var(--card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.birthday-month-card h3,
+.birthday-list-card h3 {
+  margin: 0 0 10px;
+  font-family: "Fraunces", serif;
+  font-size: 18px;
+}
+
+.birthday-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.birthday-day {
+  position: relative;
+  min-height: 34px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-soft) 70%, var(--card));
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+}
+
+.birthday-day.has-birthday {
+  cursor: pointer;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--primary) 14%, var(--card));
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+}
+
+.birthday-day.has-birthday::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateX(-50%);
+}
+
+.birthday-day i {
+  position: absolute;
+  top: -5px;
+  right: -3px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.birthday-day-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.birthday-month-lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.birthday-list {
+  display: grid;
+  gap: 8px;
+}
+
+.birthday-person {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  border: 1px solid rgba(79, 138, 106, 0.18);
+  border-radius: 12px;
+  padding: 9px 10px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.birthday-person.compact {
+  display: inline-grid;
+}
+
+.birthday-person span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.birthday-empty {
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .timeline-head {
@@ -2168,6 +2341,21 @@ body.hide-tags .person-tags {
   }
 
   .timeline-detail-row {
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-head,
+  .birthday-tools {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .birthday-head {
+    align-items: stretch;
+  }
+
+  .birthday-calendar,
+  .birthday-month-lists {
     grid-template-columns: 1fr;
   }
 

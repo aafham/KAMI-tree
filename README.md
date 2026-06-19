@@ -13,6 +13,7 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - Paparan tree keluarga dengan zoom, fit screen, drag/pan, dan minimap.
 - Carian nama dan fokus terus ke ahli keluarga.
 - Statistik keluarga: jumlah ahli, pasangan, jantina, cucu, cicit, dan ulang tahun terdekat.
+- Birthday page: kalendar bulan 1-12, tarikh birthday bertanda, senarai birthday ikut bulan, dan search nama.
 - Timeline dengan penapis generasi, bulan lahir, jantina, dan susunan.
 - Panel cerita/profil ahli keluarga.
 - Salasilah individu dalam panel ahli: atok/nenek, mak/ayah, adik-beradik, pasangan, dan anak.

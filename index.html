@@ -132,7 +132,7 @@
           </div>
         </div>
       </div>
-      <div class="stat-card stat-card--birthday">
+      <div class="stat-card stat-card--birthday" id="birthday-card" role="button" tabindex="0">
         <div class="stat-label" data-i18n="statsUpcoming">Ulang Tahun Terdekat</div>
         <div class="stat-value" id="stat-upcoming-name">-</div>
         <div class="stat-sub" id="stat-upcoming-meta">-</div>
@@ -252,6 +252,24 @@
           <div id="timeline-active-filters" class="timeline-active-filters" hidden></div>
         </div>
         <div class="timeline-list" id="timeline-list"></div>
+      </section>
+      <section class="birthday-section" id="birthday-section" hidden>
+        <div class="birthday-head">
+          <button id="birthday-back" class="btn ghost small" type="button" data-i18n="birthdayBack">Back ke Home</button>
+          <div>
+            <p class="kicker" data-i18n="birthdayKicker">Kalendar Keluarga</p>
+            <h2 data-i18n="birthdayTitle">Semua Birthday</h2>
+          </div>
+        </div>
+        <div class="birthday-tools">
+          <label class="birthday-search">
+            <span class="label" data-i18n="birthdaySearchLabel">Cari nama birthday</span>
+            <input id="birthday-search" class="input" type="search" placeholder="Cari nama..." data-i18n-placeholder="birthdaySearchPlaceholder" />
+          </label>
+          <div id="birthday-search-results" class="birthday-search-results" aria-live="polite"></div>
+        </div>
+        <div id="birthday-calendar" class="birthday-calendar"></div>
+        <div id="birthday-month-lists" class="birthday-month-lists"></div>
       </section>
     </main>
   </div>
