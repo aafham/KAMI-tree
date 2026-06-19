@@ -2263,6 +2263,9 @@ function renderBirthdayPage() {
   const months = getMonthLabels();
   const byMonth = Array.from({ length: 12 }, () => []);
   const byDate = new Map();
+  const today = new Date();
+  const currentDateKey = `${today.getMonth()}-${today.getDate()}`;
+  const nextBirthdayKey = getNextBirthdayKey(entries, today);
 
   entries.forEach((entry) => {
     byMonth[entry.month].push(entry);
@@ -2283,8 +2286,16 @@ function renderBirthdayPage() {
       const dayEntries = byDate.get(`${monthIndex}-${day}`) || [];
       const key = `${monthIndex}-${day}`;
       const isOpen = openBirthdayDates.has(key);
+      const dayClasses = [
+        "birthday-day",
+        dayEntries.length ? "has-birthday" : "",
+        key === currentDateKey ? "is-today" : "",
+        isBirthdayDateInRange(key, currentDateKey, nextBirthdayKey) ? "is-upcoming-range" : "",
+        key === nextBirthdayKey ? "is-next-birthday" : "",
+        isOpen ? "is-open" : ""
+      ].filter(Boolean).join(" ");
       dayButtons.push(`
-        <button class="birthday-day${dayEntries.length ? " has-birthday" : ""}${isOpen ? " is-open" : ""}" type="button" data-birthday-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
+        <button class="${dayClasses}" type="button" data-birthday-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
           <span>${day}</span>
           ${dayEntries.length ? `<i>${dayEntries.length}</i>` : ""}
         </button>
@@ -2304,10 +2315,13 @@ function renderBirthdayPage() {
     listCard.innerHTML = `
       <h3>${escapeHtml(monthName)}</h3>
       <div class="birthday-list">
-        ${monthEntries.length ? monthEntries.map((entry) => `
-          <button class="birthday-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-            <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
-            <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+        ${monthEntries.length ? monthEntries.map((entry, index) => `
+          <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+            <span class="birthday-number">${index + 1}</span>
+            <span class="birthday-person-main">
+              <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+              <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+            </span>
           </button>
         `).join("") : `<div class="birthday-empty">${escapeHtml(t.birthdayNoDate)}</div>`}
       </div>
@@ -2432,6 +2446,36 @@ function getBirthdayEntries() {
 function formatBirthdayDate(entry) {
   const months = getMonthLabels();
   return `${entry.day} ${months[entry.month]}`;
+}
+
+function getNextBirthdayKey(entries, today = new Date()) {
+  if (!entries.length) return null;
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  let best = null;
+  entries.forEach((entry) => {
+    const next = new Date(todayMid.getFullYear(), entry.month, entry.day);
+    if (next < todayMid) next.setFullYear(next.getFullYear() + 1);
+    if (!best || next < best.date) {
+      best = { date: next, key: `${entry.month}-${entry.day}` };
+    }
+  });
+  return best?.key || null;
+}
+
+function isBirthdayDateInRange(key, startKey, endKey) {
+  if (!endKey) return false;
+  const currentDay = birthdayKeyToDayOfYear(key);
+  const startDay = birthdayKeyToDayOfYear(startKey);
+  const endDay = birthdayKeyToDayOfYear(endKey);
+  if (startDay <= endDay) {
+    return currentDay >= startDay && currentDay <= endDay;
+  }
+  return currentDay >= startDay || currentDay <= endDay;
+}
+
+function birthdayKeyToDayOfYear(key) {
+  const [month, day] = key.split("-").map(Number);
+  return new Date(2024, month, day).getTime();
 }
 
 function formatDateDisplay(value) {
