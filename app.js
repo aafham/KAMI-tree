@@ -11,6 +11,8 @@ const zoomInBtn = document.getElementById("zoom-in");
 const zoomOutBtn = document.getElementById("zoom-out");
 const zoomResetBtn = document.getElementById("zoom-reset");
 const resetViewBtn = document.getElementById("reset-view");
+const generalViewBtn = document.getElementById("general-view");
+const focusSelfBtn = document.getElementById("focus-self");
 const toggleThemeBtn = document.getElementById("toggle-theme");
 const exportPngBtn = document.getElementById("export-png");
 const exportPdfBtn = document.getElementById("export-pdf");
@@ -63,8 +65,10 @@ const mobileActionGo = document.getElementById("mobile-action-go");
 const mobileQuickZoomIn = document.getElementById("m-zoom-in");
 const mobileQuickZoomOut = document.getElementById("m-zoom-out");
 const mobileQuickZoomFit = document.getElementById("m-zoom-fit");
+const mobileQuickFocusSelf = document.getElementById("m-focus-self");
 const mobileSettingsBtn = document.getElementById("mobile-settings-btn");
 const mobileSearchBtn = document.getElementById("mobile-search-btn");
+const mobileSelfBtn = document.getElementById("mobile-self-btn");
 const bottomSheetHandle = document.getElementById("sheet-handle");
 const miniToolbar = document.getElementById("mini-toolbar");
 const miniSearchBtn = document.getElementById("mini-search");
@@ -81,6 +85,7 @@ const settingsMinimap = document.getElementById("settings-minimap");
 const settingsDrag = document.getElementById("settings-drag");
 const settingsDefaultView = document.getElementById("settings-default-view");
 const settingsReset = document.getElementById("setting-reset-settings");
+const settingsResetSelf = document.getElementById("setting-reset-self");
 const settingsShowBirthdate = document.getElementById("setting-show-birthdate");
 const settingsShowAge = document.getElementById("setting-show-age");
 const settingsShowTags = document.getElementById("setting-show-tags");
@@ -136,6 +141,7 @@ const LAVENDER_COLOR = "var(--lavender)";
 const VIRTUALIZE_THRESHOLD = 1000000;
 const STORAGE_KEY = "familyTreePrefs";
 const DATA_KEY = "familyTreeData";
+const SELF_STORAGE_KEY = "familyTreeSelfId";
 const FORCE_RESET = false;
 const MOBILE_CONTROLS_KEY = "ft_controls_collapsed";
 
@@ -184,6 +190,7 @@ let timelineFilters = {
   sort: "year"
 };
 let timelineMoreOpen = false;
+let initialFocusDone = false;
 
 const prefs = loadPrefs();
 const i18n = {
@@ -193,6 +200,18 @@ const i18n = {
     appSubtitle: "Semua ahli keluarga dalam satu pandangan yang jelas, mudah, dan mesra.",
     searchLabel: "Carian nama",
     searchGo: "Cari & Fokus",
+    searchShort: "Cari",
+    generalView: "Paparan Umum",
+    focusSelf: "Fokus Diri Saya",
+    focusSelfShort: "Saya",
+    chooseSelf: "Pilih Diri Saya",
+    chooseSelfShort: "Pilih Saya",
+    chooseSelfPrompt: "Taip nama anda dalam family tree:",
+    chooseSelfNotFound: "Nama tidak ditemui. Cuba taip nama penuh atau sebahagian nama.",
+    chooseSelfSaved: "Diri saya diset kepada {name} untuk browser ini.",
+    resetSelf: "Reset Diri Saya",
+    resetSelfConfirm: "Padam pilihan diri saya untuk browser ini?",
+    resetSelfDone: "Pilihan diri saya telah dipadam untuk browser ini.",
     viewTimeline: "Lihat Timeline",
     viewTree: "Lihat Tree",
     compactOn: "Mode Penuh",
@@ -335,6 +354,18 @@ const i18n = {
     appSubtitle: "All family members in one clear, simple, friendly view.",
     searchLabel: "Name search",
     searchGo: "Search & Focus",
+    searchShort: "Search",
+    generalView: "General View",
+    focusSelf: "Focus Me",
+    focusSelfShort: "Me",
+    chooseSelf: "Choose Me",
+    chooseSelfShort: "Choose Me",
+    chooseSelfPrompt: "Type your name in the family tree:",
+    chooseSelfNotFound: "Name not found. Try a full or partial name.",
+    chooseSelfSaved: "Me is set to {name} for this browser.",
+    resetSelf: "Reset Me",
+    resetSelfConfirm: "Clear the selected person for this browser?",
+    resetSelfDone: "Your selected person has been cleared for this browser.",
     viewTimeline: "Timeline View",
     viewTree: "Tree View",
     compactOn: "Full Mode",
@@ -961,6 +992,7 @@ function initFromData(data) {
   applyDetailsVisibility();
   if (themePresetSelect) themePresetSelect.value = themePreset;
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
+  if (settingsResetSelf) settingsResetSelf.textContent = t.resetSelf;
   if (settingsCompact) settingsCompact.checked = compactMode;
   if (settingsLines) settingsLines.checked = showLines;
   if (settingsMinimap) settingsMinimap.checked = minimapEnabled;
@@ -981,6 +1013,9 @@ function initFromData(data) {
   setTreeStatus("");
   ensureTreeVisible();
   restoreFromUrl();
+  if (!hasUrlFocus()) {
+    requestAnimationFrame(focusInitialTree);
+  }
   if (pathMode) applyLineageHighlight();
   if (treeCanvas && treeCanvas.children.length === 0) {
     recoverEmptyView();
@@ -2114,11 +2149,7 @@ function localizeTagText(text, langCode) {
 
 function calcAge(birthDate, refDate = new Date()) {
   if (!birthDate) return null;
-  let age = refDate.getFullYear() - birthDate.getFullYear();
-  const m = refDate.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && refDate.getDate() < birthDate.getDate())) {
-    age -= 1;
-  }
+  const age = refDate.getFullYear() - birthDate.getFullYear();
   return age >= 0 ? age : null;
 }
 
@@ -2357,6 +2388,8 @@ const actionEntries = [
   ["zoom-out", zoomOutBtn],
   ["zoom-reset", zoomResetBtn],
   ["reset-view", resetViewBtn],
+  ["general-view", generalViewBtn],
+  ["focus-self", focusSelfBtn],
   ["zoom-fit", zoomFitBtn],
   ["toggle-theme", toggleThemeBtn],
   ["lang-toggle", langToggleBtn],
@@ -2434,6 +2467,36 @@ if (focusEldersBtn) {
     const elder = findElderPerson();
     if (elder) focusPerson(elder.id, true);
   });
+}
+
+function focusSelf(open = true, updateUrl = true) {
+  const self = findSelfPerson();
+  if (!self) {
+    return chooseSelfPerson();
+  }
+  focusPerson(self.id, open, updateUrl);
+  return true;
+}
+
+if (focusSelfBtn) {
+  focusSelfBtn.addEventListener("click", () => {
+    focusSelf(true);
+  });
+}
+
+if (generalViewBtn) {
+  generalViewBtn.addEventListener("click", () => {
+    focusGeneralView();
+  });
+}
+
+if (mobileSelfBtn) {
+  mobileSelfBtn.addEventListener("click", () => {
+    focusSelf(false);
+  });
+  mobileSelfBtn.addEventListener("touchstart", () => {
+    focusSelf(false);
+  }, { passive: true });
 }
 
 if (backTopBtn) {
@@ -2592,7 +2655,7 @@ if (resetViewBtn) {
   resetViewBtn.addEventListener("click", () => {
     scale = 1;
     applyZoom();
-    treeWrap.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+    focusGeneralView();
     savePrefs();
   });
 }
@@ -2887,8 +2950,8 @@ function highlightMatches(ids) {
   });
 }
 
-function focusPerson(personId, open = false) {
-  const el = elementByPersonId.get(personId);
+function focusPerson(personId, open = false, updateUrl = true) {
+  let el = elementByPersonId.get(personId);
   const person = peopleById.get(personId);
   if (!person) return;
   if (!treeWrap) return;
@@ -2896,13 +2959,25 @@ function focusPerson(personId, open = false) {
   if (viewMode !== "tree") {
     viewMode = "tree";
     applyViewMode();
-    scheduleRender();
+    renderScene();
+    applyZoom();
   }
 
   if (!el) {
-    if (!nodeByPersonId.get(personId)) return;
-    scheduleRender();
+    renderScene();
+    applyZoom();
+    el = elementByPersonId.get(personId);
   }
+
+  if (!el && hiddenGenerations.size > 0) {
+    hiddenGenerations.clear();
+    buildGenerationControls();
+    renderScene();
+    applyZoom();
+    el = elementByPersonId.get(personId);
+  }
+
+  if (!el) return;
 
   selectedPersonId = personId;
   updateStoryPanel(person);
@@ -2915,7 +2990,7 @@ function focusPerson(personId, open = false) {
   const scrollLeft = treeWrap.scrollLeft + rect.left - wrapRect.left - wrapRect.width / 2 + rect.width / 2;
   const scrollTop = treeWrap.scrollTop + rect.top - wrapRect.top - wrapRect.height / 2 + rect.height / 2;
   treeWrap.scrollTo({ left: scrollLeft, top: scrollTop, behavior: "smooth" });
-  updateUrlState();
+  if (updateUrl) updateUrlState();
 }
 
 if (toggleThemeBtn) {
@@ -3130,6 +3205,17 @@ if (settingsReset) {
       // ignore storage errors
     }
     window.location.reload();
+  });
+}
+
+if (settingsResetSelf) {
+  settingsResetSelf.addEventListener("click", () => {
+    const t = i18n[lang] || i18n.ms;
+    if (!confirm(t.resetSelfConfirm)) return;
+    setStoredSelfId("");
+    updateSelfButtons();
+    focusGeneralView();
+    alert(t.resetSelfDone);
   });
 }
 
@@ -3369,13 +3455,111 @@ function findElderPerson() {
   return peopleById.get(firstRootUnion.partner1) || peopleById.get(firstRootUnion.partner2) || null;
 }
 
+function findSelfPerson() {
+  const storedSelfId = getStoredSelfId();
+  if (storedSelfId && peopleById.has(storedSelfId)) {
+    return peopleById.get(storedSelfId);
+  }
+  return null;
+}
+
+function getStoredSelfId() {
+  try {
+    return localStorage.getItem(SELF_STORAGE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function setStoredSelfId(personId) {
+  try {
+    if (personId) {
+      localStorage.setItem(SELF_STORAGE_KEY, personId);
+    } else {
+      localStorage.removeItem(SELF_STORAGE_KEY);
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function updateSelfButtons() {
+  const t = i18n[lang] || i18n.ms;
+  const hasSelf = Boolean(findSelfPerson());
+  const fullLabel = hasSelf ? t.focusSelf : t.chooseSelf;
+  const shortLabel = hasSelf ? t.focusSelfShort : t.chooseSelfShort;
+  if (focusSelfBtn) focusSelfBtn.textContent = fullLabel;
+  if (mobileSelfBtn) mobileSelfBtn.textContent = shortLabel;
+  if (mobileQuickFocusSelf) mobileQuickFocusSelf.textContent = shortLabel;
+}
+
+function chooseSelfPerson() {
+  if (!treeData?.people?.length) return false;
+  const t = i18n[lang] || i18n.ms;
+  const query = window.prompt(t.chooseSelfPrompt);
+  if (!query) return false;
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return false;
+  const matches = treeData.people.filter((person) => {
+    const name = formatDisplayName(person.name).toLowerCase();
+    return name.includes(normalized) || String(person.name || "").toLowerCase().includes(normalized);
+  });
+  if (!matches.length) {
+    alert(t.chooseSelfNotFound);
+    return false;
+  }
+  const exact = matches.find((person) => formatDisplayName(person.name).toLowerCase() === normalized);
+  const selected = exact || matches[0];
+  setStoredSelfId(selected.id);
+  updateSelfButtons();
+  focusPerson(selected.id, false, true);
+  alert(formatText(t.chooseSelfSaved, { name: formatDisplayName(selected.name) }));
+  return true;
+}
+
+function hasUrlFocus() {
+  const params = new URLSearchParams(window.location.search);
+  return Boolean(params.get("focus"));
+}
+
+function focusInitialTree() {
+  if (initialFocusDone || viewMode !== "tree") return;
+  initialFocusDone = true;
+  focusGeneralView(false);
+}
+
+function focusGeneralView(animate = true) {
+  if (!treeWrap) return;
+  if (viewMode !== "tree") {
+    viewMode = "tree";
+    applyViewMode();
+    renderScene();
+    applyZoom();
+    updateViewSwitch();
+  }
+  selectedPersonId = "";
+  clearSelectionHighlight();
+  if (storyPanel) storyPanel.hidden = true;
+  setStoryPanelOpen(false);
+  const rootNode = layoutRoot?.children?.[0];
+  if (rootNode) {
+    const width = rootNode.ownWidth || layoutConfig.cardWidth;
+    const left = Math.max(0, (rootNode.x + width / 2) * scale - treeWrap.clientWidth / 2);
+    treeWrap.scrollTo({ left, top: 0, behavior: animate ? "smooth" : "auto" });
+    updateMinimap();
+    return;
+  }
+  fitToScreen();
+}
+
 function applyLineageHighlight() {
   document.querySelectorAll(".person-card.path-on").forEach((el) => el.classList.remove("path-on"));
-  if (!pathMode || !treeData.selfId) {
+  const self = findSelfPerson();
+  if (!pathMode || !self) {
     applyLanguage();
     return;
   }
-  const ids = getLineageIds(treeData.selfId);
+  const ids = getLineageIds(self.id);
   ids.forEach((id) => {
     const group = elementByPersonId.get(id);
     if (!group) return;
@@ -3487,6 +3671,7 @@ function applyLanguage() {
   if (viewToggle) viewToggle.textContent = viewMode === "timeline" ? t.viewTree : t.viewTimeline;
   if (compactToggleBtn) compactToggleBtn.textContent = compactMode ? t.compactOn : t.compactOff;
   if (pathToggleBtn) pathToggleBtn.textContent = pathMode ? t.pathOn : t.pathOff;
+  updateSelfButtons();
   if (focusEldersBtn) focusEldersBtn.textContent = t.focusElders;
   if (backTopBtn) backTopBtn.textContent = t.backTop;
   if (zoomFitBtn) zoomFitBtn.textContent = t.fit;

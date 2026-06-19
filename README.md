@@ -52,14 +52,24 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 ### Cadangan khusus ikut view
 - Desktop: auto-fit root tree selepas load, tambah toolbar relationship finder, dan jadikan minimap lebih discoverable.
 - Mobile: jadikan search sebagai butang utama di topbar, tambah bottom nav `Tree / Search / Timeline / Saya`, dan tambah `Focused Branch View`.
-- Desktop dan mobile: tambah "Fokus Diri Saya" berdasarkan `selfId` supaya pengguna sentiasa ada titik mula.
+- Desktop dan mobile: "Fokus Diri Saya" perlu guna pilihan per browser/device supaya setiap pengguna boleh pilih diri sendiri.
 - Desktop dan mobile: bila klik ahli, panel profil perlu ada aksi cepat `Lihat keluarga kecil`, `Cari hubungan`, `Salin link`, dan `Fokus dalam tree`.
 - Desktop dan mobile: tambah ujian manual untuk viewport `1440x1000`, `1024x768`, `768x1024`, `390x844`, dan `360x740`.
+
+### Nota "Diri Saya"
+- Website tidak menetapkan satu ahli keluarga sebagai "saya" untuk semua pengguna.
+- Paparan asal website ialah `Paparan Umum`, iaitu bermula dari root/permulaan keluarga.
+- Jika browser belum ada pilihan, butang akan menjadi `Pilih Diri Saya`.
+- Pilihan diri sendiri disimpan dalam `localStorage` sebagai `familyTreeSelfId`, jadi ia hanya terpakai untuk browser/device itu.
+- Laptop, phone, browser lain, atau pengguna lain perlu pilih diri sendiri masing-masing.
+- Jika device dikongsi, pengguna boleh buka `Tetapan` dan tekan `Reset Diri Saya` sebelum orang lain pilih diri mereka.
+- Butang `Paparan Umum` sentiasa boleh digunakan untuk kembali ke view salasilah biasa tanpa fokus kepada sesiapa.
+- Untuk sokongan merentas device tanpa pilih semula, projek perlukan sistem login dan database.
 
 ## Cadangan penambahbaikan utama
 
 ### 1. Jadikan tree mudah difahami
-- Tambah "You are here" untuk `selfId`, dengan highlight kekal dan butang fokus kepada diri sendiri.
+- Tambah "You are here" berdasarkan pilihan diri sendiri yang disimpan dalam browser, dengan highlight kekal dan butang fokus kepada diri sendiri.
 - Tambah breadcrumb keluarga apabila klik ahli: `Wan/Tok > Anak > Cucu > Cicit`.
 - Tambah mode "Laluan hubungan" yang highlight laluan dari seorang ahli ke seorang ahli lain.
 - Tambah butang "Lihat ibu bapa", "Lihat pasangan", "Lihat anak", dan "Lihat adik-beradik" dalam panel profil.
@@ -80,7 +90,7 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - Tambah ruangan "nama panggilan" supaya ahli keluarga mudah dicari walaupun nama penuh panjang.
 - Tambah gambar/avatar untuk setiap ahli. Jika tiada gambar, gunakan avatar initials yang konsisten.
 - Tambah nota sejarah keluarga, tempat lahir, tempat tinggal, pekerjaan, dan kenangan ringkas.
-- Tambah "copy link to this person" supaya mudah kongsi terus kepada ahli tertentu melalui `?focus=p16`.
+- Tambah "copy link to this person" supaya mudah kongsi terus kepada ahli tertentu melalui parameter seperti `?focus=p1`.
 
 ### 4. Data dan penyelenggaraan
 - Putuskan sama ada website ini view-only atau boleh edit.
@@ -116,9 +126,9 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - [ ] Selaraskan README, UI, dan kod untuk import/export JSON.
 - [ ] Baiki fungsi edit supaya sama ada disimpan dengan jelas atau dilumpuhkan.
 - [ ] Ganti password hardcoded `1234` dengan mekanisme lebih selamat, atau buang edit untuk public view.
-- [ ] Semak dan baiki kemungkinan horizontal overflow pada mobile view.
-- [ ] Auto-fit atau auto-focus root/self selepas tree selesai load.
-- [ ] Tambah butang "Fokus Diri Saya" berdasarkan `selfId`.
+- [x] Semak dan baiki kemungkinan horizontal overflow pada mobile view.
+- [x] Auto-focus root selepas tree selesai load.
+- [x] Tambah butang "Pilih/Fokus Diri Saya" yang simpan pilihan per browser/device.
 - [ ] Tambah relationship/path finder untuk cari hubungan antara dua ahli.
 - [ ] Tambah carian lanjutan ikut nama, nama panggilan, hubungan, cabang, dan generasi.
 
@@ -197,9 +207,9 @@ Untuk menjadikan carian dan relationship finder lebih tepat, setiap ahli elok ad
 
 ```json
 {
-  "id": "p16",
-  "name": "Khairul Anuar Bin Karia",
-  "nickname": "Anuar",
+  "id": "p1",
+  "name": "Ali Bin Abu",
+  "nickname": "Ali",
   "gender": "male",
   "birth": "1984-12-29",
   "death": "",

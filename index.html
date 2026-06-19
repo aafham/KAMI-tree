@@ -14,8 +14,9 @@
   <div class="app" id="app" data-theme="light">
     <header class="topbar">
       <div id="mobile-topbar" class="mobile-topbar" aria-label="Mobile top bar">
+        <button id="mobile-self-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="focusSelfShort">Saya</button>
+        <button id="mobile-search-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="searchShort">Cari</button>
         <button id="mobile-settings-btn" class="btn ghost icon" type="button" aria-label="Settings">⚙️</button>
-        <button id="mobile-search-btn" class="btn ghost icon" type="button" aria-label="Search">🔎</button>
       </div>
       <div class="brand">
         <p class="kicker" data-i18n="appKicker">Salasilah Keluarga</p>
@@ -49,12 +50,15 @@
           </div>
           <div class="mobile-actions" aria-label="Aksi mudah alih">
             <div class="control-row mobile-quick">
+              <button class="btn ghost" id="m-focus-self" data-action="focus-self" data-i18n="focusSelfShort">Saya</button>
               <button class="btn" id="m-zoom-in" data-action="zoom-in" data-i18n="zoomIn">Zoom +</button>
               <button class="btn" id="m-zoom-out" data-action="zoom-out" data-i18n="zoomOut">Zoom -</button>
               <button class="btn ghost" id="m-zoom-fit" data-action="zoom-fit" data-i18n="fit">Fit Skrin</button>
             </div>
           </div>
           <div class="control-row actions-zoom">
+            <button id="general-view" class="btn ghost" data-i18n="generalView">Paparan Umum</button>
+            <button id="focus-self" class="btn" data-i18n="focusSelf">Fokus Diri Saya</button>
             <button id="zoom-in" class="btn" data-i18n="zoomIn">Zoom +</button>
             <button id="zoom-out" class="btn" data-i18n="zoomOut">Zoom -</button>
             <button id="zoom-reset" class="btn ghost" data-i18n="zoomReset">Reset</button>
@@ -336,6 +340,9 @@
         <div class="settings-grid settings-grid--tools">
           <button id="setting-reset-settings" class="btn ghost small" type="button" data-i18n="settingsReset">
             Reset settings
+          </button>
+          <button id="setting-reset-self" class="btn ghost small" type="button" data-i18n="resetSelf">
+            Reset diri saya
           </button>
           <button id="clear-cache" class="btn danger small" type="button" data-i18n="clearCache">
             Clear Cache
