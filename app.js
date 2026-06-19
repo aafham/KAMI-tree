@@ -205,6 +205,7 @@ let timelineFilters = {
 let timelineMoreOpen = false;
 let initialFocusDone = false;
 let openBirthdayDates = new Set();
+let autoOpenedBirthdayKey = "";
 
 const prefs = loadPrefs();
 const i18n = {
@@ -2266,6 +2267,7 @@ function renderBirthdayPage() {
   const today = new Date();
   const currentDateKey = `${today.getMonth()}-${today.getDate()}`;
   const nextBirthdayKey = getNextBirthdayKey(entries, today);
+  syncAutoOpenBirthday(nextBirthdayKey);
 
   entries.forEach((entry) => {
     byMonth[entry.month].push(entry);
@@ -2460,6 +2462,17 @@ function getNextBirthdayKey(entries, today = new Date()) {
     }
   });
   return best?.key || null;
+}
+
+function syncAutoOpenBirthday(nextBirthdayKey) {
+  if (autoOpenedBirthdayKey && autoOpenedBirthdayKey !== nextBirthdayKey) {
+    openBirthdayDates.delete(autoOpenedBirthdayKey);
+    autoOpenedBirthdayKey = "";
+  }
+  if (nextBirthdayKey && autoOpenedBirthdayKey !== nextBirthdayKey) {
+    openBirthdayDates.add(nextBirthdayKey);
+    autoOpenedBirthdayKey = nextBirthdayKey;
+  }
 }
 
 function isBirthdayDateInRange(key, startKey, endKey) {
