@@ -1074,6 +1074,60 @@ body[data-view="timeline"].story-open .timeline-section {
   font-weight: 600;
 }
 
+.lineage-section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 10px;
+}
+
+.lineage-section h3 {
+  margin: 0 0 2px;
+  font-family: "Fraunces", serif;
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.lineage-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.lineage-row strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.lineage-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lineage-chip {
+  border: 1px solid rgba(79, 138, 106, 0.22);
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: color-mix(in srgb, var(--primary) 10%, var(--card));
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.lineage-chip:hover {
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+  background: color-mix(in srgb, var(--primary) 18%, var(--card));
+}
+
+.lineage-empty {
+  color: var(--muted);
+}
+
 .story-edit {
   display: grid;
   gap: 10px;
@@ -2085,6 +2139,11 @@ body.hide-tags .person-tags {
 
   .timeline-detail-row {
     grid-template-columns: 1fr;
+  }
+
+  .lineage-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   .bottom-sheet {

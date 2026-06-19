@@ -15,6 +15,7 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - Statistik keluarga: jumlah ahli, pasangan, jantina, cucu, cicit, dan ulang tahun terdekat.
 - Timeline dengan penapis generasi, bulan lahir, jantina, dan susunan.
 - Panel cerita/profil ahli keluarga.
+- Salasilah individu dalam panel ahli: atok/nenek, mak/ayah, adik-beradik, pasangan, dan anak.
 - Tetapan paparan seperti tema, bahasa BM/EN, compact mode, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Eksport tree kepada JPEG/PDF.
 
@@ -53,7 +54,7 @@ Website salasilah keluarga interaktif menggunakan HTML, CSS, dan JavaScript vani
 - Desktop: auto-fit root tree selepas load, tambah toolbar relationship finder, dan jadikan minimap lebih discoverable.
 - Mobile: jadikan search sebagai butang utama di topbar, tambah bottom nav `Tree / Search / Timeline / Saya`, dan tambah `Focused Branch View`.
 - Desktop dan mobile: "Fokus Diri Saya" perlu guna pilihan per browser/device supaya setiap pengguna boleh pilih diri sendiri.
-- Desktop dan mobile: bila klik ahli, panel profil perlu ada aksi cepat `Lihat keluarga kecil`, `Cari hubungan`, `Salin link`, dan `Fokus dalam tree`.
+- Desktop dan mobile: bila klik ahli, panel profil sudah memaparkan salasilah individu; aksi seterusnya boleh tambah `Cari hubungan`, `Salin link`, dan `Fokus dalam tree`.
 - Desktop dan mobile: tambah ujian manual untuk viewport `1440x1000`, `1024x768`, `768x1024`, `390x844`, dan `360x740`.
 
 ### Nota "Diri Saya"

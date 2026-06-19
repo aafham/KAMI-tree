@@ -240,6 +240,13 @@ const i18n = {
     modalDeath: "Tarikh meninggal",
     modalNote: "Catatan",
     modalStory: "Cerita",
+    lineageTitle: "Salasilah Individu",
+    lineageGrandparents: "Atok / Nenek",
+    lineageParents: "Mak / Ayah",
+    lineageSiblings: "Adik-beradik",
+    lineageSpouses: "Pasangan",
+    lineageChildren: "Anak",
+    lineageNone: "Tiada data",
     modalFullName: "Nama penuh",
     modalImage: "URL gambar",
     modalShortNote: "Nota ringkas",
@@ -396,6 +403,13 @@ const i18n = {
     modalDeath: "Death date",
     modalNote: "Notes",
     modalStory: "Story",
+    lineageTitle: "Individual Lineage",
+    lineageGrandparents: "Grandparents",
+    lineageParents: "Parents",
+    lineageSiblings: "Siblings",
+    lineageSpouses: "Spouses",
+    lineageChildren: "Children",
+    lineageNone: "No data",
     modalFullName: "Full name",
     modalImage: "Image URL",
     modalShortNote: "Short note",
@@ -2200,6 +2214,114 @@ function formatDates(birth, death) {
   return `${t.diedPrefix}${formatDateDisplay(death)}`;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function uniquePeople(ids) {
+  const seen = new Set();
+  return ids
+    .filter(Boolean)
+    .filter((id) => {
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    })
+    .map((id) => peopleById.get(id))
+    .filter(Boolean);
+}
+
+function getParentUnion(personId) {
+  if (!treeData?.unions) return null;
+  return treeData.unions.find((union) => (union.children || []).includes(personId)) || null;
+}
+
+function getIndividualFamily(personId) {
+  const parentUnion = getParentUnion(personId);
+  const parentIds = parentUnion ? [parentUnion.partner1, parentUnion.partner2].filter(Boolean) : [];
+  const siblingIds = parentUnion ? (parentUnion.children || []).filter((id) => id !== personId) : [];
+  const grandparentIds = [];
+
+  parentIds.forEach((parentId) => {
+    const grandUnion = getParentUnion(parentId);
+    if (!grandUnion) return;
+    if (grandUnion.partner1) grandparentIds.push(grandUnion.partner1);
+    if (grandUnion.partner2) grandparentIds.push(grandUnion.partner2);
+  });
+
+  const spouseIds = [];
+  const childIds = [];
+  (treeData?.unions || []).forEach((union) => {
+    if (union.partner1 !== personId && union.partner2 !== personId) return;
+    if (union.partner1 && union.partner1 !== personId) spouseIds.push(union.partner1);
+    if (union.partner2 && union.partner2 !== personId) spouseIds.push(union.partner2);
+    (union.children || []).forEach((childId) => childIds.push(childId));
+  });
+
+  return {
+    grandparents: uniquePeople(grandparentIds),
+    parents: uniquePeople(parentIds),
+    siblings: uniquePeople(siblingIds),
+    spouses: uniquePeople(spouseIds),
+    children: uniquePeople(childIds)
+  };
+}
+
+function renderPersonChips(people) {
+  const t = i18n[lang] || i18n.ms;
+  if (!people.length) return `<span class="lineage-empty">${escapeHtml(t.lineageNone)}</span>`;
+  return people.map((person) => `
+    <button class="lineage-chip" type="button" data-person-link="${escapeHtml(person.id)}">
+      ${escapeHtml(formatDisplayName(person.name))}
+    </button>
+  `).join("");
+}
+
+function renderIndividualLineage(person) {
+  const t = i18n[lang] || i18n.ms;
+  const family = getIndividualFamily(person.id);
+  return `
+    <section class="lineage-section">
+      <h3>${escapeHtml(t.lineageTitle)}</h3>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageGrandparents)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.grandparents)}</div>
+      </div>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageParents)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.parents)}</div>
+      </div>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageSiblings)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.siblings)}</div>
+      </div>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageSpouses)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.spouses)}</div>
+      </div>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageChildren)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.children)}</div>
+      </div>
+    </section>
+  `;
+}
+
+function bindPersonLinkClicks(container) {
+  if (!container) return;
+  container.querySelectorAll("[data-person-link]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const personId = btn.dataset.personLink;
+      if (personId) focusPerson(personId, true);
+    });
+  });
+}
+
 function setStoryPanelOpen(isOpen) {
   if (!app) return;
   app.classList.toggle("story-open", isOpen);
@@ -2228,7 +2350,9 @@ function openModal(person) {
     <div class="story-detail"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
+    ${renderIndividualLineage(person)}
   `;
+  bindPersonLinkClicks(storyContent);
 
   if (panelEditForm) panelEditForm.hidden = true;
   if (panelEditBtn) panelEditBtn.hidden = false;
@@ -2350,6 +2474,7 @@ function openTimelineInlineDetail(person, itemEl) {
       <div class="timeline-detail-row"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
       <div class="timeline-detail-row"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
       <div class="timeline-detail-row"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
+      ${renderIndividualLineage(person)}
     </div>
   `;
   const closeBtn = detail.querySelector(".timeline-detail-close");
@@ -2358,6 +2483,7 @@ function openTimelineInlineDetail(person, itemEl) {
       detail.remove();
     });
   }
+  bindPersonLinkClicks(detail);
   itemEl.insertAdjacentElement("afterend", detail);
   detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
