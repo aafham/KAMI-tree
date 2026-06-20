@@ -141,6 +141,7 @@
     <div class="view-switch" role="group" aria-label="View switch">
       <button id="view-tree-btn" class="btn ghost small" type="button" data-i18n="viewTree">Lihat Tree</button>
       <button id="view-timeline-btn" class="btn ghost small" type="button" data-i18n="viewTimeline">Lihat Timeline</button>
+      <button id="view-directory-btn" class="btn ghost small" type="button" data-i18n="viewDirectory">Directory</button>
     </div>
 
     <main class="tree-section">
@@ -149,6 +150,10 @@
         <button id="mini-zoom-in" class="btn small" type="button">+</button>
         <button id="mini-zoom-out" class="btn small" type="button">−</button>
         <button id="mini-zoom-fit" class="btn ghost small" type="button" data-i18n="fit">Fit Skrin</button>
+      </div>
+      <div id="focused-branch-bar" class="focused-branch-bar" hidden>
+        <span id="focused-branch-label"></span>
+        <button id="focused-branch-clear" class="btn ghost small" type="button" data-i18n="focusedBranchClear">Tunjuk Semua</button>
       </div>
       <div class="content-grid">
         <div class="tree-wrap" id="tree-wrap">
@@ -272,8 +277,43 @@
           </div>
           <div id="birthday-search-results" class="birthday-search-results" aria-live="polite"></div>
         </div>
+        <div class="birthday-legend" aria-label="Legend birthday calendar">
+          <span><i class="legend-dot legend-today"></i><span data-i18n="birthdayLegendToday">Hari ini</span></span>
+          <span><i class="legend-dot legend-range"></i><span data-i18n="birthdayLegendRange">Menuju birthday terdekat</span></span>
+          <span><i class="legend-dot legend-next"></i><span data-i18n="birthdayLegendNext">Birthday terdekat</span></span>
+        </div>
         <div id="birthday-calendar" class="birthday-calendar"></div>
         <div id="birthday-month-lists" class="birthday-month-lists"></div>
+      </section>
+      <section class="directory-section" id="directory-section" hidden>
+        <div class="directory-head">
+          <div>
+            <p class="kicker" data-i18n="directoryKicker">Senarai Keluarga</p>
+            <h2 data-i18n="directoryTitle">Family Directory</h2>
+          </div>
+          <button id="directory-back" class="btn ghost small" type="button" data-i18n="directoryBack">Back ke Home</button>
+        </div>
+        <div class="directory-tools">
+          <label class="directory-search">
+            <span class="label" data-i18n="directorySearchLabel">Cari ahli</span>
+            <input id="directory-search" class="input" type="search" placeholder="Cari nama..." data-i18n-placeholder="directorySearchPlaceholder" />
+          </label>
+          <label class="directory-filter">
+            <span class="label" data-i18n="directoryGeneration">Generasi</span>
+            <select id="directory-generation" class="select"></select>
+          </label>
+          <label class="directory-filter">
+            <span class="label" data-i18n="directoryGender">Jantina</span>
+            <select id="directory-gender" class="select">
+              <option value="all" data-i18n="timelineGenderAll">Semua</option>
+              <option value="male" data-i18n="timelineGenderMale">Lelaki</option>
+              <option value="female" data-i18n="timelineGenderFemale">Perempuan</option>
+            </select>
+          </label>
+          <button id="directory-clear" class="btn ghost small" type="button" data-i18n="timelineClear">Reset</button>
+        </div>
+        <div id="directory-summary" class="directory-summary"></div>
+        <div id="directory-list" class="directory-list"></div>
       </section>
     </main>
   </div>

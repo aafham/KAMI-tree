@@ -10,6 +10,7 @@ README ini juga berfungsi sebagai checklist projek. Item bertanda `[x]` sudah di
 - Mode data semasa: view-only. Data utama dibaca daripada `data.json`.
 - `storeData()` sengaja dibuat `no-op`, jadi perubahan edit tidak kekal selepas reload.
 - Semakan asas terakhir: `app.js` lulus `node --check`.
+- Semakan static server terakhir: `index.html`, `app.js`, `styles.css`, dan `data.json` return HTTP 200 di localhost.
 - Website ada dua pengalaman utama: desktop/web view dan mobile view.
 - README dikemas kini pada 2026-06-20.
 
@@ -47,6 +48,7 @@ http://localhost:5500
 - Statistik keluarga.
 - Upcoming birthday card yang boleh ditekan untuk buka birthday page.
 - Birthday page penuh bulan 1 sampai 12.
+- Birthday calendar ada legend warna untuk hari ini, range ke birthday terdekat, dan birthday terdekat.
 - Kalendar birthday dengan bulat pada tarikh yang ada birthday.
 - Tarikh birthday dalam kalendar boleh buka/tutup bila ditekan.
 - Button Buka Semua dan Tutup Semua untuk birthday calendar.
@@ -59,9 +61,12 @@ http://localhost:5500
 - List birthday setiap bulan dengan numbering.
 - Timeline keluarga dengan filter generasi, bulan lahir, jantina, dan sort.
 - Panel profil ahli keluarga.
+- Button aksi dalam profil: fokus dalam tree, cari hubungan, lihat keluarga ini, dan copy link.
 - Salasilah individu bila klik nama: atok/nenek, mak/ayah, adik-beradik, pasangan, dan anak.
+- Focused Branch View asas untuk lihat keluarga terdekat individu yang dipilih.
 - Relationship Finder asas untuk cari hubungan antara dua ahli.
 - Highlight dua ahli yang dibandingkan dalam Relationship Finder.
+- Family Directory untuk senarai semua ahli dengan search dan filter.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -168,7 +173,40 @@ Nota penting:
 - Jika buka di phone lain atau browser lain, kena pilih semula.
 - Default website masih `Paparan Umum`, bukan fokus kepada `p16` atau mana-mana orang.
 
-### 8. Guna Relationship Finder
+### 8. Guna Button Aksi Dalam Profil
+
+Bila klik ahli keluarga, dalam panel profil ada beberapa button aksi:
+
+- `Fokus dalam tree` untuk scroll/fokus semula kepada ahli itu dalam tree.
+- `Cari hubungan` untuk masukkan ahli itu sebagai orang pertama dalam Relationship Finder.
+- `Lihat keluarga ini` untuk buka Focused Branch View.
+- `Copy link` untuk salin link terus kepada ahli tersebut.
+
+Cara guna:
+
+1. Klik mana-mana ahli dalam tree.
+2. Panel profil akan terbuka.
+3. Tekan aksi yang diperlukan.
+4. Jika tekan `Lihat keluarga ini`, tree akan tapis kepada keluarga terdekat ahli itu.
+
+### 9. Guna Focused Branch View
+
+Focused Branch View memudahkan pengguna lihat keluarga kecil seseorang tanpa perlu tengok seluruh tree.
+
+Cara guna:
+
+1. Klik ahli keluarga.
+2. Tekan `Lihat keluarga ini`.
+3. Tree akan fokus kepada ahli itu bersama keluarga terdekat:
+   - atok/nenek
+   - mak/ayah
+   - adik-beradik
+   - pasangan
+   - anak
+4. Bar `Family view` akan muncul di atas tree.
+5. Tekan `Tunjuk Semua` untuk keluar daripada Focused Branch View.
+
+### 10. Guna Relationship Finder
 
 Relationship Finder digunakan untuk cari hubungan antara dua ahli keluarga.
 
@@ -199,7 +237,7 @@ Limitasi semasa:
 - Belum highlight laluan penuh antara dua orang.
 - Hubungan ipar, biras, menantu kompleks, moyang jauh, dan hubungan berlapis masih belum lengkap.
 
-### 9. Klik Ahli Dan View Profil
+### 11. Klik Ahli Dan View Profil
 
 1. Klik mana-mana kad ahli dalam tree.
 2. Panel profil akan terbuka.
@@ -225,7 +263,7 @@ Salasilah individu yang dipaparkan:
 
 Nama dalam salasilah individu boleh ditekan untuk lompat ke ahli tersebut.
 
-### 10. Edit Profil
+### 12. Edit Profil
 
 Dalam panel profil ada flow edit dalam UI/kod, tetapi projek semasa dianggap `view-only`.
 
@@ -237,7 +275,7 @@ Perkara penting:
 - Jika mahu edit kekal, perlu update sistem simpan data dahulu.
 - Untuk kegunaan public, lebih baik hide atau buang flow edit sehingga admin mode siap.
 
-### 11. Guna Statistik Keluarga
+### 13. Guna Statistik Keluarga
 
 Bahagian statistik memaparkan:
 
@@ -249,7 +287,7 @@ Bahagian statistik memaparkan:
 
 Kad `Ulang Tahun Terdekat` boleh ditekan untuk buka birthday page.
 
-### 12. Guna Birthday Page
+### 14. Guna Birthday Page
 
 Cara buka birthday page:
 
@@ -290,7 +328,7 @@ Cara search birthday:
 2. Result akan keluar terus semasa menaip.
 3. Klik nama dalam result untuk buka/fokus ahli tersebut.
 
-### 13. Guna List Birthday Ikut Bulan
+### 15. Guna List Birthday Ikut Bulan
 
 1. Scroll bawah birthday calendar.
 2. Setiap bulan ada kad list sendiri.
@@ -307,7 +345,7 @@ Contoh:
 
 Numbering reset untuk setiap bulan.
 
-### 14. Guna Timeline
+### 16. Guna Timeline
 
 Cara buka timeline:
 
@@ -334,7 +372,7 @@ Cara guna:
 3. Active filter akan dipaparkan.
 4. Tekan `Reset` untuk kosongkan filter.
 
-### 15. Guna Generation Collapse/Expand
+### 17. Guna Generation Collapse/Expand
 
 1. Cari bahagian `Generasi (Collapse/Expand)`.
 2. Tekan generasi yang mahu disorok atau dibuka.
@@ -345,7 +383,23 @@ Nota:
 - Fungsi ini bergantung kepada struktur generasi yang dibina dalam tree.
 - Jika data berubah, semak semula sama ada generasi masih tepat.
 
-### 16. Guna Download / Export
+### 18. Guna Family Directory
+
+Family Directory ialah senarai semua ahli keluarga dalam bentuk kad/list.
+
+Cara buka:
+
+1. Tekan button `Directory` pada view switch.
+2. Senarai ahli keluarga akan dipaparkan.
+3. Taip nama dalam search untuk tapis senarai.
+4. Pilih generasi untuk lihat generasi tertentu.
+5. Pilih jantina untuk tapis lelaki/perempuan.
+6. Tekan `Reset` untuk kosongkan filter.
+7. Klik mana-mana nama untuk kembali ke tree dan fokus kepada ahli itu.
+
+Directory sesuai digunakan bila user tidak mahu cari dalam tree besar.
+
+### 19. Guna Download / Export
 
 Cara export:
 
@@ -359,7 +413,7 @@ Nota:
 - Import/export JSON belum lengkap dalam UI semasa.
 - Jika mahu backup data, edit terus `data.json` atau tambah semula UI backup JSON nanti.
 
-### 17. Guna Settings
+### 20. Guna Settings
 
 Cara buka:
 
@@ -390,7 +444,7 @@ Tools dalam settings:
 - `Reset Diri Saya` untuk buang pilihan diri sendiri dalam browser itu.
 - `Clear Cache` untuk clear cache/data sementara website.
 
-### 18. Guna Mobile View
+### 21. Guna Mobile View
 
 Pada phone/mobile, website ada susun atur khas.
 
@@ -418,10 +472,10 @@ Cara guna mobile:
 Nota mobile:
 
 - Tree besar memang perlu pan/zoom.
-- Focused Branch View belum siap, jadi mobile masih boleh terasa besar untuk user baru.
+- Focused Branch View asas sudah ada dan boleh bantu kecilkan paparan kepada keluarga terdekat.
 - Search mobile perlu dijadikan lebih utama dalam update akan datang.
 
-### 19. Clear Cache / Reset
+### 22. Clear Cache / Reset
 
 Gunakan reset jika website nampak pelik selepas banyak setting:
 
@@ -431,7 +485,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 4. Tekan `Clear Cache` jika perlu clear cache/data sementara.
 5. Reload browser.
 
-### 20. Aliran Guna Yang Dicadangkan Untuk User Baru
+### 23. Aliran Guna Yang Dicadangkan Untuk User Baru
 
 1. Buka website.
 2. Tekan `Fit Skrin`.
@@ -439,10 +493,12 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 4. Cari nama sendiri melalui search.
 5. Pilih diri sendiri jika mahu guna `Fokus Diri Saya`.
 6. Klik nama sendiri dan lihat salasilah individu.
-7. Cuba Relationship Finder untuk cari hubungan dengan ahli lain.
-8. Buka birthday page melalui kad `Ulang Tahun Terdekat`.
-9. Semak timeline untuk lihat susunan umur/tahun.
-10. Ubah settings jika paparan terlalu kecil atau besar.
+7. Tekan `Lihat keluarga ini` untuk cuba Focused Branch View.
+8. Cuba Relationship Finder untuk cari hubungan dengan ahli lain.
+9. Buka birthday page melalui kad `Ulang Tahun Terdekat`.
+10. Buka `Directory` untuk cari ahli melalui senarai.
+11. Semak timeline untuk lihat susunan umur/tahun.
+12. Ubah settings jika paparan terlalu kecil atau besar.
 
 ## Nota Penting Tentang "Diri Saya"
 
@@ -513,12 +569,15 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Ada `Pilih/Fokus Diri Saya`.
 - [x] Pilihan diri sendiri disimpan per browser/device.
 - [x] Ada reset pilihan diri sendiri.
-- [ ] Tambah Focused Branch View untuk lihat keluarga kecil sahaja.
+- [x] Tambah Focused Branch View asas untuk lihat keluarga kecil sahaja.
 - [ ] Tambah collapse/dim cabang lain bila fokus satu cabang.
 - [ ] Tambah label generasi yang lebih jelas seperti Generasi 1, 2, 3, 4.
 - [ ] Tambah breadcrumb salasilah untuk orang dipilih.
-- [ ] Tambah button `Fokus dalam tree` dalam panel profil.
-- [ ] Tambah button `Lihat ibu bapa`, `Lihat pasangan`, `Lihat anak`, dan `Lihat adik-beradik`.
+- [x] Tambah button `Fokus dalam tree` dalam panel profil.
+- [x] Tambah button `Lihat keluarga ini` dalam panel profil.
+- [x] Tambah button `Cari hubungan` dalam panel profil.
+- [x] Tambah button `Copy link` dalam panel profil.
+- [ ] Tambah button khusus `Lihat ibu bapa`, `Lihat pasangan`, `Lihat anak`, dan `Lihat adik-beradik`.
 - [ ] Tambah branch overview untuk setiap anak utama.
 - [ ] Pastikan tree masih selesa bila data bertambah lebih 100 ahli.
 
@@ -550,6 +609,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Salasilah individu papar pasangan.
 - [x] Salasilah individu papar anak.
 - [x] Nama dalam salasilah individu boleh ditekan.
+- [x] Profil ada button aksi untuk fokus tree, cari hubungan, family view, dan copy link.
 - [ ] Tambah avatar/gambar dalam panel profil.
 - [ ] Tambah nama panggilan.
 - [ ] Tambah tempat tinggal atau lokasi semasa jika sesuai.
@@ -595,7 +655,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Birthday terdekat highlight merah kuat.
 - [x] Birthday upcoming terdekat auto terbuka.
 - [x] Bila upcoming berubah, auto-open pindah ke birthday seterusnya.
-- [ ] Tambah legend kecil untuk warna hari ini, range, dan next birthday.
+- [x] Tambah legend kecil untuk warna hari ini, range, dan next birthday.
 - [ ] Tambah filter birthday ikut bulan.
 - [ ] Tambah sort birthday ikut nama atau tarikh.
 - [ ] Tambah umur akan datang pada birthday, contoh "jadi 25 tahun".
@@ -614,6 +674,20 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [ ] Tambah grouping timeline ikut dekad.
 - [ ] Tambah event selain birth/death seperti kahwin, pindah, atau milestone.
 - [ ] Tambah link dari timeline terus fokus ke tree.
+
+### 8A. Family Directory
+
+- [x] Tambah page Family Directory.
+- [x] Directory papar semua ahli keluarga dalam bentuk kad/list.
+- [x] Directory ada search nama/relation.
+- [x] Directory ada filter generasi.
+- [x] Directory ada filter jantina.
+- [x] Directory ada reset filter.
+- [x] Klik ahli dalam Directory akan kembali ke tree dan fokus orang itu.
+- [ ] Tambah filter birthday month dalam Directory.
+- [ ] Tambah filter cabang dalam Directory.
+- [ ] Tambah sort Directory ikut nama, umur, generasi, atau birthday.
+- [ ] Tambah export Directory ke CSV/PDF.
 
 ### 9. Web View / Desktop
 
@@ -639,7 +713,8 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [ ] Jadikan search sebagai aksi utama mobile.
 - [ ] Tambah bottom nav ringkas: Tree, Search, Birthday, Timeline, Settings.
 - [ ] Ringkaskan statistik mobile supaya tree cepat nampak.
-- [ ] Tambah Focused Branch View khas untuk mobile.
+- [x] Focused Branch View asas boleh digunakan di mobile.
+- [ ] Tambah Focused Branch View khas mobile yang lebih ringkas.
 - [ ] Kurangkan keperluan pan/zoom untuk user baru.
 - [ ] Buat visual QA mobile untuk viewport 390x844.
 - [ ] Buat visual QA mobile untuk viewport 360x740.
@@ -714,14 +789,14 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 2. Bersihkan kod lama yang refer elemen HTML yang sudah tiada.
 3. Tambah validator data supaya salasilah tidak rosak bila tambah ahli.
 4. Tambah `nickname`, `gender`, `branchId`, dan `status` dalam `data.json`.
-5. Tambah Focused Branch View supaya mobile lebih mudah digunakan.
+5. Kembangkan Focused Branch View supaya boleh pilih jenis keluarga yang mahu dilihat.
 
 ### Penting selepas itu
 
 1. Tambah gambar/avatar ahli.
 2. Tambah share/copy link untuk ahli tertentu.
 3. Tambah relationship path highlight penuh.
-4. Tambah legend birthday calendar.
+4. Tambah filter dan sort tambahan dalam Family Directory.
 5. Buat QA desktop dan mobile dengan viewport tetap.
 
 ### Boleh buat kemudian
@@ -743,7 +818,7 @@ Cara paling mudah untuk pengguna salasilah keluarga:
    Panel individu perlu terus papar atok/nenek, mak/ayah, adik-beradik, pasangan, dan anak. Ini sudah dibuat sebagai asas.
 
 3. Focused Branch View.
-   Bila klik seseorang, website boleh fokus kepada keluarga kecil orang itu sahaja. Cabang lain dimalapkan supaya user tidak sesat dalam tree besar.
+   Bila klik seseorang, website boleh fokus kepada keluarga kecil orang itu sahaja. Asas fungsi ini sudah dibuat; update seterusnya boleh tambah pilihan jenis keluarga dan paparan mobile yang lebih ringkas.
 
 4. Relationship Finder.
    Pengguna pilih dua orang, website tulis hubungan dalam bahasa mudah dan highlight laluan dalam tree.

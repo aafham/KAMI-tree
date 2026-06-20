@@ -1030,6 +1030,13 @@ body[data-view="birthday"] .timeline-section {
   display: none;
 }
 
+body[data-view="directory"] .stats,
+body[data-view="directory"] .content-grid,
+body[data-view="directory"] .timeline-section,
+body[data-view="directory"] .birthday-section {
+  display: none;
+}
+
 body[data-view="timeline"] .story-panel {
   position: fixed;
   right: 24px;
@@ -1115,6 +1122,31 @@ body[data-view="timeline"].story-open .timeline-section {
 .story-detail strong {
   color: var(--ink);
   font-weight: 600;
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.focused-branch-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+  color: var(--ink);
+  box-shadow: var(--shadow-soft);
+}
+
+.focused-branch-bar span {
+  font-weight: 700;
 }
 
 .lineage-section {
@@ -1291,6 +1323,41 @@ body[data-view="timeline"].story-open .timeline-section {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.birthday-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: -4px 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.birthday-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.legend-today {
+  background: #f5b83d;
+}
+
+.legend-range {
+  background: color-mix(in srgb, #e14d4d 30%, var(--card));
+}
+
+.legend-next {
+  background: #d92d20;
 }
 
 .birthday-calendar {
@@ -1473,6 +1540,113 @@ body[data-view="timeline"].story-open .timeline-section {
 .birthday-empty {
   color: var(--muted);
   font-size: 13px;
+}
+
+.directory-section {
+  margin-top: 28px;
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.directory-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.directory-head h2 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+}
+
+.directory-tools {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(150px, 190px) minmax(150px, 190px) auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.directory-summary {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.directory-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.directory-person {
+  width: 100%;
+  border: 1px solid rgba(79, 138, 106, 0.16);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.directory-person:hover {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+}
+
+.directory-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.directory-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.directory-main strong,
+.directory-main span,
+.directory-main em {
+  overflow-wrap: anywhere;
+}
+
+.directory-main span,
+.directory-main em {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.directory-main em {
+  font-style: normal;
+}
+
+.directory-empty {
+  grid-column: 1 / -1;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--muted);
+  border: 1px dashed rgba(0, 0, 0, 0.12);
 }
 
 .timeline-head {
@@ -2414,18 +2588,27 @@ body.hide-tags .person-tags {
   }
 
   .birthday-head,
-  .birthday-tools {
+  .birthday-tools,
+  .directory-head,
+  .directory-tools {
     grid-template-columns: 1fr;
     flex-direction: column;
   }
 
-  .birthday-head {
+  .birthday-head,
+  .directory-head {
     align-items: stretch;
   }
 
   .birthday-calendar,
-  .birthday-month-lists {
+  .birthday-month-lists,
+  .directory-list {
     grid-template-columns: 1fr;
+  }
+
+  .focused-branch-bar {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .lineage-row {
