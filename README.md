@@ -35,6 +35,7 @@ http://localhost:5500
 - `styles.css` - styling, responsive layout, mobile view, dan visual state.
 - `app.js` - logik aplikasi, render tree, birthday page, timeline, relationship finder, settings, dan interaksi.
 - `data.json` - sumber data keluarga.
+- `scripts/validate-data.js` - validator command line untuk semak struktur data salasilah.
 - `audit-shots/` - screenshot audit jika ada.
 
 ## Fungsi Yang Sudah Ada
@@ -519,7 +520,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 - Edit profil masih boleh wujud dalam UI/kod, tetapi perubahan tidak disimpan kekal kerana mode semasa view-only.
 - Kod import/export JSON masih ada, tetapi UI import/export JSON tidak lengkap dalam HTML semasa.
-- Ada hook JavaScript untuk elemen lama/tiada dalam HTML seperti `export-json`, `import-json`, `validate-data`, `focus-elders`, `path-toggle`, `compact-toggle`, `settings-lines`, `settings-default-view`, `setting-clear-data`, dan `mobile-action`.
+- Hook JavaScript lama untuk elemen HTML yang sudah tiada telah dibersihkan. Jika UI lama mahu dihidupkan semula, tambah semula HTML dan event handler dengan jelas.
 - Password edit masih hardcoded sebagai `1234` jika flow edit digunakan.
 - Banyak ahli belum ada gambar/avatar.
 - Satu ahli belum ada tarikh lahir.
@@ -558,7 +559,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [ ] Tambah `placeOfBirth`, `currentLocation`, atau tempat tinggal jika perlu.
 - [ ] Tambah nota data untuk bezakan "tiada data" dan "tidak berkaitan".
 - [ ] Semak semua tarikh lahir yang kosong atau tidak lengkap.
-- [ ] Buat script validator data yang check ID pendua, union rosak, child tanpa parent, dan tarikh pelik.
+- [x] Buat script validator data yang check ID pendua, union rosak, child tanpa parent, dan tarikh pelik.
 - [ ] Buat Data Completeness Dashboard untuk senarai data yang belum lengkap.
 
 ### 3. Tree Salasilah
@@ -779,7 +780,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] `data.json` boleh parse sebagai JSON.
 - [x] `git diff --check` digunakan untuk semak whitespace.
 - [ ] Tambah script `npm` atau command tetap untuk test.
-- [ ] Tambah data validator automatik.
+- [x] Tambah data validator command line.
 - [ ] Tambah unit test untuk relationship helper.
 - [ ] Tambah unit test untuk birthday helper.
 - [ ] Tambah visual test desktop.
@@ -792,9 +793,9 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 1. Putuskan mode sebenar: view-only atau admin/editable.
 2. Bersihkan kod lama yang refer elemen HTML yang sudah tiada.
-3. Tambah validator data supaya salasilah tidak rosak bila tambah ahli.
-4. Tambah `nickname`, `gender`, `branchId`, dan `status` dalam `data.json`.
-5. Kembangkan Focused Branch View supaya boleh pilih jenis keluarga yang mahu dilihat.
+3. Tambah `nickname`, `gender`, `branchId`, dan `status` dalam `data.json`.
+4. Kembangkan Focused Branch View supaya boleh pilih jenis keluarga yang mahu dilihat.
+5. Baiki warning data yang tinggal seperti ahli tanpa tarikh lahir.
 
 ### Penting selepas itu
 
@@ -884,6 +885,12 @@ Semak JSON:
 
 ```bash
 node -e "const fs=require('fs'); JSON.parse(fs.readFileSync('data.json','utf8')); console.log('data.json OK')"
+```
+
+Semak struktur salasilah:
+
+```bash
+node scripts/validate-data.js data.json
 ```
 
 Semak whitespace dalam diff:

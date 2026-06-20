@@ -18,15 +18,6 @@ const exportPngBtn = document.getElementById("export-png");
 const exportPdfBtn = document.getElementById("export-pdf");
 const exportMenuBtn = document.getElementById("export-menu-btn");
 const exportMenu = document.getElementById("export-menu");
-const exportJsonBtn = document.getElementById("export-json");
-const importJsonBtn = document.getElementById("import-json");
-const importJsonFile = document.getElementById("import-json-file");
-const validateDataBtn = document.getElementById("validate-data");
-const focusEldersBtn = document.getElementById("focus-elders");
-const backTopBtn = document.getElementById("back-top");
-const pathToggleBtn = document.getElementById("path-toggle");
-const compactToggleBtn = document.getElementById("compact-toggle");
-const validateOutput = document.getElementById("validate-output");
 const modal = document.getElementById("person-modal");
 const modalBody = document.getElementById("modal-body");
 const app = document.getElementById("app");
@@ -72,9 +63,6 @@ const birthdayMonthLists = document.getElementById("birthday-month-lists");
 const zoomFitBtn = document.getElementById("zoom-fit");
 const langToggleBtn = document.getElementById("lang-toggle");
 const clearCacheBtn = document.getElementById("clear-cache");
-const mobileActionSelect = document.getElementById("mobile-action");
-const mobileActionLabel = document.getElementById("mobile-action-label");
-const mobileActionGo = document.getElementById("mobile-action-go");
 const mobileQuickZoomIn = document.getElementById("m-zoom-in");
 const mobileQuickZoomOut = document.getElementById("m-zoom-out");
 const mobileQuickZoomFit = document.getElementById("m-zoom-fit");
@@ -97,17 +85,14 @@ const settingsBtn = document.getElementById("settings-btn");
 const bottomSheet = document.getElementById("bottom-sheet");
 const settingsModal = document.getElementById("settings-modal");
 const settingsCompact = document.getElementById("settings-compact");
-const settingsLines = document.getElementById("settings-lines");
 const settingsCardScale = document.getElementById("setting-card-scale");
 const settingsMinimap = document.getElementById("settings-minimap");
 const settingsDrag = document.getElementById("settings-drag");
-const settingsDefaultView = document.getElementById("settings-default-view");
 const settingsReset = document.getElementById("setting-reset-settings");
 const settingsResetSelf = document.getElementById("setting-reset-self");
 const settingsShowBirthdate = document.getElementById("setting-show-birthdate");
 const settingsShowAge = document.getElementById("setting-show-age");
 const settingsShowTags = document.getElementById("setting-show-tags");
-const settingsClearData = document.getElementById("setting-clear-data");
 const settingsDataVersion = document.getElementById("settings-data-version");
 const statPeople = document.getElementById("stat-people");
 const statCouples = document.getElementById("stat-couples");
@@ -384,8 +369,6 @@ const i18n = {
     errPartner2Missing: "Partner2 tidak wujud: {id}",
     errChildMissing: "Anak tidak wujud: {id}",
     errChildMultiple: "Anak {id} terikat pada lebih satu union ({unions}).",
-    mobileActions: "Aksi lain",
-    mobilePick: "Pilih aksi...",
     validateOk: "Data sah. Tiada ralat ditemui.",
     validateErr: "Ralat data ditemui:",
     searchPlaceholder: "Cari nama ahli keluarga...",
@@ -429,21 +412,18 @@ const i18n = {
     settingsTools: "Alat",
     settingsAbout: "Tentang",
     settingsCompact: "Compact Mode",
-    settingsLines: "Tunjuk Garisan",
     settingsCardSize: "Saiz Kad",
     settingsSizeSmall: "Kecil",
     settingsSizeNormal: "Normal",
     settingsSizeLarge: "Besar",
     settingsMinimap: "Minimap",
     settingsDrag: "Drag untuk Pan",
-    settingsDefaultView: "Paparan Lalai",
     settingsViewTree: "Tree",
     settingsViewTimeline: "Timeline",
     settingsReset: "Reset tetapan",
     settingsShowBirthdate: "Tarikh Lahir",
     settingsShowAge: "Umur",
     settingsShowTags: "Tag/Nota",
-    settingsClearData: "Padam semua data",
     settingsDataVersion: "Versi data",
     settingsClose: "Tutup"
   },
@@ -597,8 +577,6 @@ const i18n = {
     errPartner2Missing: "Partner2 not found: {id}",
     errChildMissing: "Child not found: {id}",
     errChildMultiple: "Child {id} is linked to multiple unions ({unions}).",
-    mobileActions: "More actions",
-    mobilePick: "Select action...",
     validateOk: "Data is valid. No issues found.",
     validateErr: "Data issues found:",
     searchPlaceholder: "Search family member...",
@@ -642,21 +620,18 @@ const i18n = {
     settingsTools: "Tools",
     settingsAbout: "About",
     settingsCompact: "Compact Mode",
-    settingsLines: "Show Lines",
     settingsCardSize: "Card Size",
     settingsSizeSmall: "Small",
     settingsSizeNormal: "Normal",
     settingsSizeLarge: "Large",
     settingsMinimap: "Minimap",
     settingsDrag: "Drag to Pan",
-    settingsDefaultView: "Default View",
     settingsViewTree: "Tree",
     settingsViewTimeline: "Timeline",
     settingsReset: "Reset settings",
     settingsShowBirthdate: "Show Birthdate",
     settingsShowAge: "Show Age",
     settingsShowTags: "Show Tags",
-    settingsClearData: "Clear all data",
     settingsDataVersion: "Data version",
     settingsClose: "Close"
   }
@@ -1357,13 +1332,11 @@ function initFromData(data) {
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
   if (settingsResetSelf) settingsResetSelf.textContent = t.resetSelf;
   if (settingsCompact) settingsCompact.checked = compactMode;
-  if (settingsLines) settingsLines.checked = showLines;
   if (settingsMinimap) settingsMinimap.checked = minimapEnabled;
   if (settingsDrag) settingsDrag.checked = dragToPan;
   if (settingsShowBirthdate) settingsShowBirthdate.checked = showBirthdate;
   if (settingsShowAge) settingsShowAge.checked = showAge;
   if (settingsShowTags) settingsShowTags.checked = showTags;
-  if (settingsDefaultView) settingsDefaultView.value = viewMode;
   if (settingsDataVersion) settingsDataVersion.textContent = treeData?.dataVersion || "-";
   document.body.classList.toggle("compact", compactMode);
   document.body.classList.toggle("controls-collapsed", controlsCollapsed);
@@ -3365,24 +3338,6 @@ document.querySelectorAll(".mobile-actions [data-action]").forEach((btn) => {
   });
 });
 
-if (mobileActionSelect) {
-  mobileActionSelect.addEventListener("change", () => {
-    if (mobileActionGo) {
-      mobileActionGo.disabled = !mobileActionSelect.value;
-    }
-  });
-}
-
-if (mobileActionGo) {
-  mobileActionGo.addEventListener("click", () => {
-    const actionId = mobileActionSelect?.value;
-    if (!actionId) return;
-    runAction(actionId);
-    if (mobileActionSelect) mobileActionSelect.value = "";
-    mobileActionGo.disabled = true;
-  });
-}
-
 if (relationshipFindBtn) {
   relationshipFindBtn.addEventListener("click", () => {
     const t = i18n[lang] || i18n.ms;
@@ -3491,13 +3446,6 @@ if (zoomFitBtn) {
   });
 }
 
-if (focusEldersBtn) {
-  focusEldersBtn.addEventListener("click", () => {
-    const elder = findElderPerson();
-    if (elder) focusPerson(elder.id, true);
-  });
-}
-
 function focusSelf(open = true, updateUrl = true) {
   const self = findSelfPerson();
   if (!self) {
@@ -3526,29 +3474,6 @@ if (mobileSelfBtn) {
   mobileSelfBtn.addEventListener("touchstart", () => {
     focusSelf(false);
   }, { passive: true });
-}
-
-if (backTopBtn) {
-  backTopBtn.addEventListener("click", () => {
-    treeWrap.scrollTo({ left: 0, top: 0, behavior: "smooth" });
-  });
-}
-
-if (pathToggleBtn) {
-  pathToggleBtn.addEventListener("click", () => {
-    pathMode = !pathMode;
-    applyLineageHighlight();
-    savePrefs();
-  });
-}
-
-if (compactToggleBtn) {
-  compactToggleBtn.addEventListener("click", () => {
-    compactMode = !compactMode;
-    document.body.classList.toggle("compact", compactMode);
-    applyLanguage();
-    savePrefs();
-  });
 }
 
 if (langToggleBtn) {
@@ -3745,58 +3670,6 @@ if (resetViewBtn) {
 if (clearCacheBtn) {
   clearCacheBtn.addEventListener("click", () => {
     clearSiteCache();
-  });
-}
-
-if (exportJsonBtn) {
-  exportJsonBtn.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(treeData, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const stamp = new Date().toISOString().slice(0, 10);
-    link.download = `salasilah-backup-${stamp}.json`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
-  });
-}
-
-if (importJsonBtn && importJsonFile) {
-  importJsonBtn.addEventListener("click", () => {
-    importJsonFile.click();
-  });
-
-  importJsonFile.addEventListener("change", async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      const text = await file.text();
-      const parsed = JSON.parse(text);
-      const errors = validateTreeData(parsed);
-      if (errors.length > 0) {
-        validateOutput.textContent = `${i18n[lang].validateErr} ${errors.join(" | ")}`;
-        return;
-      }
-      treeData = parsed;
-      storeData();
-      rebuildFromData();
-      validateOutput.textContent = i18n[lang].validateOk;
-    } catch (err) {
-      validateOutput.textContent = i18n[lang].importFail;
-    } finally {
-      importJsonFile.value = "";
-    }
-  });
-}
-
-if (validateDataBtn) {
-  validateDataBtn.addEventListener("click", () => {
-    const errors = validateTreeData(treeData);
-    if (errors.length === 0) {
-      validateOutput.textContent = i18n[lang].validateOk;
-    } else {
-      validateOutput.textContent = `${i18n[lang].validateErr} ${errors.join(" | ")}`;
-    }
   });
 }
 
@@ -4295,14 +4168,6 @@ if (settingsCompact) {
   });
 }
 
-if (settingsLines) {
-  settingsLines.addEventListener("change", () => {
-    showLines = settingsLines.checked;
-    applyLinesState();
-    savePrefs();
-  });
-}
-
 if (settingsCardScale) {
   settingsCardScale.addEventListener("input", () => {
     cardScale = Number(settingsCardScale.value) || 1;
@@ -4356,15 +4221,6 @@ if (settingsShowTags) {
   });
 }
 
-if (settingsDefaultView) {
-  settingsDefaultView.addEventListener("change", () => {
-    defaultView = settingsDefaultView.value || "tree";
-    viewMode = defaultView;
-    applyViewMode();
-    savePrefs();
-  });
-}
-
 if (settingsReset) {
   settingsReset.addEventListener("click", () => {
     try {
@@ -4384,12 +4240,6 @@ if (settingsResetSelf) {
     updateSelfButtons();
     focusGeneralView();
     alert(t.resetSelfDone);
-  });
-}
-
-if (settingsClearData) {
-  settingsClearData.addEventListener("click", () => {
-    clearSiteCache();
   });
 }
 
@@ -4798,26 +4648,6 @@ function syncMobileLabels() {
   if (mobileQuickZoomIn) mobileQuickZoomIn.textContent = zoomInBtn.textContent;
   if (mobileQuickZoomOut) mobileQuickZoomOut.textContent = zoomOutBtn.textContent;
   if (mobileQuickZoomFit) mobileQuickZoomFit.textContent = zoomFitBtn.textContent;
-  if (mobileActionLabel) mobileActionLabel.textContent = i18n[lang].mobileActions;
-
-  if (mobileActionSelect) {
-    const placeholder = mobileActionSelect.querySelector('option[value=""]');
-    if (placeholder) placeholder.textContent = i18n[lang].mobilePick;
-
-    const optionMap = {
-      "zoom-reset": zoomResetBtn,
-      "reset-view": resetViewBtn,
-      "toggle-theme": toggleThemeBtn,
-      "lang-toggle": langToggleBtn,
-      "export-png": exportPngBtn,
-      "export-pdf": exportPdfBtn
-    };
-
-    Object.entries(optionMap).forEach(([value, btn]) => {
-      const option = mobileActionSelect.querySelector(`option[value="${value}"]`);
-      if (option && btn) option.textContent = btn.textContent;
-    });
-  }
 }
 
 function applyLanguage() {
@@ -4843,11 +4673,7 @@ function applyLanguage() {
   if (treeCanvas) treeCanvas.dataset.emptyText = "";
   if (searchInput) searchInput.placeholder = t.searchPlaceholder;
   if (viewToggle) viewToggle.textContent = viewMode === "timeline" ? t.viewTree : t.viewTimeline;
-  if (compactToggleBtn) compactToggleBtn.textContent = compactMode ? t.compactOn : t.compactOff;
-  if (pathToggleBtn) pathToggleBtn.textContent = pathMode ? t.pathOn : t.pathOff;
   updateSelfButtons();
-  if (focusEldersBtn) focusEldersBtn.textContent = t.focusElders;
-  if (backTopBtn) backTopBtn.textContent = t.backTop;
   if (zoomFitBtn) zoomFitBtn.textContent = t.fit;
   if (zoomInBtn) zoomInBtn.textContent = t.zoomIn;
   if (zoomOutBtn) zoomOutBtn.textContent = t.zoomOut;
@@ -4860,9 +4686,6 @@ function applyLanguage() {
     const label = exportPdfBtn.querySelector('[data-i18n="exportPdf"]');
     if (label) label.textContent = t.exportPdf;
   }
-  if (exportJsonBtn) exportJsonBtn.textContent = t.exportJson;
-  if (importJsonBtn) importJsonBtn.textContent = t.importJson;
-  if (validateDataBtn) validateDataBtn.textContent = t.validateData;
   if (toggleThemeBtn) toggleThemeBtn.checked = app.dataset.theme === "dark";
   if (langToggleBtn) langToggleBtn.checked = lang === "en";
   if (controlsToggleBtn) {
@@ -4875,13 +4698,11 @@ function applyLanguage() {
   if (themePresetSelect) themePresetSelect.value = themePreset;
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
   if (settingsCompact) settingsCompact.checked = compactMode;
-  if (settingsLines) settingsLines.checked = showLines;
   if (settingsMinimap) settingsMinimap.checked = minimapEnabled;
   if (settingsDrag) settingsDrag.checked = dragToPan;
   if (settingsShowBirthdate) settingsShowBirthdate.checked = showBirthdate;
   if (settingsShowAge) settingsShowAge.checked = showAge;
   if (settingsShowTags) settingsShowTags.checked = showTags;
-  if (settingsDefaultView) settingsDefaultView.value = viewMode;
   if (timelineMonthSelect) timelineMonthSelect.value = timelineFilters.month;
   if (timelineGenderSelect) timelineGenderSelect.value = timelineFilters.gender;
   if (timelineSortSelect) timelineSortSelect.value = timelineFilters.sort;
