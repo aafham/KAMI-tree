@@ -66,7 +66,9 @@ http://localhost:5500
 - Focused Branch View asas untuk lihat keluarga terdekat individu yang dipilih.
 - Relationship Finder asas untuk cari hubungan antara dua ahli.
 - Highlight dua ahli yang dibandingkan dalam Relationship Finder.
+- Relationship Finder papar laluan nama dan highlight path dalam tree.
 - Family Directory untuk senarai semua ahli dengan search dan filter.
+- Mobile search overlay untuk cari ahli lebih cepat di phone.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -203,7 +205,7 @@ Cara guna:
    - adik-beradik
    - pasangan
    - anak
-4. Bar `Family view` akan muncul di atas tree.
+4. Bar `Family view` akan muncul di atas tree bersama guide ringkas.
 5. Tekan `Tunjuk Semua` untuk keluar daripada Focused Branch View.
 
 ### 10. Guna Relationship Finder
@@ -217,7 +219,8 @@ Cara guna:
 3. Pilih orang kedua dalam dropdown kedua.
 4. Tekan `Cari Hubungan`.
 5. Website akan tulis hubungan yang dijumpai.
-6. Dua ahli yang dipilih akan di-highlight dalam tree.
+6. Website akan papar laluan nama hubungan.
+7. Dua ahli utama dan ahli dalam laluan hubungan akan di-highlight dalam tree.
 
 Hubungan yang boleh dikesan sekarang:
 
@@ -234,7 +237,6 @@ Hubungan yang boleh dikesan sekarang:
 
 Limitasi semasa:
 
-- Belum highlight laluan penuh antara dua orang.
 - Hubungan ipar, biras, menantu kompleks, moyang jauh, dan hubungan berlapis masih belum lengkap.
 
 ### 11. Klik Ahli Dan View Profil
@@ -394,8 +396,9 @@ Cara buka:
 3. Taip nama dalam search untuk tapis senarai.
 4. Pilih generasi untuk lihat generasi tertentu.
 5. Pilih jantina untuk tapis lelaki/perempuan.
-6. Tekan `Reset` untuk kosongkan filter.
-7. Klik mana-mana nama untuk kembali ke tree dan fokus kepada ahli itu.
+6. Pilih bulan birthday untuk tapis ahli yang lahir pada bulan tertentu.
+7. Tekan `Reset` untuk kosongkan filter.
+8. Klik mana-mana nama untuk kembali ke tree dan fokus kepada ahli itu.
 
 Directory sesuai digunakan bila user tidak mahu cari dalam tree besar.
 
@@ -452,6 +455,7 @@ Fungsi mobile:
 
 - Topbar dengan button `Saya`.
 - Topbar dengan button `Cari`.
+- Button `Cari` membuka search overlay khas mobile.
 - Button settings.
 - Button `Buka Panel`.
 - Mobile quick actions untuk zoom dan fit screen.
@@ -461,8 +465,8 @@ Fungsi mobile:
 
 Cara guna mobile:
 
-1. Tekan `Buka Panel` untuk buka controls.
-2. Guna `Cari` untuk cari nama ahli.
+1. Guna `Cari` untuk buka search overlay dan cari nama ahli.
+2. Tekan `Buka Panel` jika mahu buka controls penuh.
 3. Guna `Saya` untuk fokus diri sendiri jika sudah dipilih.
 4. Guna `Zoom +`, `Zoom -`, dan `Fit Skrin` untuk kawal tree.
 5. Klik kad ahli untuk buka profil.
@@ -473,7 +477,7 @@ Nota mobile:
 
 - Tree besar memang perlu pan/zoom.
 - Focused Branch View asas sudah ada dan boleh bantu kecilkan paparan kepada keluarga terdekat.
-- Search mobile perlu dijadikan lebih utama dalam update akan datang.
+- Search mobile sudah ada overlay khas, tetapi keyboard navigation boleh ditambah kemudian.
 
 ### 22. Clear Cache / Reset
 
@@ -587,7 +591,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Search boleh fokus terus ke ahli dalam tree.
 - [x] Search ada pada desktop controls.
 - [x] Mobile ada akses search melalui panel/action.
-- [ ] Jadikan search lebih jelas sebagai aksi utama di mobile.
+- [x] Jadikan search lebih jelas sebagai aksi utama di mobile melalui overlay.
 - [ ] Tambah fuzzy search untuk salah ejaan kecil.
 - [ ] Search ikut nama panggilan.
 - [ ] Search ikut cabang.
@@ -629,8 +633,8 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Detect pakcik/makcik dan anak saudara.
 - [x] Detect sepupu asas.
 - [x] Highlight ahli yang dibandingkan.
-- [ ] Highlight laluan penuh antara dua ahli dalam tree.
-- [ ] Papar penjelasan langkah hubungan, contoh A -> ibu -> nenek -> cucu.
+- [x] Highlight laluan penuh antara dua ahli dalam tree.
+- [x] Papar laluan nama hubungan, contoh A -> ibu -> nenek -> cucu.
 - [ ] Sokong hubungan menantu/ipar/biras dengan lebih tepat.
 - [ ] Sokong hubungan generasi jauh seperti moyang dan cicit jauh.
 - [ ] Tambah button cepat `Cari hubungan dengan orang ini` dalam profil.
@@ -682,9 +686,9 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Directory ada search nama/relation.
 - [x] Directory ada filter generasi.
 - [x] Directory ada filter jantina.
+- [x] Directory ada filter birthday month.
 - [x] Directory ada reset filter.
 - [x] Klik ahli dalam Directory akan kembali ke tree dan fokus orang itu.
-- [ ] Tambah filter birthday month dalam Directory.
 - [ ] Tambah filter cabang dalam Directory.
 - [ ] Tambah sort Directory ikut nama, umur, generasi, atau birthday.
 - [ ] Tambah export Directory ke CSV/PDF.
@@ -706,11 +710,12 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 - [x] Mobile view ada topbar.
 - [x] Mobile view ada bottom sheet/panel.
+- [x] Mobile search overlay tersedia.
 - [x] Mobile quick zoom tersedia.
 - [x] Mobile boleh tukar Tree/Timeline/Birthday melalui flow sedia ada.
 - [x] Birthday page responsive.
 - [x] List birthday mobile disusun grid/responsive.
-- [ ] Jadikan search sebagai aksi utama mobile.
+- [x] Jadikan search sebagai aksi utama mobile.
 - [ ] Tambah bottom nav ringkas: Tree, Search, Birthday, Timeline, Settings.
 - [ ] Ringkaskan statistik mobile supaya tree cepat nampak.
 - [x] Focused Branch View asas boleh digunakan di mobile.
@@ -795,8 +800,8 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 1. Tambah gambar/avatar ahli.
 2. Tambah share/copy link untuk ahli tertentu.
-3. Tambah relationship path highlight penuh.
-4. Tambah filter dan sort tambahan dalam Family Directory.
+3. Tambah hubungan ipar/biras/menantu yang lebih tepat.
+4. Tambah filter cabang dan sort tambahan dalam Family Directory.
 5. Buat QA desktop dan mobile dengan viewport tetap.
 
 ### Boleh buat kemudian

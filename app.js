@@ -82,6 +82,11 @@ const mobileQuickFocusSelf = document.getElementById("m-focus-self");
 const mobileSettingsBtn = document.getElementById("mobile-settings-btn");
 const mobileSearchBtn = document.getElementById("mobile-search-btn");
 const mobileSelfBtn = document.getElementById("mobile-self-btn");
+const mobileSearchOverlay = document.getElementById("mobile-search-overlay");
+const mobileSearchBackdrop = document.getElementById("mobile-search-backdrop");
+const mobileSearchClose = document.getElementById("mobile-search-close");
+const mobileSearchInput = document.getElementById("mobile-search-input");
+const mobileSearchResults = document.getElementById("mobile-search-results");
 const bottomSheetHandle = document.getElementById("sheet-handle");
 const miniToolbar = document.getElementById("mini-toolbar");
 const miniSearchBtn = document.getElementById("mini-search");
@@ -130,6 +135,7 @@ const directoryBackBtn = document.getElementById("directory-back");
 const directorySearchInput = document.getElementById("directory-search");
 const directoryGenerationSelect = document.getElementById("directory-generation");
 const directoryGenderSelect = document.getElementById("directory-gender");
+const directoryBirthdayMonthSelect = document.getElementById("directory-birthday-month");
 const directoryClearBtn = document.getElementById("directory-clear");
 const directorySummary = document.getElementById("directory-summary");
 const directoryList = document.getElementById("directory-list");
@@ -224,7 +230,8 @@ let focusedBranchPeople = new Set();
 let directoryFilters = {
   query: "",
   generation: "all",
-  gender: "all"
+  gender: "all",
+  birthdayMonth: "all"
 };
 
 const prefs = loadPrefs();
@@ -275,6 +282,7 @@ const i18n = {
     relationshipUncleAunt: "{a} ialah pakcik/makcik kepada {b}.",
     relationshipNephewNiece: "{a} ialah anak saudara kepada {b}.",
     relationshipCousin: "{a} ialah sepupu kepada {b}.",
+    relationshipPathLabel: "Laluan hubungan",
     birthdayBack: "Back ke Home",
     birthdayKicker: "Kalendar Keluarga",
     birthdayTitle: "Semua Birthday",
@@ -295,8 +303,11 @@ const i18n = {
     directorySearchPlaceholder: "Cari nama...",
     directoryGeneration: "Generasi",
     directoryGender: "Jantina",
+    directoryBirthdayMonth: "Bulan Birthday",
+    directoryAllBirthdayMonths: "Semua bulan",
     directoryAllGenerations: "Semua generasi",
     directorySummary: "{count} ahli dipaparkan",
+    mobileSearchTitle: "Cari Ahli Keluarga",
     profileFocusTree: "Fokus dalam tree",
     profileFindRelation: "Cari hubungan",
     profileFamilyView: "Lihat keluarga ini",
@@ -305,6 +316,7 @@ const i18n = {
     profileLinkCopyFail: "Tak dapat copy link. URL sudah dikemas kini di address bar.",
     focusedBranchClear: "Tunjuk Semua",
     focusedBranchActive: "Family view: {name}",
+    focusedBranchHint: "Paparan ini hanya tunjuk keluarga terdekat.",
     generationLabel: "Generasi (Lipat/Buka)",
     legendParentChild: "Garis sambungan ibu bapa \u2192 anak",
     legendCouple: "Pasangan ditunjukkan secara selari",
@@ -483,6 +495,7 @@ const i18n = {
     relationshipUncleAunt: "{a} is an uncle/aunt of {b}.",
     relationshipNephewNiece: "{a} is a nephew/niece of {b}.",
     relationshipCousin: "{a} is a cousin of {b}.",
+    relationshipPathLabel: "Relationship path",
     birthdayBack: "Back to Home",
     birthdayKicker: "Family Calendar",
     birthdayTitle: "All Birthdays",
@@ -503,8 +516,11 @@ const i18n = {
     directorySearchPlaceholder: "Search name...",
     directoryGeneration: "Generation",
     directoryGender: "Gender",
+    directoryBirthdayMonth: "Birthday Month",
+    directoryAllBirthdayMonths: "All months",
     directoryAllGenerations: "All generations",
     directorySummary: "{count} members shown",
+    mobileSearchTitle: "Search Family Members",
     profileFocusTree: "Focus in tree",
     profileFindRelation: "Find relationship",
     profileFamilyView: "View this family",
@@ -513,6 +529,7 @@ const i18n = {
     profileLinkCopyFail: "Could not copy the link. The URL was updated in the address bar.",
     focusedBranchClear: "Show All",
     focusedBranchActive: "Family view: {name}",
+    focusedBranchHint: "This view only shows close family.",
     generationLabel: "Generation (Collapse/Expand)",
     legendParentChild: "Parent \u2192 child connection",
     legendCouple: "Partners shown side by side",
@@ -1089,31 +1106,107 @@ function getCousinIds(personId) {
 }
 
 function describeRelationship(aId, bId) {
+  return describeRelationshipResult(aId, bId).text;
+}
+
+function describeRelationshipResult(aId, bId) {
   const t = i18n[lang] || i18n.ms;
   const a = peopleById.get(aId);
   const b = peopleById.get(bId);
-  if (!a || !b) return "";
+  if (!a || !b) return { text: "", path: [] };
   const vars = { a: formatDisplayName(a.name), b: formatDisplayName(b.name) };
-  if (aId === bId) return formatText(t.relationshipSelf, vars);
-  if (getSpouseIds(aId).includes(bId)) return formatText(t.relationshipSpouse, vars);
-  if (getChildIds(aId).includes(bId)) return formatText(t.relationshipParent, vars);
-  if (getParentIds(aId).includes(bId)) return formatText(t.relationshipChild, vars);
-  if (getSiblingIds(aId).includes(bId)) return formatText(t.relationshipSibling, vars);
-  if (getGrandchildIds(aId).includes(bId)) return formatText(t.relationshipGrandparent, vars);
-  if (getGrandparentIds(aId).includes(bId)) return formatText(t.relationshipGrandchild, vars);
-  if (getNephewNieceIds(aId).includes(bId)) return formatText(t.relationshipUncleAunt, vars);
-  if (getUncleAuntIds(aId).includes(bId)) return formatText(t.relationshipNephewNiece, vars);
-  if (getCousinIds(aId).includes(bId)) return formatText(t.relationshipCousin, vars);
-  return t.relationshipNoData;
+  const path = findRelationshipPath(aId, bId);
+  if (aId === bId) return { text: formatText(t.relationshipSelf, vars), path: [aId] };
+  if (getSpouseIds(aId).includes(bId)) return { text: formatText(t.relationshipSpouse, vars), path };
+  if (getChildIds(aId).includes(bId)) return { text: formatText(t.relationshipParent, vars), path };
+  if (getParentIds(aId).includes(bId)) return { text: formatText(t.relationshipChild, vars), path };
+  if (getSiblingIds(aId).includes(bId)) return { text: formatText(t.relationshipSibling, vars), path };
+  if (getGrandchildIds(aId).includes(bId)) return { text: formatText(t.relationshipGrandparent, vars), path };
+  if (getGrandparentIds(aId).includes(bId)) return { text: formatText(t.relationshipGrandchild, vars), path };
+  if (getNephewNieceIds(aId).includes(bId)) return { text: formatText(t.relationshipUncleAunt, vars), path };
+  if (getUncleAuntIds(aId).includes(bId)) return { text: formatText(t.relationshipNephewNiece, vars), path };
+  if (getCousinIds(aId).includes(bId)) return { text: formatText(t.relationshipCousin, vars), path };
+  return { text: t.relationshipNoData, path };
+}
+
+function buildRelationshipGraph() {
+  const graph = new Map();
+  const addEdge = (from, to) => {
+    if (!from || !to) return;
+    if (!graph.has(from)) graph.set(from, new Set());
+    if (!graph.has(to)) graph.set(to, new Set());
+    graph.get(from).add(to);
+    graph.get(to).add(from);
+  };
+  (treeData?.people || []).forEach((person) => {
+    if (!graph.has(person.id)) graph.set(person.id, new Set());
+  });
+  (treeData?.unions || []).forEach((union) => {
+    addEdge(union.partner1, union.partner2);
+    (union.children || []).forEach((childId) => {
+      addEdge(union.partner1, childId);
+      addEdge(union.partner2, childId);
+    });
+  });
+  return graph;
+}
+
+function findRelationshipPath(startId, endId) {
+  if (!startId || !endId) return [];
+  if (startId === endId) return [startId];
+  const graph = buildRelationshipGraph();
+  const queue = [[startId]];
+  const seen = new Set([startId]);
+  while (queue.length > 0) {
+    const path = queue.shift();
+    const current = path[path.length - 1];
+    const nextIds = [...(graph.get(current) || [])].sort((a, b) => {
+      return formatDisplayName(peopleById.get(a)?.name || "").localeCompare(formatDisplayName(peopleById.get(b)?.name || ""));
+    });
+    for (const nextId of nextIds) {
+      if (seen.has(nextId)) continue;
+      const nextPath = [...path, nextId];
+      if (nextId === endId) return nextPath;
+      seen.add(nextId);
+      queue.push(nextPath);
+    }
+  }
+  return [];
+}
+
+function renderRelationshipResult(result) {
+  const t = i18n[lang] || i18n.ms;
+  const text = escapeHtml(result.text || "");
+  const path = result.path || [];
+  if (path.length <= 1) return text;
+  const names = path
+    .map((id) => peopleById.get(id))
+    .filter(Boolean)
+    .map((person) => escapeHtml(formatDisplayName(person.name)));
+  return `
+    <div>${text}</div>
+    <div class="relationship-path">
+      <strong>${escapeHtml(t.relationshipPathLabel)}:</strong>
+      <span>${names.join(" &rarr; ")}</span>
+    </div>
+  `;
 }
 
 function clearRelationshipHighlight() {
   document.querySelectorAll(".person-card.is-relationship-target")
     .forEach((el) => el.classList.remove("is-relationship-target"));
+  document.querySelectorAll(".person-card.is-relationship-path")
+    .forEach((el) => el.classList.remove("is-relationship-path"));
 }
 
-function applyRelationshipHighlight(ids) {
+function applyRelationshipHighlight(ids, pathIds = []) {
   clearRelationshipHighlight();
+  pathIds.forEach((id) => {
+    const group = elementByPersonId.get(id);
+    if (!group) return;
+    const card = group.querySelector(`.person-card[data-person-id="${id}"]`);
+    if (card) card.classList.add("is-relationship-path");
+  });
   ids.forEach((id) => {
     const group = elementByPersonId.get(id);
     if (!group) return;
@@ -2488,22 +2581,39 @@ function renderBirthdaySearchResults() {
 }
 
 function populateDirectoryFilters() {
-  if (!directoryGenerationSelect) return;
   const t = i18n[lang] || i18n.ms;
-  const current = directoryFilters.generation || directoryGenerationSelect.value || "all";
-  directoryGenerationSelect.innerHTML = "";
-  const all = document.createElement("option");
-  all.value = "all";
-  all.textContent = t.directoryAllGenerations;
-  directoryGenerationSelect.appendChild(all);
-  for (let depth = 1; depth <= maxDepth; depth += 1) {
-    const option = document.createElement("option");
-    option.value = String(depth);
-    option.textContent = `${t.legendGeneration} ${depth}`;
-    directoryGenerationSelect.appendChild(option);
+  if (directoryGenerationSelect) {
+    const current = directoryFilters.generation || directoryGenerationSelect.value || "all";
+    directoryGenerationSelect.innerHTML = "";
+    const all = document.createElement("option");
+    all.value = "all";
+    all.textContent = t.directoryAllGenerations;
+    directoryGenerationSelect.appendChild(all);
+    for (let depth = 1; depth <= maxDepth; depth += 1) {
+      const option = document.createElement("option");
+      option.value = String(depth);
+      option.textContent = `${t.legendGeneration} ${depth}`;
+      directoryGenerationSelect.appendChild(option);
+    }
+    directoryGenerationSelect.value = [...directoryGenerationSelect.options].some((option) => option.value === current) ? current : "all";
+    directoryFilters.generation = directoryGenerationSelect.value;
   }
-  directoryGenerationSelect.value = [...directoryGenerationSelect.options].some((option) => option.value === current) ? current : "all";
-  directoryFilters.generation = directoryGenerationSelect.value;
+  if (directoryBirthdayMonthSelect) {
+    const currentMonth = directoryFilters.birthdayMonth || directoryBirthdayMonthSelect.value || "all";
+    directoryBirthdayMonthSelect.innerHTML = "";
+    const allMonths = document.createElement("option");
+    allMonths.value = "all";
+    allMonths.textContent = t.directoryAllBirthdayMonths;
+    directoryBirthdayMonthSelect.appendChild(allMonths);
+    getMonthLabels().forEach((month, index) => {
+      const option = document.createElement("option");
+      option.value = String(index);
+      option.textContent = month;
+      directoryBirthdayMonthSelect.appendChild(option);
+    });
+    directoryBirthdayMonthSelect.value = [...directoryBirthdayMonthSelect.options].some((option) => option.value === currentMonth) ? currentMonth : "all";
+    directoryFilters.birthdayMonth = directoryBirthdayMonthSelect.value;
+  }
 }
 
 function getPersonDepth(personId) {
@@ -2522,8 +2632,17 @@ function renderDirectoryPage() {
   const query = (directoryFilters.query || "").trim().toLowerCase();
   const generation = directoryFilters.generation || "all";
   const gender = directoryFilters.gender || "all";
+  const birthdayMonth = directoryFilters.birthdayMonth || "all";
   const people = treeData.people
-    .map((person) => ({ person, depth: getPersonDepth(person.id), gender: detectGenderFromName(person.name) }))
+    .map((person) => {
+      const birthDate = parseDateValue(person.birth);
+      return {
+        person,
+        depth: getPersonDepth(person.id),
+        gender: detectGenderFromName(person.name),
+        birthMonth: birthDate ? birthDate.getMonth() : ""
+      };
+    })
     .filter((entry) => {
       const name = formatDisplayName(entry.person.name).toLowerCase();
       const raw = String(entry.person.name || "").toLowerCase();
@@ -2531,6 +2650,7 @@ function renderDirectoryPage() {
       if (query && !name.includes(query) && !raw.includes(query) && !relation.includes(query)) return false;
       if (generation !== "all" && String(entry.depth) !== generation) return false;
       if (gender !== "all" && entry.gender !== gender) return false;
+      if (birthdayMonth !== "all" && String(entry.birthMonth) !== birthdayMonth) return false;
       return true;
     })
     .sort((a, b) => {
@@ -3279,7 +3399,8 @@ if (relationshipFindBtn) {
       focusPerson(aId, false, false);
       return;
     }
-    relationshipOutput.textContent = describeRelationship(aId, bId);
+    const result = describeRelationshipResult(aId, bId);
+    relationshipOutput.innerHTML = renderRelationshipResult(result);
     if (viewMode !== "tree") {
       viewMode = "tree";
       applyViewMode();
@@ -3287,7 +3408,7 @@ if (relationshipFindBtn) {
     }
     renderScene();
     applyZoom();
-    applyRelationshipHighlight([aId, bId]);
+    applyRelationshipHighlight([aId, bId], result.path);
     focusPerson(aId, false, false);
   });
 }
@@ -3543,21 +3664,74 @@ if (mobileSettingsBtn) {
 
 if (mobileSearchBtn) {
   mobileSearchBtn.addEventListener("click", () => {
-    if (controlsCollapsed) {
-      toggleControlsCollapsed(false);
-    }
-    if (searchInput) {
-      setTimeout(() => {
-        searchInput.focus();
-      }, 50);
-    }
+    openMobileSearch();
   });
   mobileSearchBtn.addEventListener("touchstart", () => {
-    if (controlsCollapsed) {
-      toggleControlsCollapsed(false);
-    }
+    openMobileSearch();
   }, { passive: true });
 }
+
+function openMobileSearch() {
+  if (!mobileSearchOverlay) {
+    if (controlsCollapsed) toggleControlsCollapsed(false);
+    setTimeout(() => searchInput?.focus(), 50);
+    return;
+  }
+  mobileSearchOverlay.hidden = false;
+  document.body.classList.add("mobile-search-open");
+  if (mobileSearchInput) {
+    mobileSearchInput.value = searchInput?.value || "";
+    renderMobileSearchResults();
+    setTimeout(() => mobileSearchInput.focus(), 50);
+  }
+}
+
+function closeMobileSearch() {
+  if (!mobileSearchOverlay) return;
+  mobileSearchOverlay.hidden = true;
+  document.body.classList.remove("mobile-search-open");
+}
+
+function renderMobileSearchResults() {
+  if (!mobileSearchResults || !mobileSearchInput) return;
+  const t = i18n[lang] || i18n.ms;
+  const query = mobileSearchInput.value.trim();
+  mobileSearchResults.innerHTML = "";
+  if (!query) {
+    mobileSearchResults.innerHTML = `<div class="mobile-search-empty">${escapeHtml(t.searchNone)}</div>`;
+    return;
+  }
+  const results = getSearchMatches(query);
+  if (!results.length) {
+    mobileSearchResults.innerHTML = `<div class="mobile-search-empty">${escapeHtml(t.searchNone)}</div>`;
+    return;
+  }
+  mobileSearchResults.innerHTML = results.map((person) => `
+    <button class="mobile-search-result" type="button" data-person-link="${escapeHtml(person.id)}">
+      <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
+      <span>${escapeHtml(person.relation || formatDates(person.birth, person.death))}</span>
+    </button>
+  `).join("");
+  mobileSearchResults.querySelectorAll("[data-person-link]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const personId = btn.dataset.personLink;
+      if (!personId) return;
+      if (searchInput) searchInput.value = formatDisplayName(peopleById.get(personId)?.name || "");
+      closeMobileSearch();
+      focusPerson(personId, true);
+    });
+  });
+}
+
+if (mobileSearchInput) {
+  mobileSearchInput.addEventListener("input", renderMobileSearchResults);
+}
+
+if (mobileSearchClose) mobileSearchClose.addEventListener("click", closeMobileSearch);
+if (mobileSearchBackdrop) mobileSearchBackdrop.addEventListener("click", closeMobileSearch);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && mobileSearchOverlay && !mobileSearchOverlay.hidden) closeMobileSearch();
+});
 
 if (resetViewBtn) {
   resetViewBtn.addEventListener("click", () => {
@@ -3799,6 +3973,17 @@ window.addEventListener("resize", () => {
   updateMinimap();
 });
 
+function getSearchMatches(query) {
+  const normalized = String(query || "").trim().toLowerCase();
+  if (!normalized || !treeData?.people) return [];
+  return treeData.people.filter((person) => {
+    const displayName = formatDisplayName(person.name).toLowerCase();
+    const rawName = String(person.name || "").toLowerCase();
+    const relation = String(person.relation || "").toLowerCase();
+    return displayName.includes(normalized) || rawName.includes(normalized) || relation.includes(normalized);
+  });
+}
+
 if (searchInput && searchResults) {
   searchInput.addEventListener("input", (event) => {
     const query = event.target.value.trim().toLowerCase();
@@ -3810,7 +3995,7 @@ if (searchInput && searchResults) {
       return;
     }
 
-    const results = treeData.people.filter((person) => person.name.toLowerCase().includes(query));
+    const results = getSearchMatches(query);
     searchResults.innerHTML = "";
     lastSearchResults = results;
 
@@ -4012,12 +4197,20 @@ if (directoryGenderSelect) {
   });
 }
 
+if (directoryBirthdayMonthSelect) {
+  directoryBirthdayMonthSelect.addEventListener("change", () => {
+    directoryFilters.birthdayMonth = directoryBirthdayMonthSelect.value || "all";
+    renderDirectoryPage();
+  });
+}
+
 if (directoryClearBtn) {
   directoryClearBtn.addEventListener("click", () => {
-    directoryFilters = { query: "", generation: "all", gender: "all" };
+    directoryFilters = { query: "", generation: "all", gender: "all", birthdayMonth: "all" };
     if (directorySearchInput) directorySearchInput.value = "";
     if (directoryGenerationSelect) directoryGenerationSelect.value = "all";
     if (directoryGenderSelect) directoryGenderSelect.value = "all";
+    if (directoryBirthdayMonthSelect) directoryBirthdayMonthSelect.value = "all";
     renderDirectoryPage();
   });
 }
@@ -4694,6 +4887,7 @@ function applyLanguage() {
   if (timelineSortSelect) timelineSortSelect.value = timelineFilters.sort;
   if (directorySearchInput) directorySearchInput.value = directoryFilters.query || "";
   if (directoryGenderSelect) directoryGenderSelect.value = directoryFilters.gender || "all";
+  if (directoryBirthdayMonthSelect) directoryBirthdayMonthSelect.value = directoryFilters.birthdayMonth || "all";
   populateRelationshipFinder();
   populateTimelineFilters();
   populateDirectoryFilters();

@@ -154,6 +154,7 @@
       </div>
       <div id="focused-branch-bar" class="focused-branch-bar" hidden>
         <span id="focused-branch-label"></span>
+        <small data-i18n="focusedBranchHint">Paparan ini hanya tunjuk keluarga terdekat.</small>
         <button id="focused-branch-clear" class="btn ghost small" type="button" data-i18n="focusedBranchClear">Tunjuk Semua</button>
       </div>
       <div class="content-grid">
@@ -311,6 +312,10 @@
               <option value="female" data-i18n="timelineGenderFemale">Perempuan</option>
             </select>
           </label>
+          <label class="directory-filter">
+            <span class="label" data-i18n="directoryBirthdayMonth">Bulan Birthday</span>
+            <select id="directory-birthday-month" class="select"></select>
+          </label>
           <button id="directory-clear" class="btn ghost small" type="button" data-i18n="timelineClear">Reset</button>
         </div>
         <div id="directory-summary" class="directory-summary"></div>
@@ -324,6 +329,18 @@
     <div class="modal-card" role="dialog" aria-modal="true">
       <button class="modal-close" data-close="true" data-i18n="modalClose">Tutup</button>
       <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="mobile-search-overlay" id="mobile-search-overlay" hidden>
+    <div class="mobile-search-backdrop" id="mobile-search-backdrop"></div>
+    <div class="mobile-search-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-search-title">
+      <div class="mobile-search-head">
+        <h2 id="mobile-search-title" data-i18n="mobileSearchTitle">Cari Ahli Keluarga</h2>
+        <button id="mobile-search-close" class="btn ghost small" type="button" data-i18n="modalClose">Tutup</button>
+      </div>
+      <input id="mobile-search-input" class="input" type="search" placeholder="Cari nama ahli keluarga..." data-i18n-placeholder="searchPlaceholder" />
+      <div id="mobile-search-results" class="mobile-search-results" aria-live="polite"></div>
     </div>
   </div>
 
