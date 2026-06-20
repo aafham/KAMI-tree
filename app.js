@@ -39,6 +39,7 @@ const relationshipPersonB = document.getElementById("relationship-person-b");
 const relationshipFindBtn = document.getElementById("relationship-find");
 const relationshipOutput = document.getElementById("relationship-output");
 const viewToggle = document.getElementById("view-toggle");
+const directoryToggle = document.getElementById("directory-toggle");
 const storyPanel = document.getElementById("story-panel");
 const storyTitle = document.getElementById("story-title");
 const storyBody = document.getElementById("story-body");
@@ -989,6 +990,7 @@ function updateViewSwitch() {
   if (viewTreeBtn) viewTreeBtn.classList.toggle("is-active", viewMode === "tree");
   if (viewTimelineBtn) viewTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
   if (viewDirectoryBtn) viewDirectoryBtn.classList.toggle("is-active", viewMode === "directory");
+  if (directoryToggle) directoryToggle.classList.toggle("is-active", viewMode === "directory");
 }
 
 function populateRelationshipFinder() {
@@ -3216,6 +3218,7 @@ const actionEntries = [
   ["toggle-theme", toggleThemeBtn],
   ["lang-toggle", langToggleBtn],
   ["view-toggle", viewToggle],
+  ["directory-toggle", directoryToggle],
   ["export-png", exportPngBtn],
   ["export-pdf", exportPdfBtn]
 ];
@@ -3224,6 +3227,16 @@ const actionMap = new Map(actionEntries.filter(([, el]) => el));
 function runAction(actionId) {
   const btn = actionMap.get(actionId);
   if (btn) btn.click();
+}
+
+function openDirectoryView() {
+  if (viewMode === "directory") return;
+  viewMode = "directory";
+  applyViewMode();
+  applyLanguage();
+  updateViewSwitch();
+  savePrefs();
+  updateUrlState();
 }
 
 document.querySelectorAll(".mobile-actions [data-action]").forEach((btn) => {
@@ -3955,23 +3968,16 @@ if (viewTimelineBtn) {
 
 if (viewDirectoryBtn) {
   viewDirectoryBtn.addEventListener("click", () => {
-    if (viewMode === "directory") return;
-    viewMode = "directory";
-    applyViewMode();
-    applyLanguage();
-    updateViewSwitch();
-    savePrefs();
-    updateUrlState();
+    openDirectoryView();
   });
   viewDirectoryBtn.addEventListener("touchstart", () => {
-    if (viewMode === "directory") return;
-    viewMode = "directory";
-    applyViewMode();
-    applyLanguage();
-    updateViewSwitch();
-    savePrefs();
-    updateUrlState();
+    openDirectoryView();
   }, { passive: true });
+}
+
+if (directoryToggle) {
+  directoryToggle.addEventListener("click", openDirectoryView);
+  directoryToggle.addEventListener("touchstart", openDirectoryView, { passive: true });
 }
 
 if (directoryBackBtn) {
