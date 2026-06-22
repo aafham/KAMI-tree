@@ -257,6 +257,9 @@ const i18n = {
     viewTimeline: "Lihat Timeline",
     viewTimelineShort: "Timeline",
     viewTree: "Lihat Tree",
+    treeToolbarTitle: "Tree Keluarga",
+    treeToolbarHint: "Drag atau scroll untuk lihat cabang lain.",
+    treeScrollGuide: "← Drag / scroll untuk lihat cabang keluarga lain →",
     compactOn: "Mode Penuh",
     compactOff: "Mode Ringkas",
     fit: "Fit Skrin",
@@ -486,6 +489,9 @@ const i18n = {
     viewTimeline: "Timeline View",
     viewTimelineShort: "Timeline",
     viewTree: "Tree View",
+    treeToolbarTitle: "Family Tree",
+    treeToolbarHint: "Drag or scroll to view other branches.",
+    treeScrollGuide: "← Drag / scroll to view other family branches →",
     compactOn: "Full Mode",
     compactOff: "Compact Mode",
     pathOn: "Hide Path",
@@ -4486,6 +4492,41 @@ if (focusedBranchClearBtn) {
     focusGeneralView();
   });
 }
+
+document.querySelectorAll("[data-stat-action]").forEach((card) => {
+  const openFromStat = () => {
+    const action = card.dataset.statAction || "directory";
+    if (action === "directory-gender") {
+      directoryFilters = { ...directoryFilters, gender: "all", status: "all", generation: "all", query: "" };
+    }
+    if (action === "directory-descendants") {
+      directoryFilters = { ...directoryFilters, query: lang === "en" ? "grandchild" : "cucu", generation: "all", gender: "all", status: "all" };
+    }
+    openDirectoryView();
+  };
+  card.addEventListener("click", openFromStat);
+  card.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openFromStat();
+    }
+  });
+});
+
+document.querySelectorAll("[data-tree-action]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const action = btn.dataset.treeAction;
+    if (action === "fit") fitToScreen();
+    if (action === "reset") focusGeneralView();
+    if (action === "minimap") {
+      const minimapWrap = document.querySelector(".brand-minimap-wrap");
+      if (minimapWrap) {
+        minimapWrap.classList.add("is-open");
+        minimapWrap.classList.remove("is-collapsed");
+      }
+    }
+  });
+});
 
 if (quickFamilyFilter) {
   quickFamilyFilter.querySelectorAll("[data-quick-family]").forEach((btn) => {

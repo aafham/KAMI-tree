@@ -109,15 +109,15 @@
     </header>
 
     <section class="stats" id="stats">
-      <div class="stat-card">
+      <div class="stat-card stat-card--clickable" role="button" tabindex="0" data-stat-action="directory">
         <div class="stat-label" data-i18n="statsPeople">Jumlah Ahli</div>
         <div class="stat-value" id="stat-people">0</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card--clickable" role="button" tabindex="0" data-stat-action="directory">
         <div class="stat-label" data-i18n="statsCouples">Jumlah Pasangan</div>
         <div class="stat-value" id="stat-couples">0</div>
       </div>
-      <div class="stat-card stat-card--gender">
+      <div class="stat-card stat-card--gender stat-card--clickable" role="button" tabindex="0" data-stat-action="directory-gender">
         <div class="stat-label" data-i18n="statsGender">Jantina</div>
         <div class="stat-split">
           <div class="stat-split-item">
@@ -130,7 +130,7 @@
           </div>
         </div>
       </div>
-      <div class="stat-card stat-card--descendants">
+      <div class="stat-card stat-card--descendants stat-card--clickable" role="button" tabindex="0" data-stat-action="directory-descendants">
         <div class="stat-label" data-i18n="statsDescendants">Keturunan</div>
         <div class="stat-split">
           <div class="stat-split-item">
@@ -156,6 +156,18 @@
     </div>
 
     <main class="tree-section">
+      <div class="tree-toolbar" id="tree-toolbar">
+        <div>
+          <strong data-i18n="treeToolbarTitle">Tree Keluarga</strong>
+          <span data-i18n="treeToolbarHint">Drag atau scroll untuk lihat cabang lain.</span>
+        </div>
+        <div class="tree-toolbar-actions">
+          <button class="btn ghost small" type="button" data-tree-action="fit" data-i18n="fit">Fit Skrin</button>
+          <button class="btn ghost small" type="button" data-tree-action="reset" data-i18n="resetView">Reset View</button>
+          <button class="btn ghost small" type="button" data-tree-action="minimap" data-i18n="minimapShow">Buka Minimap</button>
+        </div>
+      </div>
+      <div class="tree-scroll-guide" id="tree-scroll-guide" data-i18n="treeScrollGuide">← Drag / scroll untuk lihat cabang keluarga lain →</div>
       <div id="mini-toolbar" class="mini-toolbar" aria-label="Quick nav">
         <button id="mini-search" class="btn ghost small" type="button" data-i18n="searchGo">Cari & Fokus</button>
         <button id="mini-zoom-in" class="btn small" type="button">+</button>
