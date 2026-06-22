@@ -76,6 +76,7 @@ http://localhost:5500
 - Mobile topbar ada akses cepat kepada Saya, Cari, Directory, Timeline, dan Settings.
 - Mobile search overlay untuk cari ahli lebih cepat di phone.
 - Homepage controls dipolish dengan search utama, relationship finder compact/collapsible, action row yang lebih minimal, tools tidak terasing, dan stats card yang lebih rendah.
+- Tree desktop default/reset guna overview yang lebih usable supaya user tidak perlu cari tree sendiri selepas reset.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -587,9 +588,11 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Tree utama boleh render ahli keluarga.
 - [x] Kad ahli boleh ditekan untuk buka panel profil.
 - [x] Zoom in, zoom out, reset zoom, dan fit screen tersedia.
+- [x] `Reset View` kembali kepada overview yang usable, bukan zoom-in tepi.
 - [x] Drag/pan tersedia.
 - [x] Minimap tersedia.
 - [x] Auto-focus root/general view selepas load.
+- [x] Default/reset tree desktop guna overview/fit yang lebih mudah dilihat.
 - [x] Ada `Paparan Umum`.
 - [x] Ada `Pilih/Fokus Diri Saya`.
 - [x] Pilihan diri sendiri disimpan per browser/device.
@@ -734,6 +737,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Kemaskan `Download` dan `Tetapan` supaya tidak terasing di bawah kanan.
 - [x] Rendahkan stats card supaya tree lebih cepat muncul.
 - [x] Smoothkan dark mode header transition.
+- [x] Kurangkan ruang kosong tree dan tambah padding bawah supaya mini toolbar tidak tindih kad.
 - [ ] Jadikan minimap lebih discoverable.
 - [ ] Tambah sticky quick actions untuk Search, Fit, Paparan Umum, dan Relationship Finder.
 - [ ] Buat visual QA desktop untuk viewport 1440x1000.

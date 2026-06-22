@@ -145,8 +145,8 @@ const layoutConfig = {
   cardWidth: 220,
   cardGap: 16,
   hGap: 40,
-  vGap: 180,
-  topPadding: 10,
+  vGap: 150,
+  topPadding: 0,
   leftPadding: 20,
   labelColumnWidth: 120
 };
@@ -3953,8 +3953,6 @@ document.addEventListener("keydown", (event) => {
 
 if (resetViewBtn) {
   resetViewBtn.addEventListener("click", () => {
-    scale = 1;
-    applyZoom();
     focusGeneralView();
     savePrefs();
   });
@@ -4849,7 +4847,7 @@ function updateMinimap() {
 function fitToScreen() {
   if (!treeWrap || !treeCanvas) return;
   if (!treeCanvas.children.length || baseSize.width <= 0 || baseSize.height <= 0) return;
-  const pad = 24;
+  const pad = isMobileView() ? 18 : 48;
   const targetScale = Math.min(
     (treeWrap.clientWidth - pad) / baseSize.width,
     (treeWrap.clientHeight - pad) / baseSize.height
@@ -4857,7 +4855,51 @@ function fitToScreen() {
   if (!Number.isFinite(targetScale) || targetScale <= 0) return;
   scale = Math.max(0.6, Math.min(2.2, targetScale));
   applyZoom();
-  treeWrap.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+  centerVisibleTree("smooth");
+  scheduleRender();
+}
+
+function getVisibleTreeBounds() {
+  const visibleNodes = nodesList.filter((node) => nodeVisible(node));
+  if (!visibleNodes.length) return null;
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = 0;
+  let maxY = 0;
+  visibleNodes.forEach((node) => {
+    const width = node.ownWidth || layoutConfig.cardWidth;
+    minX = Math.min(minX, node.x);
+    minY = Math.min(minY, node.y);
+    maxX = Math.max(maxX, node.x + width);
+    maxY = Math.max(maxY, node.y + 120);
+  });
+  return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
+}
+
+function centerVisibleTree(behavior = "auto") {
+  if (!treeWrap) return;
+  const bounds = getVisibleTreeBounds();
+  if (!bounds) return;
+  const left = Math.max(0, (bounds.minX + bounds.width / 2) * scale - treeWrap.clientWidth / 2);
+  const top = Math.max(0, (bounds.minY + bounds.height / 2) * scale - treeWrap.clientHeight / 2);
+  treeWrap.scrollTo({ left, top, behavior });
+  updateMinimap();
+}
+
+function fitOverview(behavior = "auto") {
+  if (!treeWrap || !treeCanvas) return;
+  if (!treeCanvas.children.length) return;
+  const bounds = getVisibleTreeBounds();
+  if (!bounds) return;
+  const horizontalPad = isMobileView() ? 28 : 80;
+  const verticalPad = isMobileView() ? 34 : 70;
+  const usableWidth = Math.max(280, treeWrap.clientWidth - horizontalPad);
+  const usableHeight = Math.max(260, treeWrap.clientHeight - verticalPad);
+  const targetScale = Math.min(usableWidth / bounds.width, usableHeight / bounds.height);
+  if (!Number.isFinite(targetScale) || targetScale <= 0) return;
+  scale = Math.max(0.45, Math.min(1.25, targetScale));
+  applyZoom();
+  centerVisibleTree(behavior);
   scheduleRender();
 }
 
@@ -4967,15 +5009,7 @@ function focusGeneralView(animate = true) {
   updateQuickFamilyFilterBar();
   if (storyPanel) storyPanel.hidden = true;
   setStoryPanelOpen(false);
-  const rootNode = layoutRoot?.children?.[0];
-  if (rootNode) {
-    const width = rootNode.ownWidth || layoutConfig.cardWidth;
-    const left = Math.max(0, (rootNode.x + width / 2) * scale - treeWrap.clientWidth / 2);
-    treeWrap.scrollTo({ left, top: 0, behavior: animate ? "smooth" : "auto" });
-    updateMinimap();
-    return;
-  }
-  fitToScreen();
+  fitOverview(animate ? "smooth" : "auto");
 }
 
 function applyLineageHighlight() {
