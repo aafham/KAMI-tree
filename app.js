@@ -145,7 +145,7 @@ const layoutConfig = {
   cardWidth: 220,
   cardGap: 16,
   hGap: 40,
-  vGap: 150,
+  vGap: 248,
   topPadding: 0,
   leftPadding: 20,
   labelColumnWidth: 120

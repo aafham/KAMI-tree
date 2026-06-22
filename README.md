@@ -92,6 +92,7 @@ http://localhost:5500
 - Tree desktop default/reset guna overview yang lebih usable supaya user tidak perlu cari tree sendiri selepas reset.
 - Tree overview ada compact card mode bila zoom jauh, mini toolbar desktop di tepi, dan minimap desktop lebih discoverable.
 - Tree ada toolbar ringkas, scroll guide, stats card clickable, dan label generasi yang lebih subtle.
+- Layout tree sudah disemak untuk elak card individu bertindih ketika zoom normal, zoom in, zoom out, dan English label.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -751,6 +752,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Jadikan minimap lebih discoverable di desktop.
 - [x] Pindahkan mini toolbar desktop ke tepi supaya tidak menutup kad bawah.
 - [x] Tambah compact card mode bila tree di zoom jauh.
+- [x] Semak dan baiki jarak generasi supaya kad individu tidak overlap ketika zoom dan ketika UI English aktif.
 - [x] Tambah tree toolbar atas tree untuk Fit, Reset View, dan Minimap.
 - [x] Tambah horizontal scroll guide untuk tree besar.
 - [x] Jadikan stats card boleh ditekan untuk buka Directory/Birthday.
