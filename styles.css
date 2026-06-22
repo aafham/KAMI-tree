@@ -775,10 +775,11 @@ input[type="file"].input {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  border: none;
+  padding: 6px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  border: 1px solid rgba(79, 138, 106, 0.12);
+  box-shadow: 0 12px 28px rgba(31, 42, 36, 0.05);
 }
 
 .action-cluster--primary .btn:first-child,
@@ -789,6 +790,9 @@ input[type="file"].input {
 .action-cluster--zoom {
   margin-left: auto;
   justify-self: end;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .actions-zoom .export-actions {
@@ -1315,6 +1319,15 @@ input[type="file"].input {
   box-shadow: var(--shadow-soft);
 }
 
+.tree-toolbar::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
+
 .tree-toolbar strong {
   display: block;
   color: var(--ink);
@@ -1333,6 +1346,7 @@ input[type="file"].input {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .tree-view-modes {
@@ -1343,6 +1357,10 @@ input[type="file"].input {
   border-radius: 14px;
   background: color-mix(in srgb, var(--primary) 8%, var(--card));
   border: 1px solid rgba(79, 138, 106, 0.12);
+}
+
+.tree-toolbar-actions > .btn:not(.is-active) {
+  background: color-mix(in srgb, var(--card) 82%, transparent);
 }
 
 .tree-view-modes .btn {
@@ -1385,7 +1403,11 @@ input[type="file"].input {
   position: relative;
   min-height: clamp(560px, 70vh, 760px);
   border-radius: 24px;
-  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
+  background:
+    linear-gradient(90deg, rgba(79, 138, 106, 0.05) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(79, 138, 106, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
+  background-size: 120px 120px, 120px 120px, auto;
   overflow: auto;
   box-shadow: var(--shadow);
   padding: 28px 40px 112px;
@@ -1453,6 +1475,14 @@ body[data-tree-mode="branch"] .tree-wrap {
   border: 1px solid rgba(0, 0, 0, 0.08);
   animation: panelIn 0.5s ease both;
   position: relative;
+}
+
+.story-open .story-panel {
+  position: sticky;
+  top: 84px;
+  align-self: start;
+  max-height: calc(100vh - 108px);
+  overflow: auto;
 }
 
 .story-open .mini-toolbar {
@@ -1565,6 +1595,8 @@ body[data-view="timeline"].story-open .timeline-section {
   margin-bottom: 12px;
   color: var(--muted);
   font-size: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(79, 138, 106, 0.12);
 }
 
 .story-detail strong {
@@ -1573,10 +1605,15 @@ body[data-view="timeline"].story-open .timeline-section {
 }
 
 .profile-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 14px 0;
+}
+
+.profile-actions .btn {
+  width: 100%;
+  justify-content: center;
 }
 
 .focused-branch-bar {
@@ -1633,8 +1670,8 @@ body[data-view="timeline"].story-open .timeline-section {
   display: grid;
   gap: 8px;
   margin: 14px 0;
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 16px;
   background: color-mix(in srgb, var(--primary) 10%, var(--card));
   border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
 }
@@ -2214,6 +2251,24 @@ body[data-view="timeline"].story-open .timeline-section {
   color: #f4f8f5;
 }
 
+[data-theme="dark"] .settings-section {
+  border-color: rgba(220, 235, 226, 0.14);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+[data-theme="dark"] .settings-danger-zone {
+  background: color-mix(in srgb, #c45f5f 13%, #182620);
+  border-color: rgba(196, 95, 95, 0.34);
+}
+
+[data-theme="dark"] .tree-toolbar::before {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .tree-toolbar-actions > .btn:not(.is-active) {
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+}
+
 [data-theme="dark"] .birthday-person {
   background: #192821;
   border-color: rgba(123, 199, 163, 0.22);
@@ -2587,14 +2642,14 @@ body.compact .person-name {
   background: var(--card-fill, var(--card));
   border-radius: var(--radius);
   padding: calc(16px * var(--card-scale));
-  box-shadow: var(--shadow);
+  box-shadow: 0 14px 32px rgba(31, 42, 36, 0.1);
   color: var(--card-ink, var(--ink));
   display: grid;
   gap: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(79, 138, 106, 0.14);
   border-left: 4px solid var(--branch-color, var(--primary));
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
   animation: cardIn 0.35s ease both;
   animation-delay: var(--enter-delay, 0ms);
   position: relative;
@@ -2669,7 +2724,8 @@ body.overview-zoom .person-card {
 }
 
 .person-card.is-selected {
-  box-shadow: 0 0 0 3px var(--primary-2), var(--shadow-strong);
+  border-color: color-mix(in srgb, var(--primary) 74%, #fff);
+  box-shadow: 0 0 0 3px var(--primary-2), 0 20px 42px rgba(79, 138, 106, 0.24), var(--shadow-strong);
 }
 
 .person-card.is-parent {
@@ -2705,7 +2761,7 @@ body.overview-zoom .person-card {
 
 .person-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-strong);
+  box-shadow: 0 20px 42px rgba(31, 42, 36, 0.16), var(--shadow-strong);
 }
 
 .person-card:focus-visible {
@@ -2844,7 +2900,7 @@ body.hide-tags .person-tags {
   left: 40px;
   right: 40px;
   height: 2px;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(30, 30, 30, 0.22) 15%, rgba(30, 30, 30, 0.28) 50%, rgba(30, 30, 30, 0.22) 85%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(79, 138, 106, 0.22) 15%, rgba(79, 138, 106, 0.32) 50%, rgba(79, 138, 106, 0.22) 85%, rgba(0, 0, 0, 0) 100%);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
   pointer-events: none;
 }
@@ -2856,11 +2912,12 @@ body.hide-tags .person-tags {
   font-family: "Fraunces", serif;
   font-weight: 500;
   font-size: 13px;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
-  background: color-mix(in srgb, var(--bg-soft) 74%, transparent);
-  padding: 5px 10px;
+  color: color-mix(in srgb, var(--ink) 72%, var(--muted));
+  background: color-mix(in srgb, var(--card) 86%, transparent);
+  padding: 7px 12px;
   border-radius: 999px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(79, 138, 106, 0.12);
   pointer-events: none;
   z-index: 2;
 }
@@ -2955,6 +3012,7 @@ body.hide-tags .person-tags {
   display: none;
   align-items: center;
   justify-content: center;
+  padding: 18px;
   z-index: 2000;
 }
 
@@ -2975,17 +3033,23 @@ body.hide-tags .person-tags {
 
 .settings-card {
   position: relative;
-  width: min(720px, 94vw);
+  width: min(760px, calc(100vw - 28px));
   max-height: min(86vh, 820px);
   overflow: auto;
   background: var(--card);
   color: var(--ink);
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: var(--shadow-strong);
-  padding: 24px;
+  padding: 26px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 1;
   animation: panelIn 0.45s ease both;
+}
+
+.settings-card h2 {
+  margin: 0 36px 6px 0;
+  font-family: "Fraunces", serif;
+  font-size: clamp(26px, 3vw, 34px);
 }
 
 .settings-close {
@@ -3001,8 +3065,10 @@ body.hide-tags .person-tags {
 
 .settings-section {
   margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  border: 1px solid rgba(79, 138, 106, 0.12);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--bg-soft) 70%, transparent);
 }
 
 .settings-section h3 {
@@ -3039,6 +3105,33 @@ body.hide-tags .person-tags {
   justify-content: space-between;
 }
 
+.settings-grid--toggles .toggle,
+.settings-row .toggle,
+.settings-section .toggle {
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  align-items: center;
+}
+
+.settings-section .toggle-track {
+  order: 2;
+}
+
+.toggle-copy {
+  order: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  text-align: left;
+}
+
+.toggle-copy small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .settings-grid--tools {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px 12px;
@@ -3046,6 +3139,34 @@ body.hide-tags .person-tags {
 
 .settings-grid--tools .settings-close-btn {
   grid-column: 1 / -1;
+}
+
+.settings-danger-zone {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, #c45f5f 8%, var(--card));
+  border: 1px solid color-mix(in srgb, #c45f5f 28%, transparent);
+}
+
+.settings-danger-zone div {
+  display: grid;
+  gap: 3px;
+}
+
+.settings-danger-zone strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.settings-danger-zone span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .settings-range,
@@ -3616,10 +3737,29 @@ body.hide-tags .person-tags {
 
 
   .settings-card {
+    width: calc(100vw - 24px);
+    max-height: calc(100svh - 28px);
     padding: 18px;
+    border-radius: 20px;
   }
 
-  .settings-grid {
+  .settings-grid,
+  .settings-row,
+  .settings-grid--toggles,
+  .settings-grid--tools {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-section {
+    padding: 14px;
+  }
+
+  .settings-danger-zone {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .profile-actions {
     grid-template-columns: 1fr;
   }
 

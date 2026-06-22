@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260209" />
+  <link rel="stylesheet" href="styles.css?v=20260210" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -433,34 +433,52 @@
           <label class="toggle">
             <input id="toggle-theme" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="themeToggle">Light / Dark</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="themeToggle">Light / Dark</span>
+              <small data-i18n="themeToggleHint">Tukar tema cerah atau gelap.</small>
+            </span>
           </label>
         </div>
         <div class="settings-grid settings-grid--toggles">
           <label class="toggle">
             <input id="lang-toggle" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="langToggle">BM / EN</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="langToggle">BM / EN</span>
+              <small data-i18n="langToggleHint">Tukar bahasa paparan.</small>
+            </span>
           </label>
           <label class="toggle">
             <input id="settings-compact" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="settingsCompact">Compact Mode</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="settingsCompact">Compact Mode</span>
+              <small data-i18n="settingsCompactHint">Padatkan kad tree untuk lihat lebih banyak ahli.</small>
+            </span>
           </label>
           <label class="toggle">
             <input id="setting-show-birthdate" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="settingsShowBirthdate">Show Birthdate</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="settingsShowBirthdate">Show Birthdate</span>
+              <small data-i18n="settingsShowBirthdateHint">Papar atau sorok tarikh lahir pada kad.</small>
+            </span>
           </label>
           <label class="toggle">
             <input id="setting-show-age" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="settingsShowAge">Show Age</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="settingsShowAge">Show Age</span>
+              <small data-i18n="settingsShowAgeHint">Papar umur kiraan tahun.</small>
+            </span>
           </label>
           <label class="toggle">
             <input id="setting-show-tags" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="settingsShowTags">Show Tags</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="settingsShowTags">Show Tags</span>
+              <small data-i18n="settingsShowTagsHint">Papar tag relation dan nota ringkas.</small>
+            </span>
           </label>
         </div>
       </div>
@@ -471,12 +489,18 @@
           <label class="toggle">
             <input id="settings-minimap" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="settingsMinimap">Minimap</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="settingsMinimap">Minimap</span>
+              <small data-i18n="settingsMinimapHint">Tunjuk peta kecil lokasi tree.</small>
+            </span>
           </label>
           <label class="toggle">
             <input id="settings-drag" type="checkbox" />
             <span class="toggle-track"></span>
-            <span class="toggle-label" data-i18n="settingsDrag">Drag to Pan</span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="settingsDrag">Drag to Pan</span>
+              <small data-i18n="settingsDragHint">Benarkan drag untuk gerakkan tree.</small>
+            </span>
           </label>
         </div>
       </div>
@@ -490,11 +514,17 @@
           <button id="setting-reset-self" class="btn ghost small" type="button" data-i18n="resetSelf">
             Reset diri saya
           </button>
-          <button id="clear-cache" class="btn danger small" type="button" data-i18n="clearCache">
-            Clear Cache
-          </button>
           <button class="btn ghost small settings-close-btn" type="button" data-settings-close="true" data-i18n="settingsClose">
             Close
+          </button>
+        </div>
+        <div class="settings-danger-zone">
+          <div>
+            <strong data-i18n="settingsDangerTitle">Data sementara</strong>
+            <span data-i18n="settingsDangerHint">Clear cache akan buang pilihan dan data sementara browser.</span>
+          </div>
+          <button id="clear-cache" class="btn danger small" type="button" data-i18n="clearCache">
+            Clear Cache
           </button>
         </div>
       </div>
@@ -511,6 +541,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260209" defer></script>
+  <script src="app.js?v=20260210" defer></script>
 </body>
 </html>
