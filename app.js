@@ -3403,6 +3403,7 @@ function bindPersonLinkClicks(container) {
 function setStoryPanelOpen(isOpen) {
   if (!app) return;
   app.classList.toggle("story-open", isOpen);
+  updateMiniToolbarVisibility();
 }
 
 function closeStoryPanel() {
@@ -4824,7 +4825,7 @@ if (exportPdfBtn) {
 
 function updateMiniToolbarVisibility() {
   if (!miniToolbar) return;
-  if (viewMode !== "tree") {
+  if (viewMode !== "tree" || app?.classList.contains("story-open")) {
     miniToolbar.classList.remove("is-visible");
     return;
   }
