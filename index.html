@@ -16,6 +16,8 @@
       <div id="mobile-topbar" class="mobile-topbar" aria-label="Mobile top bar">
         <button id="mobile-self-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="focusSelfShort">Saya</button>
         <button id="mobile-search-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="searchShort">Cari</button>
+        <button id="mobile-directory-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="viewDirectory">Directory</button>
+        <button id="mobile-timeline-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="viewTimelineShort">Timeline</button>
         <button id="mobile-settings-btn" class="btn ghost icon" type="button" aria-label="Settings">⚙️</button>
       </div>
       <div class="brand">
@@ -155,6 +157,14 @@
         <span id="focused-branch-label"></span>
         <small data-i18n="focusedBranchHint">Paparan ini hanya tunjuk keluarga terdekat.</small>
         <button id="focused-branch-clear" class="btn ghost small" type="button" data-i18n="focusedBranchClear">Tunjuk Semua</button>
+      </div>
+      <div id="quick-family-filter" class="quick-family-filter" hidden>
+        <span id="quick-family-label" data-i18n="quickFamilyLabel">Tapis keluarga dipilih</span>
+        <button class="btn ghost small" type="button" data-quick-family="parents" data-i18n="quickFamilyParents">Mak/Ayah</button>
+        <button class="btn ghost small" type="button" data-quick-family="siblings" data-i18n="quickFamilySiblings">Adik-beradik</button>
+        <button class="btn ghost small" type="button" data-quick-family="descendants" data-i18n="quickFamilyDescendants">Anak/Cucu</button>
+        <button class="btn ghost small" type="button" data-quick-family="close" data-i18n="quickFamilyClose">Keluarga dekat</button>
+        <button class="btn ghost small" type="button" data-quick-family="clear" data-i18n="quickFamilyClear">Reset</button>
       </div>
       <div class="content-grid">
         <div class="tree-wrap" id="tree-wrap">
@@ -314,6 +324,28 @@
           <label class="directory-filter">
             <span class="label" data-i18n="directoryBirthdayMonth">Bulan Birthday</span>
             <select id="directory-birthday-month" class="select"></select>
+          </label>
+          <label class="directory-filter">
+            <span class="label" data-i18n="directoryBranch">Cabang</span>
+            <select id="directory-branch" class="select"></select>
+          </label>
+          <label class="directory-filter">
+            <span class="label" data-i18n="directoryStatus">Status</span>
+            <select id="directory-status" class="select">
+              <option value="all" data-i18n="directoryAllStatuses">Semua status</option>
+              <option value="living" data-i18n="directoryLiving">Masih hidup</option>
+              <option value="deceased" data-i18n="directoryDeceased">Meninggal</option>
+              <option value="incomplete" data-i18n="directoryIncomplete">Data belum lengkap</option>
+            </select>
+          </label>
+          <label class="directory-filter">
+            <span class="label" data-i18n="directorySort">Susun</span>
+            <select id="directory-sort" class="select">
+              <option value="generation" data-i18n="directorySortGeneration">Ikut Generasi</option>
+              <option value="name" data-i18n="directorySortName">Ikut Nama</option>
+              <option value="age" data-i18n="directorySortAge">Ikut Umur</option>
+              <option value="birthday" data-i18n="directorySortBirthday">Ikut Birthday</option>
+            </select>
           </label>
           <button id="directory-clear" class="btn ghost small" type="button" data-i18n="timelineClear">Reset</button>
         </div>

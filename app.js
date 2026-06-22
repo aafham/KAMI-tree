@@ -70,6 +70,8 @@ const mobileQuickFocusSelf = document.getElementById("m-focus-self");
 const mobileSettingsBtn = document.getElementById("mobile-settings-btn");
 const mobileSearchBtn = document.getElementById("mobile-search-btn");
 const mobileSelfBtn = document.getElementById("mobile-self-btn");
+const mobileDirectoryBtn = document.getElementById("mobile-directory-btn");
+const mobileTimelineBtn = document.getElementById("mobile-timeline-btn");
 const mobileSearchOverlay = document.getElementById("mobile-search-overlay");
 const mobileSearchBackdrop = document.getElementById("mobile-search-backdrop");
 const mobileSearchClose = document.getElementById("mobile-search-close");
@@ -121,12 +123,17 @@ const directorySearchInput = document.getElementById("directory-search");
 const directoryGenerationSelect = document.getElementById("directory-generation");
 const directoryGenderSelect = document.getElementById("directory-gender");
 const directoryBirthdayMonthSelect = document.getElementById("directory-birthday-month");
+const directoryBranchSelect = document.getElementById("directory-branch");
+const directoryStatusSelect = document.getElementById("directory-status");
+const directorySortSelect = document.getElementById("directory-sort");
 const directoryClearBtn = document.getElementById("directory-clear");
 const directorySummary = document.getElementById("directory-summary");
 const directoryList = document.getElementById("directory-list");
 const focusedBranchBar = document.getElementById("focused-branch-bar");
 const focusedBranchLabel = document.getElementById("focused-branch-label");
 const focusedBranchClearBtn = document.getElementById("focused-branch-clear");
+const quickFamilyFilter = document.getElementById("quick-family-filter");
+const quickFamilyLabel = document.getElementById("quick-family-label");
 
 
 function on(el, event, handler, options) {
@@ -212,11 +219,18 @@ let openBirthdayDates = new Set();
 let autoOpenedBirthdayKey = "";
 let focusedBranchPersonId = "";
 let focusedBranchPeople = new Set();
+let activeQuickFamilyFilter = "";
+let quickFamilyPeople = new Set();
+let activeRelationshipTargets = [];
+let activeRelationshipPath = [];
 let directoryFilters = {
   query: "",
   generation: "all",
   gender: "all",
-  birthdayMonth: "all"
+  birthdayMonth: "all",
+  branch: "all",
+  status: "all",
+  sort: "generation"
 };
 
 const prefs = loadPrefs();
@@ -240,6 +254,7 @@ const i18n = {
     resetSelfConfirm: "Padam pilihan diri saya untuk browser ini?",
     resetSelfDone: "Pilihan diri saya telah dipadam untuk browser ini.",
     viewTimeline: "Lihat Timeline",
+    viewTimelineShort: "Timeline",
     viewTree: "Lihat Tree",
     compactOn: "Mode Penuh",
     compactOff: "Mode Ringkas",
@@ -290,6 +305,20 @@ const i18n = {
     directoryGender: "Jantina",
     directoryBirthdayMonth: "Bulan Birthday",
     directoryAllBirthdayMonths: "Semua bulan",
+    directoryBranch: "Cabang",
+    directoryAllBranches: "Semua cabang",
+    directoryRootBranch: "Root / Generasi asal",
+    directoryBranchLabel: "Cabang {name}",
+    directoryStatus: "Status",
+    directoryAllStatuses: "Semua status",
+    directoryLiving: "Masih hidup",
+    directoryDeceased: "Meninggal",
+    directoryIncomplete: "Data belum lengkap",
+    directorySort: "Susun",
+    directorySortGeneration: "Ikut Generasi",
+    directorySortName: "Ikut Nama",
+    directorySortAge: "Ikut Umur",
+    directorySortBirthday: "Ikut Birthday",
     directoryAllGenerations: "Semua generasi",
     directorySummary: "{count} ahli dipaparkan",
     mobileSearchTitle: "Cari Ahli Keluarga",
@@ -302,6 +331,13 @@ const i18n = {
     focusedBranchClear: "Tunjuk Semua",
     focusedBranchActive: "Family view: {name}",
     focusedBranchHint: "Paparan ini hanya tunjuk keluarga terdekat.",
+    quickFamilyLabel: "Tapis keluarga dipilih",
+    quickFamilyParents: "Mak/Ayah",
+    quickFamilySiblings: "Adik-beradik",
+    quickFamilyDescendants: "Anak/Cucu",
+    quickFamilyClose: "Keluarga dekat",
+    quickFamilyClear: "Reset",
+    lineageBreadcrumb: "Laluan salasilah",
     generationLabel: "Generasi (Lipat/Buka)",
     legendParentChild: "Garis sambungan ibu bapa \u2192 anak",
     legendCouple: "Pasangan ditunjukkan secara selari",
@@ -446,6 +482,7 @@ const i18n = {
     resetSelfConfirm: "Clear the selected person for this browser?",
     resetSelfDone: "Your selected person has been cleared for this browser.",
     viewTimeline: "Timeline View",
+    viewTimelineShort: "Timeline",
     viewTree: "Tree View",
     compactOn: "Full Mode",
     compactOff: "Compact Mode",
@@ -498,6 +535,20 @@ const i18n = {
     directoryGender: "Gender",
     directoryBirthdayMonth: "Birthday Month",
     directoryAllBirthdayMonths: "All months",
+    directoryBranch: "Branch",
+    directoryAllBranches: "All branches",
+    directoryRootBranch: "Root / Original generation",
+    directoryBranchLabel: "{name} branch",
+    directoryStatus: "Status",
+    directoryAllStatuses: "All statuses",
+    directoryLiving: "Living",
+    directoryDeceased: "Deceased",
+    directoryIncomplete: "Incomplete data",
+    directorySort: "Sort",
+    directorySortGeneration: "By Generation",
+    directorySortName: "By Name",
+    directorySortAge: "By Age",
+    directorySortBirthday: "By Birthday",
     directoryAllGenerations: "All generations",
     directorySummary: "{count} members shown",
     mobileSearchTitle: "Search Family Members",
@@ -510,6 +561,13 @@ const i18n = {
     focusedBranchClear: "Show All",
     focusedBranchActive: "Family view: {name}",
     focusedBranchHint: "This view only shows close family.",
+    quickFamilyLabel: "Filter selected family",
+    quickFamilyParents: "Parents",
+    quickFamilySiblings: "Siblings",
+    quickFamilyDescendants: "Children/Grandkids",
+    quickFamilyClose: "Close family",
+    quickFamilyClear: "Reset",
+    lineageBreadcrumb: "Lineage path",
     generationLabel: "Generation (Collapse/Expand)",
     legendParentChild: "Parent \u2192 child connection",
     legendCouple: "Partners shown side by side",
@@ -768,7 +826,7 @@ function updateStats() {
   let cucuCount = 0;
   let cicitCount = 0;
   treeData.people.forEach((person) => {
-    const gender = detectGenderFromName(person.name);
+    const gender = getPersonGender(person);
     if (gender === "male") maleCount += 1;
     if (gender === "female") femaleCount += 1;
     if (person.relation === "Cucu") cucuCount += 1;
@@ -983,6 +1041,8 @@ function updateViewSwitch() {
   if (viewTimelineBtn) viewTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
   if (viewDirectoryBtn) viewDirectoryBtn.classList.toggle("is-active", viewMode === "directory");
   if (directoryToggle) directoryToggle.classList.toggle("is-active", viewMode === "directory");
+  if (mobileDirectoryBtn) mobileDirectoryBtn.classList.toggle("is-active", viewMode === "directory");
+  if (mobileTimelineBtn) mobileTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
 }
 
 function populateRelationshipFinder() {
@@ -1168,6 +1228,10 @@ function renderRelationshipResult(result) {
 }
 
 function clearRelationshipHighlight() {
+  activeRelationshipTargets = [];
+  activeRelationshipPath = [];
+  treeCanvas?.classList.remove("has-relationship-path");
+  treeLines?.classList.remove("has-relationship-path");
   document.querySelectorAll(".person-card.is-relationship-target")
     .forEach((el) => el.classList.remove("is-relationship-target"));
   document.querySelectorAll(".person-card.is-relationship-path")
@@ -1176,6 +1240,12 @@ function clearRelationshipHighlight() {
 
 function applyRelationshipHighlight(ids, pathIds = []) {
   clearRelationshipHighlight();
+  activeRelationshipTargets = [...ids];
+  activeRelationshipPath = [...pathIds];
+  if (pathIds.length > 1) {
+    treeCanvas?.classList.add("has-relationship-path");
+    treeLines?.classList.add("has-relationship-path");
+  }
   pathIds.forEach((id) => {
     const group = elementByPersonId.get(id);
     if (!group) return;
@@ -1188,6 +1258,15 @@ function applyRelationshipHighlight(ids, pathIds = []) {
     const card = group.querySelector(`.person-card[data-person-id="${id}"]`);
     if (card) card.classList.add("is-relationship-target");
   });
+}
+
+function restoreRelationshipHighlight() {
+  if (!activeRelationshipTargets.length && !activeRelationshipPath.length) return;
+  const targets = [...activeRelationshipTargets];
+  const path = [...activeRelationshipPath];
+  activeRelationshipTargets = [];
+  activeRelationshipPath = [];
+  applyRelationshipHighlight(targets, path);
 }
 
 function getPersonDepthMap() {
@@ -1794,6 +1873,9 @@ function applyViewMode() {
     document.body.dataset.view = "tree";
     return;
   }
+  if (viewMode !== "tree") {
+    clearQuickFamilyFilter(false);
+  }
   if (viewMode === "birthday") {
     document.body.dataset.view = "birthday";
     if (timelineSection) timelineSection.hidden = true;
@@ -1899,10 +1981,12 @@ function renderScene() {
   updateMinimap();
   if (pathMode) applyLineageHighlight();
   if (selectedPersonId) applySelectionHighlight(selectedPersonId);
+  restoreRelationshipHighlight();
   if (treeCanvas && treeCanvas.children.length > 0) {
     setTreeStatus("");
   }
   updateFocusedBranchBar();
+  updateQuickFamilyFilterBar();
 }
 
 function renderGenerationLabels() {
@@ -1934,6 +2018,10 @@ function nodeVisible(node) {
   if (focusedBranchPeople.size > 0) {
     const ids = getNodePersonIds(node);
     if (!ids.some((id) => focusedBranchPeople.has(id))) return false;
+  }
+  if (quickFamilyPeople.size > 0) {
+    const ids = getNodePersonIds(node);
+    if (!ids.some((id) => quickFamilyPeople.has(id))) return false;
   }
   return true;
 }
@@ -2138,7 +2226,7 @@ function createPersonCard(person, depth) {
     tags.appendChild(tag);
   });
   if (isPartnered(person.id)) {
-    const gender = detectGenderFromName(person.name);
+    const gender = getPersonGender(person);
     const spouseLabel = gender === "male" ? i18n[lang].spouseHusband : gender === "female" ? i18n[lang].spouseWife : "";
     const existingText = tagsQueue.join(" ").toLowerCase();
     const spouseLower = spouseLabel.toLowerCase();
@@ -2157,10 +2245,14 @@ function createPersonCard(person, depth) {
 
   card.addEventListener("click", (e) => {
     e.stopPropagation();
+    if (selectedPersonId && selectedPersonId !== person.id && quickFamilyPeople.size > 0) {
+      clearQuickFamilyFilter(false);
+    }
     openModal(person);
     updateStoryPanel(person);
     selectedPersonId = person.id;
     applySelectionHighlight(person.id);
+    updateQuickFamilyFilterBar();
     updateUrlState();
   });
 
@@ -2304,7 +2396,7 @@ function renderTimeline() {
       const birthDay = birthDate ? birthDate.getDate() : null;
       const birthTime = birthDate ? birthDate.getTime() : null;
       const order = birthTime ?? Number.POSITIVE_INFINITY;
-      const gender = detectGenderFromName(person.name) || "unknown";
+      const gender = getPersonGender(person) || "unknown";
       const nameSort = formatDisplayName(person.name).toLowerCase();
       const parentKey = parentKeyByChild.get(person.id) || "zzzz";
       return { person, birth, birthMonth, birthDay, birthTime, order, gender, nameSort, parentKey };
@@ -2587,6 +2679,24 @@ function populateDirectoryFilters() {
     directoryBirthdayMonthSelect.value = [...directoryBirthdayMonthSelect.options].some((option) => option.value === currentMonth) ? currentMonth : "all";
     directoryFilters.birthdayMonth = directoryBirthdayMonthSelect.value;
   }
+  if (directoryBranchSelect) {
+    const currentBranch = directoryFilters.branch || directoryBranchSelect.value || "all";
+    const branchIds = [...new Set((treeData?.people || []).map((person) => person.branchId || "root"))]
+      .sort((a, b) => getBranchName(a).localeCompare(getBranchName(b), lang === "en" ? "en" : "ms"));
+    directoryBranchSelect.innerHTML = "";
+    const allBranches = document.createElement("option");
+    allBranches.value = "all";
+    allBranches.textContent = t.directoryAllBranches;
+    directoryBranchSelect.appendChild(allBranches);
+    branchIds.forEach((branchId) => {
+      const option = document.createElement("option");
+      option.value = branchId;
+      option.textContent = getBranchName(branchId);
+      directoryBranchSelect.appendChild(option);
+    });
+    directoryBranchSelect.value = [...directoryBranchSelect.options].some((option) => option.value === currentBranch) ? currentBranch : "all";
+    directoryFilters.branch = directoryBranchSelect.value;
+  }
 }
 
 function getPersonDepth(personId) {
@@ -2602,31 +2712,54 @@ function renderDirectoryPage() {
   if (!directoryList || !directorySummary || !treeData?.people) return;
   const t = i18n[lang] || i18n.ms;
   populateDirectoryFilters();
-  const query = (directoryFilters.query || "").trim().toLowerCase();
+  const queryTerms = expandSearchTerms(directoryFilters.query || "");
   const generation = directoryFilters.generation || "all";
   const gender = directoryFilters.gender || "all";
   const birthdayMonth = directoryFilters.birthdayMonth || "all";
+  const branch = directoryFilters.branch || "all";
+  const status = directoryFilters.status || "all";
+  const sort = directoryFilters.sort || "generation";
   const people = treeData.people
     .map((person) => {
       const birthDate = parseDateValue(person.birth);
       return {
         person,
         depth: getPersonDepth(person.id),
-        gender: detectGenderFromName(person.name),
-        birthMonth: birthDate ? birthDate.getMonth() : ""
+        gender: getPersonGender(person),
+        status: getPersonStatus(person),
+        branchId: person.branchId || "root",
+        birthDate,
+        birthMonth: birthDate ? birthDate.getMonth() : "",
+        incomplete: isPersonDataIncomplete(person)
       };
     })
     .filter((entry) => {
-      const name = formatDisplayName(entry.person.name).toLowerCase();
-      const raw = String(entry.person.name || "").toLowerCase();
-      const relation = String(entry.person.relation || "").toLowerCase();
-      if (query && !name.includes(query) && !raw.includes(query) && !relation.includes(query)) return false;
+      if (queryTerms.length && !queryTerms.some((term) => getPersonSearchText(entry.person).includes(term))) return false;
       if (generation !== "all" && String(entry.depth) !== generation) return false;
       if (gender !== "all" && entry.gender !== gender) return false;
       if (birthdayMonth !== "all" && String(entry.birthMonth) !== birthdayMonth) return false;
+      if (branch !== "all" && entry.branchId !== branch) return false;
+      if (status === "incomplete" && !entry.incomplete) return false;
+      if (status !== "all" && status !== "incomplete" && entry.status !== status) return false;
       return true;
     })
     .sort((a, b) => {
+      if (sort === "name") {
+        return formatDisplayName(a.person.name).localeCompare(formatDisplayName(b.person.name), lang === "en" ? "en" : "ms");
+      }
+      if (sort === "age") {
+        const aYear = parseYear(a.person.birth) || 9999;
+        const bYear = parseYear(b.person.birth) || 9999;
+        if (aYear !== bYear) return aYear - bYear;
+      }
+      if (sort === "birthday") {
+        const aMonth = a.birthMonth === "" ? 99 : a.birthMonth;
+        const bMonth = b.birthMonth === "" ? 99 : b.birthMonth;
+        if (aMonth !== bMonth) return aMonth - bMonth;
+        const aDay = a.birthDate ? a.birthDate.getDate() : 99;
+        const bDay = b.birthDate ? b.birthDate.getDate() : 99;
+        if (aDay !== bDay) return aDay - bDay;
+      }
       const depthDiff = Number(a.depth || 999) - Number(b.depth || 999);
       if (depthDiff !== 0) return depthDiff;
       return formatDisplayName(a.person.name).localeCompare(formatDisplayName(b.person.name), lang === "en" ? "en" : "ms");
@@ -2646,14 +2779,17 @@ function renderDirectoryPage() {
       person.birth ? `${t.modalBirth}: ${formatDateDisplay(person.birth)}` : "",
       age !== null ? `${t.ageLabel}: ${age}` : ""
     ].filter(Boolean).join(" | ");
+    const statusLabel = getPersonStatus(person) === "deceased" ? t.directoryDeceased : t.directoryLiving;
+    const branchLabel = getBranchName(person.branchId);
     return `
       <article class="directory-card">
         <button class="directory-person" type="button" data-person-link="${escapeHtml(person.id)}">
           <span class="directory-avatar">${escapeHtml(initials(formatDisplayName(person.name)))}</span>
           <span class="directory-main">
             <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
+            ${person.nickname ? `<small>${escapeHtml(person.nickname)}</small>` : ""}
             <span>${escapeHtml(meta || t.datesUnknown)}</span>
-            ${person.relation ? `<em>${escapeHtml(person.relation)}</em>` : ""}
+            <em>${escapeHtml([person.relation, branchLabel, statusLabel].filter(Boolean).join(" | "))}</em>
           </span>
         </button>
       </article>
@@ -2804,6 +2940,29 @@ function detectGenderFromName(fullName) {
   if (name.includes(" binti ") || name.includes(" bt ")) return "female";
   if (name.includes(" bin ")) return "male";
   return "";
+}
+
+function getPersonGender(person) {
+  return person?.gender && person.gender !== "unknown" ? person.gender : detectGenderFromName(person?.name);
+}
+
+function getPersonStatus(person) {
+  if (!person) return "unknown";
+  if (person.status) return person.status;
+  return person.death ? "deceased" : "living";
+}
+
+function isPersonDataIncomplete(person) {
+  if (!person) return true;
+  return !person.birth || !person.nickname || !person.gender || person.gender === "unknown" || !person.branchId || !person.status;
+}
+
+function getBranchName(branchId) {
+  const t = i18n[lang] || i18n.ms;
+  if (!branchId || branchId === "root") return t.directoryRootBranch;
+  const person = peopleById.get(branchId);
+  if (!person) return branchId;
+  return formatText(t.directoryBranchLabel, { name: formatDisplayName(person.nickname || person.name) });
 }
 
 function isPartnered(personId) {
@@ -2965,9 +3124,66 @@ function getFocusedFamilyIds(personId) {
   ].filter(Boolean));
 }
 
+function getDescendantIds(personId) {
+  const result = new Set();
+  const queue = [...getChildIds(personId)];
+  while (queue.length) {
+    const id = queue.shift();
+    if (!id || result.has(id)) continue;
+    result.add(id);
+    queue.push(...getChildIds(id));
+  }
+  return [...result];
+}
+
+function getQuickFamilyIds(personId, mode) {
+  if (!personId || !peopleById.has(personId)) return new Set();
+  const family = getIndividualFamily(personId);
+  if (mode === "parents") {
+    return new Set([personId, ...family.parents.map((person) => person.id)]);
+  }
+  if (mode === "siblings") {
+    return new Set([personId, ...family.parents.map((person) => person.id), ...family.siblings.map((person) => person.id)]);
+  }
+  if (mode === "descendants") {
+    return new Set([personId, ...getDescendantIds(personId)]);
+  }
+  if (mode === "close") {
+    return getFocusedFamilyIds(personId);
+  }
+  return new Set();
+}
+
+function clearQuickFamilyFilter(render = true) {
+  activeQuickFamilyFilter = "";
+  quickFamilyPeople.clear();
+  updateQuickFamilyFilterBar();
+  if (render) {
+    renderScene();
+    applyZoom();
+  }
+}
+
+function setQuickFamilyFilter(mode) {
+  if (!selectedPersonId || !peopleById.has(selectedPersonId)) return;
+  if (mode === "clear") {
+    clearQuickFamilyFilter();
+    return;
+  }
+  activeQuickFamilyFilter = mode;
+  quickFamilyPeople = getQuickFamilyIds(selectedPersonId, mode);
+  hiddenGenerations.clear();
+  branchFilterValue = "all";
+  updateQuickFamilyFilterBar();
+  renderScene();
+  applyZoom();
+  focusPerson(selectedPersonId, false, true);
+}
+
 function setFocusedBranch(personId) {
   const person = peopleById.get(personId);
   if (!person) return;
+  clearQuickFamilyFilter(false);
   focusedBranchPersonId = personId;
   focusedBranchPeople = getFocusedFamilyIds(personId);
   hiddenGenerations.clear();
@@ -2993,6 +3209,19 @@ function clearFocusedBranch(render = true) {
   }
 }
 
+function updateQuickFamilyFilterBar() {
+  if (!quickFamilyFilter) return;
+  const person = peopleById.get(selectedPersonId);
+  quickFamilyFilter.hidden = !person || viewMode !== "tree";
+  if (person && quickFamilyLabel) {
+    const t = i18n[lang] || i18n.ms;
+    quickFamilyLabel.textContent = `${t.quickFamilyLabel}: ${formatDisplayName(person.name)}`;
+  }
+  quickFamilyFilter.querySelectorAll("[data-quick-family]").forEach((btn) => {
+    btn.classList.toggle("is-active", activeQuickFamilyFilter && btn.dataset.quickFamily === activeQuickFamilyFilter);
+  });
+}
+
 function updateFocusedBranchBar() {
   if (!focusedBranchBar) return;
   const person = peopleById.get(focusedBranchPersonId);
@@ -3011,6 +3240,47 @@ function renderPersonChips(people) {
       ${escapeHtml(formatDisplayName(person.name))}
     </button>
   `).join("");
+}
+
+function getAncestorLevels(personId) {
+  const levels = [];
+  let currentIds = [personId];
+  const seen = new Set([personId]);
+  let guard = 0;
+  while (guard < 8) {
+    guard += 1;
+    const parentIds = [...new Set(currentIds.flatMap((id) => getParentIds(id)))].filter((id) => !seen.has(id));
+    if (!parentIds.length) break;
+    parentIds.forEach((id) => seen.add(id));
+    levels.unshift(parentIds);
+    currentIds = parentIds;
+  }
+  return levels;
+}
+
+function renderLineageBreadcrumb(person) {
+  const t = i18n[lang] || i18n.ms;
+  const ancestorLevels = getAncestorLevels(person.id);
+  const groups = [
+    ...ancestorLevels.map((ids) => ids.map((id) => peopleById.get(id)).filter(Boolean)),
+    [person]
+  ].filter((group) => group.length);
+  if (groups.length <= 1) return "";
+  const groupHtml = groups.map((group) => `
+    <span class="breadcrumb-group">
+      ${group.map((member) => `
+        <button class="breadcrumb-chip" type="button" data-person-link="${escapeHtml(member.id)}">
+          ${escapeHtml(formatDisplayName(member.nickname || member.name))}
+        </button>
+      `).join('<span class="breadcrumb-plus">+</span>')}
+    </span>
+  `).join('<span class="breadcrumb-separator">&gt;</span>');
+  return `
+    <section class="lineage-breadcrumb" aria-label="${escapeHtml(t.lineageBreadcrumb)}">
+      <strong>${escapeHtml(t.lineageBreadcrumb)}</strong>
+      <div>${groupHtml}</div>
+    </section>
+  `;
 }
 
 function renderIndividualLineage(person) {
@@ -3116,7 +3386,9 @@ function setStoryPanelOpen(isOpen) {
 
 function closeStoryPanel() {
   selectedPersonId = "";
+  clearQuickFamilyFilter(false);
   clearSelectionHighlight();
+  updateQuickFamilyFilterBar();
   if (panelEditForm) panelEditForm.hidden = true;
   if (storyPanel) storyPanel.hidden = true;
   setStoryPanelOpen(false);
@@ -3137,6 +3409,7 @@ function openModal(person) {
     <div class="story-detail"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
+    ${renderLineageBreadcrumb(person)}
     ${renderProfileActions(person)}
     ${renderIndividualLineage(person)}
   `;
@@ -3158,7 +3431,7 @@ function openModal(person) {
   if (panelEditPhoto) panelEditPhoto.value = person.photo || "";
   if (panelEditNote) panelEditNote.value = person.note || "";
   if (panelEditStory) panelEditStory.value = person.story || "";
-  const inferredGender = detectGenderFromName(person.name);
+  const inferredGender = getPersonGender(person);
   panelGenderInputs.forEach((input) => {
     input.checked = inferredGender === input.value;
   });
@@ -3263,6 +3536,7 @@ function openTimelineInlineDetail(person, itemEl) {
       <div class="timeline-detail-row"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
       <div class="timeline-detail-row"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
       <div class="timeline-detail-row"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
+      ${renderLineageBreadcrumb(person)}
       ${renderProfileActions(person)}
       ${renderIndividualLineage(person)}
     </div>
@@ -3474,6 +3748,23 @@ if (mobileSelfBtn) {
   mobileSelfBtn.addEventListener("touchstart", () => {
     focusSelf(false);
   }, { passive: true });
+}
+
+if (mobileDirectoryBtn) {
+  mobileDirectoryBtn.addEventListener("click", openDirectoryView);
+  mobileDirectoryBtn.addEventListener("touchstart", openDirectoryView, { passive: true });
+}
+
+if (mobileTimelineBtn) {
+  const openTimelineView = () => {
+    viewMode = "timeline";
+    clearQuickFamilyFilter(false);
+    applyViewMode();
+    updateViewSwitch();
+    savePrefs();
+  };
+  mobileTimelineBtn.addEventListener("click", openTimelineView);
+  mobileTimelineBtn.addEventListener("touchstart", openTimelineView, { passive: true });
 }
 
 if (langToggleBtn) {
@@ -3847,14 +4138,85 @@ window.addEventListener("resize", () => {
 });
 
 function getSearchMatches(query) {
-  const normalized = String(query || "").trim().toLowerCase();
-  if (!normalized || !treeData?.people) return [];
+  const terms = expandSearchTerms(query);
+  if (!terms.length || !treeData?.people) return [];
   return treeData.people.filter((person) => {
-    const displayName = formatDisplayName(person.name).toLowerCase();
-    const rawName = String(person.name || "").toLowerCase();
-    const relation = String(person.relation || "").toLowerCase();
-    return displayName.includes(normalized) || rawName.includes(normalized) || relation.includes(normalized);
+    const haystack = getPersonSearchText(person);
+    return terms.some((term) => haystack.includes(term));
   });
+}
+
+function normalizeSearchText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[-_/]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function expandSearchTerms(query) {
+  const normalized = normalizeSearchText(query);
+  if (!normalized) return [];
+  const aliases = {
+    lelaki: ["male", "jantan", "putera"],
+    male: ["lelaki"],
+    perempuan: ["female", "wanita", "puteri"],
+    female: ["perempuan"],
+    hidup: ["living", "masih hidup"],
+    living: ["hidup", "masih hidup"],
+    meninggal: ["deceased", "wafat", "mati"],
+    deceased: ["meninggal", "wafat"],
+    mati: ["meninggal", "deceased"],
+    suami: ["husband", "pasangan"],
+    isteri: ["wife", "pasangan"],
+    pasangan: ["suami", "isteri", "spouse"],
+    anak: ["child"],
+    cucu: ["grandchild"],
+    cicit: ["great grandchild"],
+    menantu: ["in law"],
+    mak: ["ibu", "mother", "parent"],
+    ibu: ["mak", "mother", "parent"],
+    ayah: ["bapa", "father", "parent"],
+    bapa: ["ayah", "father", "parent"],
+    "adik beradik": ["siblings", "sibling"],
+    sibling: ["adik beradik"],
+    siblings: ["adik beradik"],
+    cabang: ["branch"],
+    branch: ["cabang"],
+    root: ["generasi asal"],
+    "data tak lengkap": ["incomplete"],
+    incomplete: ["data tak lengkap"]
+  };
+  const terms = new Set([normalized]);
+  Object.entries(aliases).forEach(([key, values]) => {
+    if (normalized.includes(key)) values.forEach((value) => terms.add(normalizeSearchText(value)));
+  });
+  return [...terms].filter(Boolean);
+}
+
+function getPersonSearchText(person) {
+  const gender = getPersonGender(person);
+  const status = getPersonStatus(person);
+  const values = [
+    formatDisplayName(person.name),
+    person.name,
+    person.nickname,
+    person.relation,
+    person.note,
+    person.story,
+    gender,
+    gender === "male" ? "lelaki male" : "",
+    gender === "female" ? "perempuan female" : "",
+    status,
+    status === "living" ? "hidup living masih hidup" : "",
+    status === "deceased" ? "meninggal deceased wafat mati" : "",
+    getBranchName(person.branchId),
+    person.branchId,
+    isPersonDataIncomplete(person) ? "data tak lengkap incomplete" : ""
+  ];
+  return normalizeSearchText(values.filter(Boolean).join(" "));
 }
 
 if (searchInput && searchResults) {
@@ -3921,6 +4283,9 @@ function focusPerson(personId, open = false, updateUrl = true) {
   const person = peopleById.get(personId);
   if (!person) return;
   if (!treeWrap) return;
+  if (selectedPersonId && selectedPersonId !== personId && quickFamilyPeople.size > 0) {
+    clearQuickFamilyFilter(false);
+  }
   if (focusedBranchPeople.size > 0 && !focusedBranchPeople.has(personId)) {
     clearFocusedBranch(false);
   }
@@ -3951,6 +4316,7 @@ function focusPerson(personId, open = false, updateUrl = true) {
   selectedPersonId = personId;
   updateStoryPanel(person);
   applySelectionHighlight(personId);
+  updateQuickFamilyFilterBar();
 
   if (open) openModal(person);
 
@@ -4077,13 +4443,37 @@ if (directoryBirthdayMonthSelect) {
   });
 }
 
+if (directoryBranchSelect) {
+  directoryBranchSelect.addEventListener("change", () => {
+    directoryFilters.branch = directoryBranchSelect.value || "all";
+    renderDirectoryPage();
+  });
+}
+
+if (directoryStatusSelect) {
+  directoryStatusSelect.addEventListener("change", () => {
+    directoryFilters.status = directoryStatusSelect.value || "all";
+    renderDirectoryPage();
+  });
+}
+
+if (directorySortSelect) {
+  directorySortSelect.addEventListener("change", () => {
+    directoryFilters.sort = directorySortSelect.value || "generation";
+    renderDirectoryPage();
+  });
+}
+
 if (directoryClearBtn) {
   directoryClearBtn.addEventListener("click", () => {
-    directoryFilters = { query: "", generation: "all", gender: "all", birthdayMonth: "all" };
+    directoryFilters = { query: "", generation: "all", gender: "all", birthdayMonth: "all", branch: "all", status: "all", sort: "generation" };
     if (directorySearchInput) directorySearchInput.value = "";
     if (directoryGenerationSelect) directoryGenerationSelect.value = "all";
     if (directoryGenderSelect) directoryGenderSelect.value = "all";
     if (directoryBirthdayMonthSelect) directoryBirthdayMonthSelect.value = "all";
+    if (directoryBranchSelect) directoryBranchSelect.value = "all";
+    if (directoryStatusSelect) directoryStatusSelect.value = "all";
+    if (directorySortSelect) directorySortSelect.value = "generation";
     renderDirectoryPage();
   });
 }
@@ -4092,6 +4482,14 @@ if (focusedBranchClearBtn) {
   focusedBranchClearBtn.addEventListener("click", () => {
     clearFocusedBranch(true);
     focusGeneralView();
+  });
+}
+
+if (quickFamilyFilter) {
+  quickFamilyFilter.querySelectorAll("[data-quick-family]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setQuickFamilyFilter(btn.dataset.quickFamily || "clear");
+    });
   });
 }
 
@@ -4561,8 +4959,10 @@ function focusGeneralView(animate = true) {
     applyZoom();
   }
   selectedPersonId = "";
+  clearQuickFamilyFilter(false);
   clearSelectionHighlight();
   clearRelationshipHighlight();
+  updateQuickFamilyFilterBar();
   if (storyPanel) storyPanel.hidden = true;
   setStoryPanelOpen(false);
   const rootNode = layoutRoot?.children?.[0];
@@ -4709,6 +5109,9 @@ function applyLanguage() {
   if (directorySearchInput) directorySearchInput.value = directoryFilters.query || "";
   if (directoryGenderSelect) directoryGenderSelect.value = directoryFilters.gender || "all";
   if (directoryBirthdayMonthSelect) directoryBirthdayMonthSelect.value = directoryFilters.birthdayMonth || "all";
+  if (directoryBranchSelect) directoryBranchSelect.value = directoryFilters.branch || "all";
+  if (directoryStatusSelect) directoryStatusSelect.value = directoryFilters.status || "all";
+  if (directorySortSelect) directorySortSelect.value = directoryFilters.sort || "generation";
   populateRelationshipFinder();
   populateTimelineFilters();
   populateDirectoryFilters();
@@ -4717,6 +5120,7 @@ function applyLanguage() {
   if (viewMode === "birthday") renderBirthdayPage();
   if (viewMode === "directory") renderDirectoryPage();
   updateFocusedBranchBar();
+  updateQuickFamilyFilterBar();
   updateViewSwitch();
 
   const branchOptions = branchFilter?.options || [];

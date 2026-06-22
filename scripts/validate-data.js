@@ -63,6 +63,14 @@ function validate(data) {
 
     if (!String(person.name || "").trim()) warnings.push(`${label} has no name.`);
     if (!person.birth) warnings.push(`${label} has no birth date.`);
+    if (!String(person.nickname || "").trim()) warnings.push(`${label} has no nickname.`);
+    if (!["male", "female", "unknown"].includes(person.gender || "")) {
+      warnings.push(`${label} has missing/unknown gender field.`);
+    }
+    if (!["living", "deceased", "unknown"].includes(person.status || "")) {
+      warnings.push(`${label} has missing/invalid status field.`);
+    }
+    if (!String(person.branchId || "").trim()) warnings.push(`${label} has no branchId.`);
 
     const birth = parseDateValue(person.birth);
     const death = parseDateValue(person.death);

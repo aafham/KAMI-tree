@@ -64,11 +64,16 @@ http://localhost:5500
 - Panel profil ahli keluarga.
 - Button aksi dalam profil: fokus dalam tree, cari hubungan, lihat keluarga ini, dan copy link.
 - Salasilah individu bila klik nama: atok/nenek, mak/ayah, adik-beradik, pasangan, dan anak.
+- Breadcrumb salasilah dalam profil supaya laluan keluarga orang dipilih lebih jelas.
+- Quick filter keluarga dalam tree untuk lihat mak/ayah, adik-beradik, anak/cucu, atau keluarga dekat orang dipilih.
 - Focused Branch View asas untuk lihat keluarga terdekat individu yang dipilih.
 - Relationship Finder asas untuk cari hubungan antara dua ahli.
 - Highlight dua ahli yang dibandingkan dalam Relationship Finder.
-- Relationship Finder papar laluan nama dan highlight path dalam tree.
+- Relationship Finder papar laluan nama dan highlight path dalam tree dengan dim pada ahli lain.
 - Family Directory untuk senarai semua ahli dengan search dan filter.
+- Search sokong keyword Bahasa Melayu seperti `lelaki`, `perempuan`, `hidup`, `meninggal`, `cabang`, `mak`, `ayah`, dan `adik beradik`.
+- Data ahli ada field standard `nickname`, `gender`, `status`, dan `branchId`.
+- Mobile topbar ada akses cepat kepada Saya, Cari, Directory, Timeline, dan Settings.
 - Mobile search overlay untuk cari ahli lebih cepat di phone.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
@@ -141,10 +146,17 @@ Fungsi tree yang boleh dibuat:
 4. Klik result nama untuk fokus ke ahli itu.
 5. Atau tekan `Cari & Fokus` selepas menaip.
 
+Contoh search:
+
+- `afham` untuk cari nama.
+- `lelaki` atau `perempuan` untuk cari ikut jantina.
+- `hidup` atau `meninggal` untuk cari ikut status.
+- `menantu`, `cucu`, `anak`, `mak`, `ayah`, atau `adik beradik` untuk cari ikut relation/keyword keluarga.
+- `cabang hamidun` atau nama cabang untuk cari ikut branch keluarga.
+
 Nota:
 
-- Search semasa ialah search nama asas.
-- Search belum lagi sokong fuzzy search, nickname, cabang, atau carian ikut ibu/bapa.
+- Search sudah sokong nama, nickname, relation, gender, status, cabang, dan beberapa keyword Bahasa Melayu. Search belum lagi sokong fuzzy search untuk salah ejaan kecil.
 - Jika nama tidak keluar, semak ejaan nama dalam `data.json`.
 
 ### 6. Guna Paparan Umum
@@ -398,8 +410,11 @@ Cara buka:
 4. Pilih generasi untuk lihat generasi tertentu.
 5. Pilih jantina untuk tapis lelaki/perempuan.
 6. Pilih bulan birthday untuk tapis ahli yang lahir pada bulan tertentu.
-7. Tekan `Reset` untuk kosongkan filter.
-8. Klik mana-mana nama untuk kembali ke tree dan fokus kepada ahli itu.
+7. Pilih cabang keluarga untuk tapis ikut cabang.
+8. Pilih status untuk lihat ahli masih hidup, meninggal, atau data belum lengkap.
+9. Pilih sort untuk susun ikut generasi, nama, umur, atau birthday.
+10. Tekan `Reset` untuk kosongkan filter.
+11. Klik mana-mana nama untuk kembali ke tree dan fokus kepada ahli itu.
 
 Directory sesuai digunakan bila user tidak mahu cari dalam tree besar.
 
@@ -456,6 +471,8 @@ Fungsi mobile:
 
 - Topbar dengan button `Saya`.
 - Topbar dengan button `Cari`.
+- Topbar dengan button `Directory`.
+- Topbar dengan button `Timeline`.
 - Button `Cari` membuka search overlay khas mobile.
 - Button settings.
 - Button `Buka Panel`.
@@ -467,12 +484,14 @@ Fungsi mobile:
 Cara guna mobile:
 
 1. Guna `Cari` untuk buka search overlay dan cari nama ahli.
-2. Tekan `Buka Panel` jika mahu buka controls penuh.
-3. Guna `Saya` untuk fokus diri sendiri jika sudah dipilih.
-4. Guna `Zoom +`, `Zoom -`, dan `Fit Skrin` untuk kawal tree.
-5. Klik kad ahli untuk buka profil.
-6. Tekan birthday card untuk buka birthday page.
-7. Tekan settings icon untuk ubah paparan.
+2. Guna `Directory` untuk buka senarai semua ahli.
+3. Guna `Timeline` untuk buka timeline keluarga.
+4. Tekan `Buka Panel` jika mahu buka controls penuh.
+5. Guna `Saya` untuk fokus diri sendiri jika sudah dipilih.
+6. Guna `Zoom +`, `Zoom -`, dan `Fit Skrin` untuk kawal tree.
+7. Klik kad ahli untuk buka profil.
+8. Tekan birthday card untuk buka birthday page.
+9. Tekan settings icon untuk ubah paparan.
 
 Nota mobile:
 
@@ -525,7 +544,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - Banyak ahli belum ada gambar/avatar.
 - Satu ahli belum ada tarikh lahir.
 - Tarikh meninggal kosong untuk kebanyakan ahli. Perlu beza antara "masih hidup" dan "data belum lengkap".
-- Data belum ada field explicit seperti `gender`, `nickname`, `branchId`, dan `status`.
+- Data sudah ada field explicit seperti `gender`, `nickname`, `branchId`, dan `status`.
 - Branch color masih bergantung kepada ID tertentu.
 - Relationship Finder masih asas, belum ada path penuh atau semua jenis hubungan kompleks.
 - Belum ada automated browser test untuk sahkan desktop dan mobile view secara konsisten.
@@ -551,10 +570,10 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Data semasa ada 15 union keluarga/pasangan.
 - [x] Majoriti ahli ada tarikh lahir.
 - [x] ID ahli digunakan untuk hubungkan parent, spouse, dan children.
-- [ ] Tambah `nickname` untuk nama panggilan.
-- [ ] Tambah `gender` explicit supaya tidak perlu agak daripada nama.
-- [ ] Tambah `branchId` untuk cabang keluarga.
-- [ ] Tambah `status` seperti `living`, `deceased`, atau `unknown`.
+- [x] Tambah `nickname` untuk nama panggilan.
+- [x] Tambah `gender` explicit supaya tidak perlu agak daripada nama.
+- [x] Tambah `branchId` untuk cabang keluarga.
+- [x] Tambah `status` seperti `living`, `deceased`, atau `unknown`.
 - [ ] Tambah `photo` sebenar untuk ahli keluarga.
 - [ ] Tambah `placeOfBirth`, `currentLocation`, atau tempat tinggal jika perlu.
 - [ ] Tambah nota data untuk bezakan "tiada data" dan "tidak berkaitan".
@@ -577,12 +596,13 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Tambah Focused Branch View asas untuk lihat keluarga kecil sahaja.
 - [ ] Tambah collapse/dim cabang lain bila fokus satu cabang.
 - [ ] Tambah label generasi yang lebih jelas seperti Generasi 1, 2, 3, 4.
-- [ ] Tambah breadcrumb salasilah untuk orang dipilih.
+- [x] Tambah breadcrumb salasilah untuk orang dipilih.
 - [x] Tambah button `Fokus dalam tree` dalam panel profil.
 - [x] Tambah button `Lihat keluarga ini` dalam panel profil.
 - [x] Tambah button `Cari hubungan` dalam panel profil.
 - [x] Tambah button `Copy link` dalam panel profil.
-- [ ] Tambah button khusus `Lihat ibu bapa`, `Lihat pasangan`, `Lihat anak`, dan `Lihat adik-beradik`.
+- [x] Tambah quick filter `Mak/Ayah`, `Adik-beradik`, `Anak/Cucu`, dan `Keluarga dekat`.
+- [ ] Tambah button khusus `Lihat pasangan` dalam profil jika masih perlu.
 - [ ] Tambah branch overview untuk setiap anak utama.
 - [ ] Pastikan tree masih selesa bila data bertambah lebih 100 ahli.
 
@@ -593,13 +613,15 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Search ada pada desktop controls.
 - [x] Mobile ada akses search melalui panel/action.
 - [x] Jadikan search lebih jelas sebagai aksi utama di mobile melalui overlay.
+- [x] Search ikut nickname.
+- [x] Search ikut cabang.
+- [x] Search ikut status/gender/relation.
+- [x] Search faham keyword Bahasa Melayu seperti `lelaki`, `perempuan`, `hidup`, `meninggal`, `mak`, `ayah`, dan `adik beradik`.
 - [ ] Tambah fuzzy search untuk salah ejaan kecil.
-- [ ] Search ikut nama panggilan.
-- [ ] Search ikut cabang.
 - [ ] Search ikut generasi.
 - [ ] Search ikut ibu/bapa, contoh "anak Noor Azizan".
 - [ ] Search ikut pasangan.
-- [ ] Search ikut relation seperti cucu, cicit, menantu.
+- [x] Search ikut relation seperti cucu, cicit, menantu.
 - [ ] Papar result search dalam kategori.
 - [ ] Tambah keyboard navigation untuk result search.
 
@@ -608,6 +630,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Panel profil buka bila klik ahli.
 - [x] Profil papar nama, relation, tarikh lahir, note, dan story jika ada.
 - [x] Profil papar salasilah individu.
+- [x] Profil papar breadcrumb salasilah ringkas.
 - [x] Salasilah individu papar atok/nenek.
 - [x] Salasilah individu papar mak/ayah.
 - [x] Salasilah individu papar adik-beradik.
@@ -620,7 +643,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [ ] Tambah tempat tinggal atau lokasi semasa jika sesuai.
 - [ ] Tambah pekerjaan atau info ringkas.
 - [ ] Tambah status data lengkap/tidak lengkap.
-- [ ] Tambah copy link direct kepada ahli tertentu.
+- [x] Tambah copy link direct kepada ahli tertentu.
 - [ ] Tambah print profile individu.
 
 ### 6. Relationship Finder
@@ -635,6 +658,7 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Detect sepupu asas.
 - [x] Highlight ahli yang dibandingkan.
 - [x] Highlight laluan penuh antara dua ahli dalam tree.
+- [x] Dim ahli lain bila path hubungan aktif supaya laluan lebih jelas.
 - [x] Papar laluan nama hubungan, contoh A -> ibu -> nenek -> cucu.
 - [ ] Sokong hubungan menantu/ipar/biras dengan lebih tepat.
 - [ ] Sokong hubungan generasi jauh seperti moyang dan cicit jauh.
@@ -688,10 +712,11 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Directory ada filter generasi.
 - [x] Directory ada filter jantina.
 - [x] Directory ada filter birthday month.
+- [x] Directory ada filter cabang.
+- [x] Directory ada filter status/data belum lengkap.
+- [x] Directory ada sort ikut generasi, nama, umur, atau birthday.
 - [x] Directory ada reset filter.
 - [x] Klik ahli dalam Directory akan kembali ke tree dan fokus orang itu.
-- [ ] Tambah filter cabang dalam Directory.
-- [ ] Tambah sort Directory ikut nama, umur, generasi, atau birthday.
 - [ ] Tambah export Directory ke CSV/PDF.
 
 ### 9. Web View / Desktop
@@ -714,10 +739,11 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Mobile search overlay tersedia.
 - [x] Mobile quick zoom tersedia.
 - [x] Mobile boleh tukar Tree/Timeline/Birthday melalui flow sedia ada.
+- [x] Mobile topbar ada akses cepat ke Directory dan Timeline.
 - [x] Birthday page responsive.
 - [x] List birthday mobile disusun grid/responsive.
 - [x] Jadikan search sebagai aksi utama mobile.
-- [ ] Tambah bottom nav ringkas: Tree, Search, Birthday, Timeline, Settings.
+- [ ] Tambah bottom nav ringkas penuh: Tree, Search, Birthday, Timeline, Settings.
 - [ ] Ringkaskan statistik mobile supaya tree cepat nampak.
 - [x] Focused Branch View asas boleh digunakan di mobile.
 - [ ] Tambah Focused Branch View khas mobile yang lebih ringkas.
@@ -793,16 +819,16 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 1. Putuskan mode sebenar: view-only atau admin/editable.
 2. Bersihkan kod lama yang refer elemen HTML yang sudah tiada.
-3. Tambah `nickname`, `gender`, `branchId`, dan `status` dalam `data.json`.
-4. Kembangkan Focused Branch View supaya boleh pilih jenis keluarga yang mahu dilihat.
-5. Baiki warning data yang tinggal seperti ahli tanpa tarikh lahir.
+3. Kembangkan Focused Branch View supaya boleh pilih jenis keluarga yang mahu dilihat.
+4. Baiki warning data yang tinggal seperti ahli tanpa tarikh lahir.
+5. Tambah gambar/avatar ahli keluarga.
 
 ### Penting selepas itu
 
 1. Tambah gambar/avatar ahli.
 2. Tambah share/copy link untuk ahli tertentu.
 3. Tambah hubungan ipar/biras/menantu yang lebih tepat.
-4. Tambah filter cabang dan sort tambahan dalam Family Directory.
+4. Tambah export Directory ke CSV/PDF.
 5. Buat QA desktop dan mobile dengan viewport tetap.
 
 ### Boleh buat kemudian
