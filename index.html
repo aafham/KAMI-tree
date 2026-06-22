@@ -50,15 +50,18 @@
             <label for="branch-filter" class="label" data-i18n="branchLabel">Tapis cabang</label>
             <select id="branch-filter" class="select"></select>
           </div>
-          <div class="control-group relationship-finder" id="relationship-finder">
-            <label class="label" data-i18n="relationshipTitle">Cari hubungan keluarga</label>
+          <details class="control-group relationship-finder" id="relationship-finder">
+            <summary>
+              <span data-i18n="relationshipTitle">Cari hubungan keluarga</span>
+              <small data-i18n="relationshipSummaryHint">Pilih dua nama untuk lihat hubungan.</small>
+            </summary>
             <div class="relationship-grid">
               <select id="relationship-person-a" class="select"></select>
               <select id="relationship-person-b" class="select"></select>
               <button id="relationship-find" class="btn ghost small" type="button" data-i18n="relationshipFind">Cari Hubungan</button>
             </div>
             <div id="relationship-output" class="relationship-output" aria-live="polite"></div>
-          </div>
+          </details>
           <div class="mobile-actions" aria-label="Aksi mudah alih">
             <div class="control-row mobile-quick">
               <button class="btn ghost" id="m-focus-self" data-action="focus-self" data-i18n="focusSelfShort">Saya</button>
@@ -68,15 +71,21 @@
             </div>
           </div>
           <div class="control-row actions-zoom">
-            <button id="general-view" class="btn ghost" data-i18n="generalView">Paparan Umum</button>
-            <button id="focus-self" class="btn" data-i18n="focusSelf">Fokus Diri Saya</button>
-            <button id="zoom-in" class="btn" data-i18n="zoomIn">Zoom +</button>
-            <button id="zoom-out" class="btn" data-i18n="zoomOut">Zoom -</button>
-            <button id="zoom-reset" class="btn ghost" data-i18n="zoomReset">Reset</button>
-            <button id="zoom-fit" class="btn ghost" data-i18n="fit">Fit Skrin</button>
-            <button id="reset-view" class="btn ghost" data-i18n="resetView">Reset View</button>
-            <button id="view-toggle" class="btn ghost" data-i18n="viewTimeline">Lihat Timeline</button>
-            <button id="directory-toggle" class="btn ghost" data-i18n="viewDirectory">Directory</button>
+            <div class="action-cluster action-cluster--primary">
+              <button id="focus-self" class="btn" data-i18n="focusSelf">Fokus Diri Saya</button>
+              <button id="general-view" class="btn ghost" data-i18n="generalView">Paparan Umum</button>
+            </div>
+            <div class="action-cluster action-cluster--views">
+              <button id="directory-toggle" class="btn ghost" data-i18n="viewDirectory">Directory</button>
+              <button id="view-toggle" class="btn ghost" data-i18n="viewTimeline">Lihat Timeline</button>
+            </div>
+            <div class="action-cluster action-cluster--zoom">
+              <button id="zoom-in" class="btn" data-i18n="zoomIn">Zoom +</button>
+              <button id="zoom-out" class="btn" data-i18n="zoomOut">Zoom -</button>
+              <button id="zoom-fit" class="btn ghost" data-i18n="fit">Fit Skrin</button>
+              <button id="zoom-reset" class="btn ghost" data-i18n="zoomReset">Reset</button>
+              <button id="reset-view" class="btn ghost" data-i18n="resetView">Reset View</button>
+            </div>
           </div>
           <div class="control-group generation-row">
             <div>

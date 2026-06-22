@@ -75,6 +75,7 @@ http://localhost:5500
 - Data ahli ada field standard `nickname`, `gender`, `status`, dan `branchId`.
 - Mobile topbar ada akses cepat kepada Saya, Cari, Directory, Timeline, dan Settings.
 - Mobile search overlay untuk cari ahli lebih cepat di phone.
+- Homepage controls dipolish dengan search utama, relationship finder collapsible, action cluster, dan stats card yang lebih kemas.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -724,9 +725,11 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Header, controls, stats, dan tree tersedia.
 - [x] Layout desktop boleh digunakan untuk scan tree besar.
 - [x] Relationship Finder berada di controls.
+- [x] Relationship Finder boleh dibuka/tutup supaya homepage kurang semak.
 - [x] Settings tersedia.
 - [x] Export JPEG/PDF tersedia.
-- [ ] Jadikan toolbar lebih ringkas untuk desktop.
+- [x] Jadikan toolbar lebih ringkas untuk desktop.
+- [x] Bezakan action utama, view action, dan zoom/tool action.
 - [ ] Jadikan minimap lebih discoverable.
 - [ ] Tambah sticky quick actions untuk Search, Fit, Paparan Umum, dan Relationship Finder.
 - [ ] Buat visual QA desktop untuk viewport 1440x1000.
