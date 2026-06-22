@@ -6,15 +6,28 @@ README ini juga berfungsi sebagai checklist projek. Item bertanda `[x]` sudah di
 
 ## Status Semasa
 
+- Live website utama: https://kami-tree.vercel.app/
 - Data semasa: 68 ahli keluarga, 15 hubungan keluarga/pasangan, dan 67 tarikh birthday dalam `data.json`.
 - Mode data semasa: view-only. Data utama dibaca daripada `data.json`.
 - `storeData()` sengaja dibuat `no-op`, jadi perubahan edit tidak kekal selepas reload.
 - Semakan asas terakhir: `app.js` lulus `node --check`.
-- Semakan static server terakhir: `index.html`, `app.js`, `styles.css`, dan `data.json` return HTTP 200 di localhost.
+- Semakan live utama dibuat melalui link Vercel. Local server hanya pilihan developer jika perlu debug.
 - Website ada dua pengalaman utama: desktop/web view dan mobile view.
-- README dikemas kini pada 2026-06-20.
+- README dikemas kini pada 2026-06-22.
 
-## Cara Jalankan
+## Link Website
+
+Website utama untuk pengguna:
+
+```text
+https://kami-tree.vercel.app/
+```
+
+Semua penggunaan biasa dibuat melalui link Vercel di atas. Tak perlu run local kalau hanya mahu guna website.
+
+## Cara Jalankan Local Untuk Developer
+
+Local server hanya perlu kalau mahu debug atau test perubahan sebelum deploy.
 
 1. Buka folder projek.
 2. Jalankan static server:
@@ -77,6 +90,7 @@ http://localhost:5500
 - Mobile search overlay untuk cari ahli lebih cepat di phone.
 - Homepage controls dipolish dengan search utama, relationship finder compact/collapsible, action row yang lebih minimal, tools tidak terasing, dan stats card yang lebih rendah.
 - Tree desktop default/reset guna overview yang lebih usable supaya user tidak perlu cari tree sendiri selepas reset.
+- Tree overview ada compact card mode bila zoom jauh, mini toolbar desktop di tepi, dan minimap desktop lebih discoverable.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -87,21 +101,15 @@ Bahagian ini menerangkan semua fungsi utama yang boleh dibuat dalam website dan 
 
 ### 1. Buka Website
 
-1. Jalankan server static dengan command:
-
-```bash
-python -m http.server 5500
-```
-
-2. Buka browser dan pergi ke:
+1. Buka link rasmi website:
 
 ```text
-http://localhost:5500
+https://kami-tree.vercel.app/
 ```
 
-3. Website akan load data daripada `data.json`.
-4. Paparan awal ialah `Paparan Umum`, bukan fokus kepada seorang ahli tertentu.
-5. Jika tree nampak jauh atau tidak terus nampak, tekan `Fit Skrin`.
+2. Website akan load data daripada `data.json`.
+3. Paparan awal ialah `Paparan Umum`, bukan fokus kepada seorang ahli tertentu.
+4. Jika tree nampak jauh atau tidak terus nampak, tekan `Fit Skrin` atau `Reset View`.
 
 ### 2. Faham Paparan Utama
 
@@ -562,7 +570,8 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] README menerangkan cara jalankan website.
 - [x] README ada status semasa projek.
 - [x] README ada checklist penuh.
-- [ ] Tambah arahan deploy ke GitHub Pages, Netlify, atau Vercel.
+- [x] Tambah link live Vercel sebagai website utama.
+- [ ] Tambah arahan deploy semula ke Vercel jika proses deploy perlu didokumenkan.
 - [ ] Tambah changelog ringkas untuk rekod update besar.
 - [ ] Tambah versi projek seperti `v0.1`, `v0.2`, dan seterusnya.
 
@@ -738,7 +747,9 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Rendahkan stats card supaya tree lebih cepat muncul.
 - [x] Smoothkan dark mode header transition.
 - [x] Kurangkan ruang kosong tree dan tambah padding bawah supaya mini toolbar tidak tindih kad.
-- [ ] Jadikan minimap lebih discoverable.
+- [x] Jadikan minimap lebih discoverable di desktop.
+- [x] Pindahkan mini toolbar desktop ke tepi supaya tidak menutup kad bawah.
+- [x] Tambah compact card mode bila tree di zoom jauh.
 - [ ] Tambah sticky quick actions untuk Search, Fit, Paparan Umum, dan Relationship Finder.
 - [ ] Buat visual QA desktop untuk viewport 1440x1000.
 - [ ] Buat visual QA desktop untuk viewport 1024x768.

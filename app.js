@@ -223,6 +223,7 @@ let activeQuickFamilyFilter = "";
 let quickFamilyPeople = new Set();
 let activeRelationshipTargets = [];
 let activeRelationshipPath = [];
+let minimapAutoPeekDone = false;
 let directoryFilters = {
   query: "",
   generation: "all",
@@ -3569,6 +3570,7 @@ function applyZoom() {
   if (!Number.isFinite(scale) || scale <= 0) {
     scale = 1;
   }
+  document.body.classList.toggle("overview-zoom", scale < 0.72);
   treeCanvas.style.transform = `scale(${scale})`;
   treeLines.style.transform = `scale(${scale})`;
   treeZoom.style.width = `${baseSize.width * scale}px`;
@@ -4891,8 +4893,8 @@ function fitOverview(behavior = "auto") {
   if (!treeCanvas.children.length) return;
   const bounds = getVisibleTreeBounds();
   if (!bounds) return;
-  const horizontalPad = isMobileView() ? 28 : 80;
-  const verticalPad = isMobileView() ? 34 : 70;
+  const horizontalPad = isMobileView() ? 24 : 48;
+  const verticalPad = isMobileView() ? 28 : 44;
   const usableWidth = Math.max(280, treeWrap.clientWidth - horizontalPad);
   const usableHeight = Math.max(260, treeWrap.clientHeight - verticalPad);
   const targetScale = Math.min(usableWidth / bounds.width, usableHeight / bounds.height);
@@ -4986,6 +4988,7 @@ function focusInitialTree() {
   if (initialFocusDone || viewMode !== "tree") return;
   initialFocusDone = true;
   focusGeneralView(false);
+  scheduleMinimapPeek();
 }
 
 function focusGeneralView(animate = true) {
@@ -5010,6 +5013,22 @@ function focusGeneralView(animate = true) {
   if (storyPanel) storyPanel.hidden = true;
   setStoryPanelOpen(false);
   fitOverview(animate ? "smooth" : "auto");
+}
+
+function scheduleMinimapPeek() {
+  if (minimapAutoPeekDone || isMobileView()) return;
+  minimapAutoPeekDone = true;
+  window.setTimeout(() => {
+    const minimapWrap = document.querySelector(".brand-minimap-wrap");
+    if (!minimapWrap || document.body.classList.contains("minimap-disabled")) return;
+    minimapWrap.classList.add("is-open");
+    minimapWrap.classList.remove("is-collapsed");
+    window.setTimeout(() => {
+      if (minimapWrap.matches(":hover") || minimapWrap.contains(document.activeElement)) return;
+      minimapWrap.classList.remove("is-open");
+      minimapWrap.classList.add("is-collapsed");
+    }, 4200);
+  }, 900);
 }
 
 function applyLineageHighlight() {

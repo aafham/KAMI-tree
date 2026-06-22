@@ -345,10 +345,11 @@ body[data-theme="dark"] {
   justify-content: center;
   padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  background: color-mix(in srgb, var(--bg-soft) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+  background: color-mix(in srgb, var(--card) 82%, var(--primary) 18%);
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
   box-shadow: var(--shadow-soft);
   transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
@@ -376,7 +377,9 @@ body[data-theme="dark"] {
 }
 
 [data-theme="dark"] .minimap-handle {
-  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(123, 199, 163, 0.12);
+  border-color: rgba(123, 199, 163, 0.32);
+  color: #eef6f1;
 }
 
 [data-theme="dark"] .minimap-label,
@@ -858,15 +861,16 @@ input[type="file"].input {
 
 .mini-toolbar {
   position: fixed;
-  left: 50%;
-  bottom: 28px;
-  transform: translateX(-50%) translateY(12px);
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%) translateX(12px);
   opacity: 0;
   pointer-events: none;
   display: inline-flex;
+  flex-direction: column;
   gap: 6px;
   padding: 8px;
-  border-radius: 999px;
+  border-radius: 18px;
   background: color-mix(in srgb, var(--card) 85%, transparent);
   border: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 14px 34px rgba(31, 42, 36, 0.16);
@@ -877,7 +881,7 @@ input[type="file"].input {
 .mini-toolbar.is-visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(-50%) translateX(0);
 }
 
 .gen-chip {
@@ -2478,6 +2482,11 @@ body.compact .person-name {
   position: relative;
 }
 
+body.overview-zoom .person-card {
+  padding: 12px;
+  gap: 6px;
+}
+
 .person-card.soft-peach {
   background: var(--soft-peach);
 }
@@ -2592,6 +2601,10 @@ body.compact .person-name {
   align-items: center;
 }
 
+body.overview-zoom .person-header {
+  gap: 9px;
+}
+
 .avatar {
   width: 48px;
   height: 48px;
@@ -2605,6 +2618,12 @@ body.compact .person-name {
   flex-shrink: 0;
   overflow: hidden;
   aspect-ratio: 1 / 1;
+}
+
+body.overview-zoom .avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 12px;
 }
 
 .avatar img {
@@ -2627,6 +2646,11 @@ body.compact .person-name {
   min-height: calc(2.4em * var(--card-scale));
 }
 
+body.overview-zoom .person-name {
+  font-size: 13px;
+  min-height: auto;
+}
+
 .gen-badge {
   display: inline-block;
   font-size: 10px;
@@ -2643,6 +2667,15 @@ body.compact .person-name {
 .person-meta {
   color: var(--muted);
   font-size: calc(13px * var(--card-scale));
+}
+
+body.overview-zoom .person-birth,
+body.overview-zoom .person-tags {
+  display: none;
+}
+
+body.overview-zoom .person-age {
+  font-size: 12px;
 }
 
 .person-tags {
@@ -3216,7 +3249,17 @@ body.hide-tags .person-tags {
   }
 
   .mini-toolbar {
-    display: none !important;
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: 28px;
+    flex-direction: row;
+    border-radius: 999px;
+    transform: translateX(-50%) translateY(12px);
+  }
+
+  .mini-toolbar.is-visible {
+    transform: translateX(-50%) translateY(0);
   }
 
   .brand-minimap-wrap:not(.is-open) .minimap,
