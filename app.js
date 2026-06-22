@@ -2314,7 +2314,6 @@ function drawLines(root, visibleNodes) {
   const visibleSet = new Set(visibleNodes.map((node) => node.id));
   treeLines.innerHTML = "";
   if (!treeCanvas) return;
-  const canvasBox = treeCanvas.getBoundingClientRect();
 
   function drawNodeEdges(node) {
     if (node.type === "union") {
@@ -2337,80 +2336,32 @@ function drawLines(root, visibleNodes) {
 
       if (childPoints.length > 0) {
         const midY = (parentBottomY + Math.min(...childPoints.map((p) => p.y))) / 2;
-        const minX = Math.min(...childPoints.map((p) => p.x));
-        const maxX = Math.max(...childPoints.map((p) => p.x));
         const stroke = `${branchPalette[node.branchId] || "#7a8a80"}CC`;
-        const barPad = 14;
-        const barInset = 6;
-
-        const trunk = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        trunk.setAttribute("d", `M ${parentCenterX} ${parentBottomY} V ${midY}`);
-        trunk.setAttribute("fill", "none");
-        trunk.setAttribute("stroke", stroke);
-        trunk.setAttribute("stroke-width", "2.5");
-        trunk.setAttribute("stroke-linecap", "round");
-        treeLines.appendChild(trunk);
-
-        const bar = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        if (minX === maxX) {
-          bar.setAttribute("x1", minX - barPad);
-          bar.setAttribute("x2", maxX + barPad);
-        } else {
-          const x1 = minX + barInset;
-          const x2 = maxX - barInset;
-          if (x2 - x1 < barPad * 2) {
-            bar.setAttribute("x1", minX - barPad);
-            bar.setAttribute("x2", maxX + barPad);
-          } else {
-            bar.setAttribute("x1", x1);
-            bar.setAttribute("x2", x2);
-          }
-        }
-        bar.setAttribute("y1", midY);
-        bar.setAttribute("y2", midY);
-        bar.setAttribute("stroke", stroke);
-        bar.setAttribute("stroke-width", "2.5");
-        bar.setAttribute("stroke-linecap", "round");
-        treeLines.appendChild(bar);
-
-        if (childPoints.length > 1) {
-          const sorted = [...childPoints].sort((a, b) => a.x - b.x);
-          for (let i = 0; i < sorted.length - 1; i += 1) {
-            const midX = (sorted[i].x + sorted[i + 1].x) / 2;
-            const divider = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            divider.setAttribute("x1", midX);
-            divider.setAttribute("y1", midY - 6);
-            divider.setAttribute("x2", midX);
-            divider.setAttribute("y2", midY + 6);
-            divider.setAttribute("stroke", stroke);
-            divider.setAttribute("stroke-width", "2");
-            divider.setAttribute("stroke-linecap", "round");
-            treeLines.appendChild(divider);
-          }
-        }
 
         childPoints.forEach((point) => {
-          const stem = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          stem.setAttribute("d", `M ${point.x} ${midY} V ${point.y}`);
-          stem.setAttribute("fill", "none");
-          stem.setAttribute("stroke", stroke);
-          stem.setAttribute("stroke-width", "2.5");
-          stem.setAttribute("stroke-linecap", "round");
-          treeLines.appendChild(stem);
+          const branch = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          branch.setAttribute("d", `M ${parentCenterX} ${parentBottomY} V ${midY} H ${point.x} V ${point.y}`);
+          branch.setAttribute("fill", "none");
+          branch.setAttribute("stroke", stroke);
+          branch.setAttribute("stroke-width", "2.5");
+          branch.setAttribute("stroke-linecap", "round");
+          branch.setAttribute("stroke-linejoin", "round");
+          treeLines.appendChild(branch);
         });
       }
 
       const partnerCards = parentEl.querySelectorAll(".person-card");
       if (partnerCards.length === 2) {
-        const leftBox = partnerCards[0].getBoundingClientRect();
-        const rightBox = partnerCards[1].getBoundingClientRect();
-        const y = leftBox.top - canvasBox.top + leftBox.height / 2;
-        const x1 = leftBox.right - canvasBox.left;
-        const x2 = rightBox.left - canvasBox.left;
+        const leftCard = partnerCards[0];
+        const rightCard = partnerCards[1];
+        const y = parentEl.offsetTop + leftCard.offsetTop + leftCard.offsetHeight / 2;
+        const x1 = parentEl.offsetLeft + leftCard.offsetLeft + leftCard.offsetWidth;
+        const x2 = parentEl.offsetLeft + rightCard.offsetLeft;
+        if (x2 - x1 <= 4) return;
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1 + 8);
+        line.setAttribute("x1", x1 + 2);
         line.setAttribute("y1", y);
-        line.setAttribute("x2", x2 - 8);
+        line.setAttribute("x2", x2 - 2);
         line.setAttribute("y2", y);
         line.setAttribute("stroke", `${branchPalette[node.branchId] || "#7a8a80"}CC`);
         line.setAttribute("stroke-width", "2.5");
