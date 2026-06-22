@@ -134,6 +134,7 @@ const focusedBranchLabel = document.getElementById("focused-branch-label");
 const focusedBranchClearBtn = document.getElementById("focused-branch-clear");
 const quickFamilyFilter = document.getElementById("quick-family-filter");
 const quickFamilyLabel = document.getElementById("quick-family-label");
+const treeViewModeBtns = document.querySelectorAll("[data-tree-view-mode]");
 
 
 function on(el, event, handler, options) {
@@ -224,6 +225,7 @@ let quickFamilyPeople = new Set();
 let activeRelationshipTargets = [];
 let activeRelationshipPath = [];
 let minimapAutoPeekDone = false;
+let treeDisplayMode = "overview";
 let directoryFilters = {
   query: "",
   generation: "all",
@@ -259,6 +261,9 @@ const i18n = {
     viewTree: "Lihat Tree",
     treeToolbarTitle: "Tree Keluarga",
     treeToolbarHint: "Drag atau scroll untuk lihat cabang lain.",
+    treeModeOverview: "Overview",
+    treeModeDetail: "Detail",
+    treeModeBranch: "Branch",
     treeScrollGuide: "← Drag / scroll untuk lihat cabang keluarga lain →",
     compactOn: "Mode Penuh",
     compactOff: "Mode Ringkas",
@@ -491,6 +496,9 @@ const i18n = {
     viewTree: "Tree View",
     treeToolbarTitle: "Family Tree",
     treeToolbarHint: "Drag or scroll to view other branches.",
+    treeModeOverview: "Overview",
+    treeModeDetail: "Detail",
+    treeModeBranch: "Branch",
     treeScrollGuide: "← Drag / scroll to view other family branches →",
     compactOn: "Full Mode",
     compactOff: "Compact Mode",
@@ -802,6 +810,7 @@ function toggleControlsCollapsed(nextState) {
     localStorage.setItem(MOBILE_CONTROLS_KEY, controlsCollapsed ? "1" : "0");
   }
   updateSheetHandleState();
+  updateMiniToolbarVisibility();
   savePrefs();
 }
 
@@ -1386,6 +1395,8 @@ function initFromData(data) {
   if (prefs.showAge !== undefined) showAge = Boolean(prefs.showAge);
   if (prefs.showTags !== undefined) showTags = Boolean(prefs.showTags);
   if (prefs.defaultView) defaultView = prefs.defaultView;
+  if (prefs.treeDisplayMode) treeDisplayMode = prefs.treeDisplayMode;
+  if (!["overview", "detail", "branch"].includes(treeDisplayMode)) treeDisplayMode = "overview";
   if (!BRANCH_FILTER_ENABLED) branchFilterValue = "all";
   if (!GENERATION_FILTER_ENABLED) hiddenGenerations.clear();
 
@@ -1418,7 +1429,7 @@ function initFromData(data) {
   applyDetailsVisibility();
   if (themePresetSelect) themePresetSelect.value = themePreset;
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
-  if (settingsResetSelf) settingsResetSelf.textContent = t.resetSelf;
+  if (settingsResetSelf) settingsResetSelf.textContent = (i18n[lang] || i18n.ms).resetSelf;
   if (settingsCompact) settingsCompact.checked = compactMode;
   if (settingsMinimap) settingsMinimap.checked = minimapEnabled;
   if (settingsDrag) settingsDrag.checked = dragToPan;
@@ -1579,7 +1590,8 @@ function savePrefs() {
     showBirthdate,
     showAge,
     showTags,
-    defaultView
+    defaultView,
+    treeDisplayMode
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
@@ -3189,7 +3201,7 @@ function setQuickFamilyFilter(mode) {
   focusPerson(selectedPersonId, false, true);
 }
 
-function setFocusedBranch(personId) {
+function setFocusedBranch(personId, openProfile = true) {
   const person = peopleById.get(personId);
   if (!person) return;
   clearQuickFamilyFilter(false);
@@ -3205,7 +3217,7 @@ function setFocusedBranch(personId) {
   renderScene();
   applyZoom();
   updateFocusedBranchBar();
-  focusPerson(personId, true, true);
+  focusPerson(personId, openProfile, true);
 }
 
 function clearFocusedBranch(render = true) {
@@ -3577,6 +3589,7 @@ function applyZoom() {
     scale = 1;
   }
   document.body.classList.toggle("overview-zoom", scale < 0.72);
+  document.body.dataset.treeMode = treeDisplayMode;
   treeCanvas.style.transform = `scale(${scale})`;
   treeLines.style.transform = `scale(${scale})`;
   treeZoom.style.width = `${baseSize.width * scale}px`;
@@ -3725,6 +3738,8 @@ if (zoomResetBtn) {
 
 if (zoomFitBtn) {
   zoomFitBtn.addEventListener("click", () => {
+    treeDisplayMode = "overview";
+    updateTreeModeButtons();
     fitToScreen();
     savePrefs();
   });
@@ -3747,6 +3762,8 @@ if (focusSelfBtn) {
 
 if (generalViewBtn) {
   generalViewBtn.addEventListener("click", () => {
+    treeDisplayMode = "overview";
+    updateTreeModeButtons();
     focusGeneralView();
   });
 }
@@ -4131,6 +4148,7 @@ let scrollStopTimer = null;
 if (treeWrap) {
   treeWrap.addEventListener("scroll", () => {
     updateMinimap();
+    updateMiniToolbarVisibility();
     if (scrollStopTimer) clearTimeout(scrollStopTimer);
     if (isPanning || mousePanning) return;
     if (!virtualizationEnabled) return;
@@ -4516,8 +4534,17 @@ document.querySelectorAll("[data-stat-action]").forEach((card) => {
 document.querySelectorAll("[data-tree-action]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const action = btn.dataset.treeAction;
-    if (action === "fit") fitToScreen();
-    if (action === "reset") focusGeneralView();
+    if (action === "fit") {
+      treeDisplayMode = "overview";
+      updateTreeModeButtons();
+      fitToScreen();
+      savePrefs();
+    }
+    if (action === "reset") {
+      treeDisplayMode = "overview";
+      updateTreeModeButtons();
+      focusGeneralView();
+    }
     if (action === "minimap") {
       const minimapWrap = document.querySelector(".brand-minimap-wrap");
       if (minimapWrap) {
@@ -4525,6 +4552,12 @@ document.querySelectorAll("[data-tree-action]").forEach((btn) => {
         minimapWrap.classList.remove("is-collapsed");
       }
     }
+  });
+});
+
+treeViewModeBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    applyTreeDisplayMode(btn.dataset.treeViewMode || "overview", { behavior: "smooth" });
   });
 });
 
@@ -4796,9 +4829,11 @@ function updateMiniToolbarVisibility() {
     return;
   }
   const controlsPanel = document.querySelector(".controls");
-  if (!controlsPanel) return;
+  if (!controlsPanel || !treeWrap) return;
   const rect = controlsPanel.getBoundingClientRect();
-  const shouldShow = rect.bottom < 0;
+  const treeRect = treeWrap.getBoundingClientRect();
+  const treeVisible = treeRect.bottom > 160 && treeRect.top < window.innerHeight - 120;
+  const shouldShow = isMobileView() ? controlsCollapsed && treeVisible : rect.bottom < 0 && treeVisible;
   miniToolbar.classList.toggle("is-visible", shouldShow);
 }
 
@@ -4946,6 +4981,65 @@ function fitOverview(behavior = "auto") {
   scheduleRender();
 }
 
+function getDefaultTreeFocusPerson() {
+  if (selectedPersonId && peopleById.has(selectedPersonId)) return peopleById.get(selectedPersonId);
+  const self = findSelfPerson();
+  if (self) return self;
+  return findElderPerson();
+}
+
+function updateTreeModeButtons() {
+  treeViewModeBtns.forEach((btn) => {
+    const active = btn.dataset.treeViewMode === treeDisplayMode;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", active.toString());
+  });
+  document.body.dataset.treeMode = treeDisplayMode;
+}
+
+function applyTreeDisplayMode(mode = treeDisplayMode, options = {}) {
+  if (!["overview", "detail", "branch"].includes(mode)) mode = "overview";
+  treeDisplayMode = mode;
+  updateTreeModeButtons();
+  if (viewMode !== "tree") {
+    viewMode = "tree";
+    applyViewMode();
+    updateViewSwitch();
+  }
+  if (mode === "overview") {
+    if (focusedBranchPersonId) clearFocusedBranch(false);
+    clearQuickFamilyFilter(false);
+    renderScene();
+    applyZoom();
+    fitOverview(options.behavior || "smooth");
+    savePrefs();
+    return;
+  }
+  const focusPersonTarget = getDefaultTreeFocusPerson();
+  if (mode === "branch") {
+    if (focusPersonTarget) {
+      setFocusedBranch(focusPersonTarget.id, false);
+    } else {
+      renderScene();
+      applyZoom();
+      centerVisibleTree(options.behavior || "smooth");
+    }
+    savePrefs();
+    return;
+  }
+  if (focusedBranchPersonId) clearFocusedBranch(false);
+  clearQuickFamilyFilter(false);
+  scale = Math.max(0.9, Math.min(1.15, scale || 1));
+  renderScene();
+  applyZoom();
+  if (focusPersonTarget) {
+    focusPerson(focusPersonTarget.id, false, true);
+  } else {
+    centerVisibleTree(options.behavior || "smooth");
+  }
+  savePrefs();
+}
+
 function findElderPerson() {
   const elderByRelation = treeData.people.find((p) => {
     const relation = (p.relation || "").toLowerCase();
@@ -5028,12 +5122,18 @@ function hasUrlFocus() {
 function focusInitialTree() {
   if (initialFocusDone || viewMode !== "tree") return;
   initialFocusDone = true;
-  focusGeneralView(false);
+  if (treeDisplayMode === "overview") {
+    focusGeneralView(false);
+  } else {
+    applyTreeDisplayMode(treeDisplayMode, { behavior: "auto" });
+  }
   scheduleMinimapPeek();
 }
 
 function focusGeneralView(animate = true) {
   if (!treeWrap) return;
+  treeDisplayMode = "overview";
+  updateTreeModeButtons();
   const hadFocusedBranch = Boolean(focusedBranchPersonId);
   if (hadFocusedBranch) clearFocusedBranch(false);
   if (viewMode !== "tree") {
@@ -5059,17 +5159,7 @@ function focusGeneralView(animate = true) {
 function scheduleMinimapPeek() {
   if (minimapAutoPeekDone || isMobileView()) return;
   minimapAutoPeekDone = true;
-  window.setTimeout(() => {
-    const minimapWrap = document.querySelector(".brand-minimap-wrap");
-    if (!minimapWrap || document.body.classList.contains("minimap-disabled")) return;
-    minimapWrap.classList.add("is-open");
-    minimapWrap.classList.remove("is-collapsed");
-    window.setTimeout(() => {
-      if (minimapWrap.matches(":hover") || minimapWrap.contains(document.activeElement)) return;
-      minimapWrap.classList.remove("is-open");
-      minimapWrap.classList.add("is-collapsed");
-    }, 4200);
-  }, 900);
+  updateMinimap();
 }
 
 function applyLineageHighlight() {
@@ -5213,6 +5303,7 @@ function applyLanguage() {
   populateDirectoryFilters();
   updateTimelineMoreState();
   updateTimelineActiveFilters();
+  updateTreeModeButtons();
   if (viewMode === "birthday") renderBirthdayPage();
   if (viewMode === "directory") renderDirectoryPage();
   updateFocusedBranchBar();

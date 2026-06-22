@@ -764,6 +764,8 @@ input[type="file"].input {
 }
 
 .actions-zoom {
+  display: grid;
+  grid-template-columns: auto auto minmax(300px, 1fr) auto;
   align-items: center;
   gap: 10px 18px;
 }
@@ -786,10 +788,12 @@ input[type="file"].input {
 
 .action-cluster--zoom {
   margin-left: auto;
+  justify-self: end;
 }
 
 .actions-zoom .export-actions {
   margin-left: 0;
+  justify-self: end;
 }
 
 .mobile-actions {
@@ -874,7 +878,7 @@ input[type="file"].input {
   background: color-mix(in srgb, var(--card) 85%, transparent);
   border: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 14px 34px rgba(31, 42, 36, 0.16);
-  z-index: 40;
+  z-index: 80;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -1080,8 +1084,19 @@ input[type="file"].input {
 }
 
 [data-theme="dark"] .tree-toolbar {
-  background: rgba(255, 255, 255, 0.035);
-  border-color: rgba(220, 235, 226, 0.12);
+  background: linear-gradient(180deg, rgba(21, 34, 29, 0.94), rgba(13, 24, 20, 0.96));
+  border-color: rgba(220, 235, 226, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="dark"] .tree-view-modes {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(220, 235, 226, 0.14);
+}
+
+[data-theme="dark"] .tree-view-modes .btn.is-active {
+  background: color-mix(in srgb, var(--primary) 82%, #fff);
+  color: #0d1512;
 }
 
 [data-theme="dark"] .gen-chip {
@@ -1284,6 +1299,9 @@ input[type="file"].input {
 }
 
 .tree-toolbar {
+  position: sticky;
+  top: 10px;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1291,7 +1309,8 @@ input[type="file"].input {
   margin: 0 0 10px;
   padding: 10px 12px;
   border-radius: 16px;
-  background: color-mix(in srgb, var(--card) 72%, transparent);
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: blur(14px);
   border: 1px solid rgba(79, 138, 106, 0.12);
   box-shadow: var(--shadow-soft);
 }
@@ -1314,6 +1333,29 @@ input[type="file"].input {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.tree-view-modes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  border: 1px solid rgba(79, 138, 106, 0.12);
+}
+
+.tree-view-modes .btn {
+  min-height: 34px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.tree-view-modes .btn.is-active {
+  background: var(--primary);
+  color: #fff;
+  border-color: transparent;
 }
 
 .tree-scroll-guide {
@@ -1341,7 +1383,7 @@ input[type="file"].input {
 
 .tree-wrap {
   position: relative;
-  min-height: min(68vh, 720px);
+  min-height: clamp(560px, 70vh, 760px);
   border-radius: 24px;
   background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
   overflow: auto;
@@ -1351,6 +1393,11 @@ input[type="file"].input {
   cursor: grab;
   border: 1px solid rgba(0, 0, 0, 0.08);
   touch-action: pan-x pan-y;
+}
+
+body[data-tree-mode="detail"] .tree-wrap,
+body[data-tree-mode="branch"] .tree-wrap {
+  min-height: clamp(600px, 74vh, 820px);
 }
 
 .tree-wrap.pinch-zooming {
@@ -3089,6 +3136,10 @@ body.hide-tags .person-tags {
 }
 
 @media (max-width: 900px) {
+  .actions-zoom {
+    display: flex;
+  }
+
   .tree-wrap {
     padding: 24px;
   }
@@ -3216,27 +3267,35 @@ body.hide-tags .person-tags {
     right: 0;
     bottom: 0;
     z-index: 1200;
-    padding: 0 12px 12px;
+    padding: 0 12px calc(12px + env(safe-area-inset-bottom));
     max-width: 100vw;
+    pointer-events: none;
   }
 
   .bottom-sheet .controls {
     border-radius: 20px;
     max-height: 70vh;
     overflow: auto;
-    padding-bottom: 18px;
+    padding-bottom: 20px;
     transition: max-height 0.25s ease, opacity 0.25s ease;
     width: 100%;
     min-width: 0;
+    pointer-events: auto;
+    background: #fffdf8;
+    box-shadow: 0 22px 60px rgba(31, 42, 36, 0.22);
+  }
+
+  [data-theme="dark"] .bottom-sheet .controls {
+    background: #101b17;
   }
 
   .sheet-handle {
     display: flex;
     height: 24px;
-    display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 8px;
+    pointer-events: auto;
   }
 
   .sheet-handle::before {
@@ -3248,24 +3307,28 @@ body.hide-tags .person-tags {
   }
 
   .mobile-panel-btn {
-    display: inline-flex;
+    display: none;
     position: fixed;
     left: 12px;
     right: 12px;
     bottom: calc(10px + env(safe-area-inset-bottom));
     z-index: 1300;
+    pointer-events: auto;
   }
 
   body.controls-collapsed .bottom-sheet .controls {
-    max-height: 56px;
-    overflow: hidden;
-    opacity: 0.75;
+    display: none;
   }
 
-  body.controls-collapsed .bottom-sheet .controls .control-group,
-  body.controls-collapsed .bottom-sheet .controls .control-row,
-  body.controls-collapsed .bottom-sheet .controls .generation-row,
-  body.controls-collapsed .bottom-sheet .controls .validate-output {
+  body.controls-collapsed .sheet-handle {
+    display: none;
+  }
+
+  body.controls-collapsed .mobile-panel-btn {
+    display: inline-flex;
+  }
+
+  body:not(.controls-collapsed) .mobile-panel-btn {
     display: none;
   }
 
@@ -3313,7 +3376,7 @@ body.hide-tags .person-tags {
     left: 50%;
     right: auto;
     top: auto;
-    bottom: 28px;
+    bottom: calc(72px + env(safe-area-inset-bottom));
     flex-direction: row;
     border-radius: 999px;
     transform: translateX(-50%) translateY(12px);
@@ -3326,6 +3389,7 @@ body.hide-tags .person-tags {
   .tree-toolbar {
     align-items: flex-start;
     flex-direction: column;
+    top: 72px;
   }
 
   .tree-toolbar-actions {
@@ -3334,6 +3398,14 @@ body.hide-tags .person-tags {
 
   .tree-toolbar-actions .btn {
     flex: 1 1 auto;
+  }
+
+  .tree-view-modes {
+    width: 100%;
+  }
+
+  .tree-view-modes .btn {
+    flex: 1 1 0;
   }
 
   .brand-minimap-wrap:not(.is-open) .minimap,
@@ -3540,7 +3612,7 @@ body.hide-tags .person-tags {
   }
 
   .mini-toolbar {
-    bottom: 12px;
+    bottom: calc(72px + env(safe-area-inset-bottom));
   }
 }
 
@@ -3617,8 +3689,9 @@ body.hide-tags .person-tags {
   }
 
   .brand-minimap-wrap {
-    right: 10px;
-    bottom: 10px;
+    right: auto;
+    left: 12px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
   }
 }
 
@@ -3671,9 +3744,3 @@ body.hide-tags .person-tags {
     margin: 10mm;
   }
 }
-
-
-  .brand-minimap-wrap {
-    right: 12px;
-    bottom: 12px;
-  }

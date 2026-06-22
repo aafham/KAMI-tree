@@ -90,9 +90,12 @@ http://localhost:5500
 - Mobile search overlay untuk cari ahli lebih cepat di phone.
 - Homepage controls dipolish dengan search utama, relationship finder compact/collapsible, action row yang lebih minimal, tools tidak terasing, dan stats card yang lebih rendah.
 - Tree desktop default/reset guna overview yang lebih usable supaya user tidak perlu cari tree sendiri selepas reset.
-- Tree overview ada compact card mode bila zoom jauh, mini toolbar desktop di tepi, dan minimap desktop lebih discoverable.
+- Tree ada mode `Overview`, `Detail`, dan `Branch` untuk tukar cara view salasilah.
+- Tree overview ada compact card mode bila zoom jauh dan mini toolbar desktop di tepi.
+- Minimap tidak auto buka secara mengganggu; pengguna boleh buka manual melalui toolbar.
 - Tree ada toolbar ringkas, scroll guide, stats card clickable, dan label generasi yang lebih subtle.
 - Layout tree sudah disemak untuk elak card individu bertindih ketika zoom normal, zoom in, zoom out, dan English label.
+- Mobile control panel dibuat sebagai bottom sheet yang default tertutup, boleh buka/tutup, dan tidak menutup home/tree secara kekal.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
 - Export tree kepada JPEG/PDF.
@@ -132,7 +135,10 @@ Pada paparan utama, pengguna akan nampak:
 4. Tekan `Reset` untuk kembali kepada zoom asal.
 5. Tekan `Fit Skrin` untuk muatkan tree dalam skrin.
 6. Tekan `Reset View` untuk reset paparan tree.
-7. Klik mana-mana kad ahli keluarga untuk buka panel profil mereka.
+7. Guna `Overview` untuk nampak lebih banyak cabang sekali gus.
+8. Guna `Detail` untuk baca kad ahli dengan saiz lebih selesa.
+9. Guna `Branch` untuk fokus kepada keluarga terdekat orang dipilih, diri sendiri, atau root keluarga.
+10. Klik mana-mana kad ahli keluarga untuk buka panel profil mereka.
 
 Fungsi tree yang boleh dibuat:
 
@@ -487,7 +493,9 @@ Fungsi mobile:
 - Topbar dengan button `Timeline`.
 - Button `Cari` membuka search overlay khas mobile.
 - Button settings.
-- Button `Buka Panel`.
+- Button `Buka Panel` untuk buka controls penuh.
+- Panel mobile default tertutup untuk pengguna baru supaya home dan tree lebih mudah dilihat.
+- Panel boleh ditutup semula melalui handle atau button `Tutup Panel`.
 - Mobile quick actions untuk zoom dan fit screen.
 - Tree masih boleh pan/zoom.
 - Birthday page responsive.
@@ -604,6 +612,9 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 - [x] Minimap tersedia.
 - [x] Auto-focus root/general view selepas load.
 - [x] Default/reset tree desktop guna overview/fit yang lebih mudah dilihat.
+- [x] Tambah tree view mode `Overview`, `Detail`, dan `Branch`.
+- [x] Matikan auto-open minimap supaya first view tidak terganggu.
+- [x] Mini toolbar hanya muncul bila tree sedang dilihat dan panel utama sudah keluar viewport.
 - [x] Ada `Paparan Umum`.
 - [x] Ada `Pilih/Fokus Diri Saya`.
 - [x] Pilihan diri sendiri disimpan per browser/device.
@@ -765,6 +776,8 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 - [x] Mobile view ada topbar.
 - [x] Mobile view ada bottom sheet/panel.
+- [x] Mobile panel default tertutup untuk pengguna baru.
+- [x] Mobile panel boleh buka/tutup tanpa menutup home/tree secara kekal.
 - [x] Mobile search overlay tersedia.
 - [x] Mobile quick zoom tersedia.
 - [x] Mobile boleh tukar Tree/Timeline/Birthday melalui flow sedia ada.

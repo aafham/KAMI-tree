@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260208" />
+  <link rel="stylesheet" href="styles.css?v=20260209" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -162,6 +162,11 @@
           <span data-i18n="treeToolbarHint">Drag atau scroll untuk lihat cabang lain.</span>
         </div>
         <div class="tree-toolbar-actions">
+          <div class="tree-view-modes" role="group" aria-label="Tree view mode">
+            <button class="btn ghost small is-active" type="button" data-tree-view-mode="overview" data-i18n="treeModeOverview">Overview</button>
+            <button class="btn ghost small" type="button" data-tree-view-mode="detail" data-i18n="treeModeDetail">Detail</button>
+            <button class="btn ghost small" type="button" data-tree-view-mode="branch" data-i18n="treeModeBranch">Branch</button>
+          </div>
           <button class="btn ghost small" type="button" data-tree-action="fit" data-i18n="fit">Fit Skrin</button>
           <button class="btn ghost small" type="button" data-tree-action="reset" data-i18n="resetView">Reset View</button>
           <button class="btn ghost small" type="button" data-tree-action="minimap" data-i18n="minimapShow">Buka Minimap</button>
@@ -506,6 +511,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260208" defer></script>
+  <script src="app.js?v=20260209" defer></script>
 </body>
 </html>
