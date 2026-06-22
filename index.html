@@ -331,11 +331,15 @@
           </div>
           <button id="directory-back" class="btn ghost small" type="button" data-i18n="directoryBack">Back ke Home</button>
         </div>
-        <div class="directory-tools">
+        <div class="directory-toolbar">
           <label class="directory-search">
             <span class="label" data-i18n="directorySearchLabel">Cari ahli</span>
             <input id="directory-search" class="input" type="search" placeholder="Cari nama..." data-i18n-placeholder="directorySearchPlaceholder" />
           </label>
+          <button id="directory-more-btn" class="btn ghost small directory-more-btn" type="button" aria-expanded="false" data-i18n="timelineMore">Tapis lagi</button>
+        </div>
+        <div id="directory-active-filters" class="active-filters directory-active-filters" hidden></div>
+        <div class="directory-tools" id="directory-more-panel" aria-hidden="true">
           <label class="directory-filter">
             <span class="label" data-i18n="directoryGeneration">Generasi</span>
             <select id="directory-generation" class="select"></select>

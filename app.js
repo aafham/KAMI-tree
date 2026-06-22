@@ -129,6 +129,9 @@ const directorySortSelect = document.getElementById("directory-sort");
 const directoryClearBtn = document.getElementById("directory-clear");
 const directorySummary = document.getElementById("directory-summary");
 const directoryList = document.getElementById("directory-list");
+const directoryMoreBtn = document.getElementById("directory-more-btn");
+const directoryMorePanel = document.getElementById("directory-more-panel");
+const directoryActiveFilters = document.getElementById("directory-active-filters");
 const focusedBranchBar = document.getElementById("focused-branch-bar");
 const focusedBranchLabel = document.getElementById("focused-branch-label");
 const focusedBranchClearBtn = document.getElementById("focused-branch-clear");
@@ -235,6 +238,7 @@ let directoryFilters = {
   status: "all",
   sort: "generation"
 };
+let directoryMoreOpen = false;
 
 const prefs = loadPrefs();
 const i18n = {
@@ -312,7 +316,7 @@ const i18n = {
     directoryKicker: "Senarai Keluarga",
     directoryTitle: "Family Directory",
     directorySearchLabel: "Cari ahli",
-    directorySearchPlaceholder: "Cari nama...",
+    directorySearchPlaceholder: "Cari nama, nickname, cabang, relation...",
     directoryGeneration: "Generasi",
     directoryGender: "Jantina",
     directoryBirthdayMonth: "Bulan Birthday",
@@ -333,6 +337,7 @@ const i18n = {
     directorySortBirthday: "Ikut Birthday",
     directoryAllGenerations: "Semua generasi",
     directorySummary: "{count} ahli dipaparkan",
+    directoryProfile: "Profil",
     mobileSearchTitle: "Cari Ahli Keluarga",
     profileFocusTree: "Fokus dalam tree",
     profileFindRelation: "Cari hubungan",
@@ -559,7 +564,7 @@ const i18n = {
     directoryKicker: "Family List",
     directoryTitle: "Family Directory",
     directorySearchLabel: "Search members",
-    directorySearchPlaceholder: "Search name...",
+    directorySearchPlaceholder: "Search name, nickname, branch, relation...",
     directoryGeneration: "Generation",
     directoryGender: "Gender",
     directoryBirthdayMonth: "Birthday Month",
@@ -580,6 +585,7 @@ const i18n = {
     directorySortBirthday: "By Birthday",
     directoryAllGenerations: "All generations",
     directorySummary: "{count} members shown",
+    directoryProfile: "Profile",
     mobileSearchTitle: "Search Family Members",
     profileFocusTree: "Focus in tree",
     profileFindRelation: "Find relationship",
@@ -2740,6 +2746,95 @@ function populateDirectoryFilters() {
   }
 }
 
+function getDirectorySelectText(select, value) {
+  if (!select) return value;
+  const option = select.querySelector(`option[value="${CSS.escape(String(value))}"]`);
+  return option ? option.textContent : value;
+}
+
+function updateDirectoryMoreState(nextState) {
+  if (!directoryMoreBtn || !directoryMorePanel) return;
+  const t = i18n[lang] || i18n.ms;
+  if (typeof nextState === "boolean") directoryMoreOpen = nextState;
+  directoryMorePanel.classList.toggle("is-open", directoryMoreOpen);
+  directoryMorePanel.setAttribute("aria-hidden", directoryMoreOpen ? "false" : "true");
+  directoryMoreBtn.setAttribute("aria-expanded", directoryMoreOpen ? "true" : "false");
+  directoryMoreBtn.textContent = directoryMoreOpen ? t.timelineLess : t.timelineMore;
+}
+
+function updateDirectoryActiveFilters() {
+  if (!directoryActiveFilters) return;
+  const t = i18n[lang] || i18n.ms;
+  const defaults = {
+    generation: "all",
+    gender: "all",
+    birthdayMonth: "all",
+    branch: "all",
+    status: "all",
+    sort: "generation"
+  };
+  const chips = [];
+  const addChip = (key, label, value, select) => {
+    if (!value || value === defaults[key]) return;
+    chips.push({ key, text: `${label}: ${getDirectorySelectText(select, value)} x` });
+  };
+
+  addChip("generation", t.directoryGeneration, directoryFilters.generation, directoryGenerationSelect);
+  addChip("gender", t.directoryGender, directoryFilters.gender, directoryGenderSelect);
+  addChip("birthdayMonth", t.directoryBirthdayMonth, directoryFilters.birthdayMonth, directoryBirthdayMonthSelect);
+  addChip("branch", t.directoryBranch, directoryFilters.branch, directoryBranchSelect);
+  addChip("status", t.directoryStatus, directoryFilters.status, directoryStatusSelect);
+  addChip("sort", t.directorySort, directoryFilters.sort, directorySortSelect);
+
+  directoryActiveFilters.innerHTML = "";
+  if (!chips.length) {
+    directoryActiveFilters.hidden = true;
+    return;
+  }
+
+  directoryActiveFilters.hidden = false;
+  chips.forEach((chip) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip";
+    btn.textContent = chip.text;
+    btn.addEventListener("click", () => {
+      const resetValue = defaults[chip.key];
+      directoryFilters[chip.key] = resetValue;
+      const selectMap = {
+        generation: directoryGenerationSelect,
+        gender: directoryGenderSelect,
+        birthdayMonth: directoryBirthdayMonthSelect,
+        branch: directoryBranchSelect,
+        status: directoryStatusSelect,
+        sort: directorySortSelect
+      };
+      if (selectMap[chip.key]) selectMap[chip.key].value = resetValue;
+      renderDirectoryPage();
+    });
+    directoryActiveFilters.appendChild(btn);
+  });
+
+  const resetAll = document.createElement("button");
+  resetAll.type = "button";
+  resetAll.className = "chip reset-all";
+  resetAll.textContent = t.timelineResetAll;
+  resetAll.addEventListener("click", resetDirectoryFilters);
+  directoryActiveFilters.appendChild(resetAll);
+}
+
+function resetDirectoryFilters() {
+  directoryFilters = { query: "", generation: "all", gender: "all", birthdayMonth: "all", branch: "all", status: "all", sort: "generation" };
+  if (directorySearchInput) directorySearchInput.value = "";
+  if (directoryGenerationSelect) directoryGenerationSelect.value = "all";
+  if (directoryGenderSelect) directoryGenderSelect.value = "all";
+  if (directoryBirthdayMonthSelect) directoryBirthdayMonthSelect.value = "all";
+  if (directoryBranchSelect) directoryBranchSelect.value = "all";
+  if (directoryStatusSelect) directoryStatusSelect.value = "all";
+  if (directorySortSelect) directorySortSelect.value = "generation";
+  renderDirectoryPage();
+}
+
 function getPersonDepth(personId) {
   const node = nodesList.find((item) => {
     if (item.type === "person") return item.personId === personId;
@@ -2753,6 +2848,7 @@ function renderDirectoryPage() {
   if (!directoryList || !directorySummary || !treeData?.people) return;
   const t = i18n[lang] || i18n.ms;
   populateDirectoryFilters();
+  updateDirectoryMoreState();
   const queryTerms = expandSearchTerms(directoryFilters.query || "");
   const generation = directoryFilters.generation || "all";
   const gender = directoryFilters.gender || "all";
@@ -2807,21 +2903,29 @@ function renderDirectoryPage() {
     });
 
   directorySummary.textContent = formatText(t.directorySummary, { count: people.length });
+  updateDirectoryActiveFilters();
   if (!people.length) {
-    directoryList.innerHTML = `<div class="directory-empty">${escapeHtml(t.searchNone)}</div>`;
+    directoryList.innerHTML = `
+      <div class="directory-empty">
+        <strong>${escapeHtml(t.searchNone)}</strong>
+        <button class="btn ghost small" type="button" data-directory-action="reset">${escapeHtml(t.timelineResetAll)}</button>
+      </div>
+    `;
+    bindDirectoryActions(directoryList);
     return;
   }
   directoryList.innerHTML = people.map(({ person, depth, gender }) => {
     const birthDate = parseDateValue(person.birth);
     const age = birthDate && !person.death ? calcAge(birthDate) : null;
-    const meta = [
+    const badges = [
       depth ? `${t.legendGeneration} ${depth}` : "",
       gender === "male" ? t.genderMale : gender === "female" ? t.genderFemale : "",
       person.birth ? `${t.modalBirth}: ${formatDateDisplay(person.birth)}` : "",
-      age !== null ? `${t.ageLabel}: ${age}` : ""
-    ].filter(Boolean).join(" | ");
-    const statusLabel = getPersonStatus(person) === "deceased" ? t.directoryDeceased : t.directoryLiving;
-    const branchLabel = getBranchName(person.branchId);
+      age !== null ? `${t.ageLabel}: ${age}` : "",
+      person.relation || "",
+      getBranchName(person.branchId),
+      getPersonStatus(person) === "deceased" ? t.directoryDeceased : t.directoryLiving
+    ].filter(Boolean);
     return `
       <article class="directory-card">
         <button class="directory-person" type="button" data-person-link="${escapeHtml(person.id)}">
@@ -2829,14 +2933,21 @@ function renderDirectoryPage() {
           <span class="directory-main">
             <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
             ${person.nickname ? `<small>${escapeHtml(person.nickname)}</small>` : ""}
-            <span>${escapeHtml(meta || t.datesUnknown)}</span>
-            <em>${escapeHtml([person.relation, branchLabel, statusLabel].filter(Boolean).join(" | "))}</em>
+            <span class="directory-badges">
+              ${badges.map((badge) => `<span class="directory-badge">${escapeHtml(badge)}</span>`).join("")}
+            </span>
           </span>
         </button>
+        <div class="directory-card-actions">
+          <button class="btn ghost small" type="button" data-person-link="${escapeHtml(person.id)}">${escapeHtml(t.directoryProfile)}</button>
+          <button class="btn ghost small" type="button" data-directory-action="focus" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.profileFocusTree)}</button>
+          <button class="btn small" type="button" data-directory-action="family" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.profileFamilyView)}</button>
+        </div>
       </article>
     `;
   }).join("");
   bindPersonLinkClicks(directoryList);
+  bindDirectoryActions(directoryList);
 }
 
 function parseYear(value) {
@@ -3416,6 +3527,27 @@ function bindPersonLinkClicks(container) {
     btn.addEventListener("click", () => {
       const personId = btn.dataset.personLink;
       if (personId) focusPerson(personId, true);
+    });
+  });
+}
+
+function bindDirectoryActions(container) {
+  if (!container) return;
+  container.querySelectorAll("[data-directory-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.directoryAction;
+      const personId = btn.dataset.personId;
+      if (action === "reset") {
+        resetDirectoryFilters();
+        return;
+      }
+      if (!personId) return;
+      if (action === "focus") {
+        focusPerson(personId, false);
+      }
+      if (action === "family") {
+        setFocusedBranch(personId);
+      }
     });
   });
 }
@@ -4469,6 +4601,12 @@ if (directorySearchInput) {
   });
 }
 
+if (directoryMoreBtn) {
+  directoryMoreBtn.addEventListener("click", () => {
+    updateDirectoryMoreState(!directoryMoreOpen);
+  });
+}
+
 if (directoryGenerationSelect) {
   directoryGenerationSelect.addEventListener("change", () => {
     directoryFilters.generation = directoryGenerationSelect.value || "all";
@@ -4513,15 +4651,7 @@ if (directorySortSelect) {
 
 if (directoryClearBtn) {
   directoryClearBtn.addEventListener("click", () => {
-    directoryFilters = { query: "", generation: "all", gender: "all", birthdayMonth: "all", branch: "all", status: "all", sort: "generation" };
-    if (directorySearchInput) directorySearchInput.value = "";
-    if (directoryGenerationSelect) directoryGenerationSelect.value = "all";
-    if (directoryGenderSelect) directoryGenderSelect.value = "all";
-    if (directoryBirthdayMonthSelect) directoryBirthdayMonthSelect.value = "all";
-    if (directoryBranchSelect) directoryBranchSelect.value = "all";
-    if (directoryStatusSelect) directoryStatusSelect.value = "all";
-    if (directorySortSelect) directorySortSelect.value = "generation";
-    renderDirectoryPage();
+    resetDirectoryFilters();
   });
 }
 
