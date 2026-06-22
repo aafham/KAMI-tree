@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="KAMI Tree logo">
+  <rect width="64" height="64" rx="16" fill="#4f8a6a"/>
+  <path d="M32 13v12" fill="none" stroke="#f7f4ea" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="32" cy="13" r="6" fill="#f7f4ea"/>
+  <circle cx="18" cy="37" r="7" fill="#9dc7e2"/>
+  <circle cx="46" cy="37" r="7" fill="#f3c6a3"/>
+  <circle cx="32" cy="51" r="7" fill="#cde4d7"/>
+  <path d="M32 25H18v5m14-5h14v5M32 25v19" fill="none" stroke="#f7f4ea" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
