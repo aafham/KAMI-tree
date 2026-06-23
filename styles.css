@@ -1306,7 +1306,7 @@ input[type="file"].input {
 
 .tree-section {
   flex: 1;
-  padding: 0 clamp(12px, 3vw, 32px) 40px;
+  padding: clamp(4px, 0.8vw, 12px) clamp(12px, 3vw, 32px) 36px;
 }
 
 .tree-toolbar {
@@ -1384,7 +1384,7 @@ input[type="file"].input {
 }
 
 .tree-scroll-guide {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   color: var(--muted);
   font-size: 12px;
   text-align: center;
@@ -1408,7 +1408,7 @@ input[type="file"].input {
 
 .tree-wrap {
   position: relative;
-  min-height: clamp(560px, 70vh, 760px);
+  min-height: clamp(500px, 64vh, 720px);
   border-radius: 24px;
   background:
     linear-gradient(90deg, rgba(79, 138, 106, 0.05) 1px, transparent 1px),
@@ -1417,7 +1417,7 @@ input[type="file"].input {
   background-size: 120px 120px, 120px 120px, auto;
   overflow: auto;
   box-shadow: var(--shadow);
-  padding: 28px 40px 112px;
+  padding: 22px 40px 104px;
   scroll-padding: 80px 80px 150px;
   cursor: grab;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -1426,7 +1426,7 @@ input[type="file"].input {
 
 body[data-tree-mode="detail"] .tree-wrap,
 body[data-tree-mode="branch"] .tree-wrap {
-  min-height: clamp(600px, 74vh, 820px);
+  min-height: clamp(520px, 68vh, 760px);
 }
 
 .tree-wrap.pinch-zooming {
@@ -2994,9 +2994,9 @@ body.hide-tags .person-tags {
   position: absolute;
   left: 40px;
   right: 40px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(79, 138, 106, 0.22) 15%, rgba(79, 138, 106, 0.32) 50%, rgba(79, 138, 106, 0.22) 85%, rgba(0, 0, 0, 0) 100%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(79, 138, 106, 0.14) 15%, rgba(79, 138, 106, 0.22) 50%, rgba(79, 138, 106, 0.14) 85%, rgba(0, 0, 0, 0) 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.24);
   pointer-events: none;
 }
 

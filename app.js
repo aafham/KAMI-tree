@@ -2336,14 +2336,14 @@ function drawLines(root, visibleNodes) {
 
       if (childPoints.length > 0) {
         const midY = (parentBottomY + Math.min(...childPoints.map((p) => p.y))) / 2;
-        const stroke = `${branchPalette[node.branchId] || "#7a8a80"}CC`;
+        const stroke = `${branchPalette[node.branchId] || "#7a8a80"}B8`;
 
         childPoints.forEach((point) => {
           const branch = document.createElementNS("http://www.w3.org/2000/svg", "path");
           branch.setAttribute("d", `M ${parentCenterX} ${parentBottomY} V ${midY} H ${point.x} V ${point.y}`);
           branch.setAttribute("fill", "none");
           branch.setAttribute("stroke", stroke);
-          branch.setAttribute("stroke-width", "2.5");
+          branch.setAttribute("stroke-width", "2.2");
           branch.setAttribute("stroke-linecap", "round");
           branch.setAttribute("stroke-linejoin", "round");
           treeLines.appendChild(branch);
@@ -2363,8 +2363,8 @@ function drawLines(root, visibleNodes) {
         line.setAttribute("y1", y);
         line.setAttribute("x2", x2 - 2);
         line.setAttribute("y2", y);
-        line.setAttribute("stroke", `${branchPalette[node.branchId] || "#7a8a80"}CC`);
-        line.setAttribute("stroke-width", "2.5");
+        line.setAttribute("stroke", `${branchPalette[node.branchId] || "#7a8a80"}B8`);
+        line.setAttribute("stroke-width", "2.2");
         line.setAttribute("stroke-linecap", "round");
         treeLines.appendChild(line);
       }
@@ -4475,27 +4475,28 @@ if (viewToggle) {
     updateViewSwitch();
     savePrefs();
     updateUrlState();
+    if (viewMode === "tree") {
+      requestAnimationFrame(() => applyTreeDisplayMode(treeDisplayMode || "overview", { behavior: "smooth" }));
+    }
   });
+}
+
+function openTreeView(behavior = "smooth") {
+  viewMode = "tree";
+  applyViewMode();
+  applyLanguage();
+  updateViewSwitch();
+  savePrefs();
+  updateUrlState();
+  requestAnimationFrame(() => applyTreeDisplayMode(treeDisplayMode || "overview", { behavior }));
 }
 
 if (viewTreeBtn) {
   viewTreeBtn.addEventListener("click", () => {
-    if (viewMode === "tree") return;
-    viewMode = "tree";
-    applyViewMode();
-    applyLanguage();
-    updateViewSwitch();
-    savePrefs();
-    updateUrlState();
+    openTreeView("smooth");
   });
   viewTreeBtn.addEventListener("touchstart", () => {
-    if (viewMode === "tree") return;
-    viewMode = "tree";
-    applyViewMode();
-    applyLanguage();
-    updateViewSwitch();
-    savePrefs();
-    updateUrlState();
+    openTreeView("smooth");
   }, { passive: true });
 }
 
@@ -5066,6 +5067,15 @@ function centerVisibleTree(behavior = "auto") {
   updateMinimap();
 }
 
+function scrollTreeIntoView(behavior = "auto") {
+  if (!treeWrap) return;
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  treeWrap.scrollIntoView({
+    behavior: reducedMotion ? "auto" : behavior,
+    block: "start"
+  });
+}
+
 function fitOverview(behavior = "auto") {
   if (!treeWrap || !treeCanvas) return;
   if (!treeCanvas.children.length) return;
@@ -5077,7 +5087,8 @@ function fitOverview(behavior = "auto") {
   const usableHeight = Math.max(260, treeWrap.clientHeight - verticalPad);
   const targetScale = Math.min(usableWidth / bounds.width, usableHeight / bounds.height);
   if (!Number.isFinite(targetScale) || targetScale <= 0) return;
-  scale = Math.max(0.45, Math.min(1.25, targetScale));
+  const minOverviewScale = isMobileView() ? 0.55 : 0.52;
+  scale = Math.max(minOverviewScale, Math.min(1.25, targetScale));
   applyZoom();
   centerVisibleTree(behavior);
   scheduleRender();
@@ -5101,6 +5112,8 @@ function updateTreeModeButtons() {
 
 function applyTreeDisplayMode(mode = treeDisplayMode, options = {}) {
   if (!["overview", "detail", "branch"].includes(mode)) mode = "overview";
+  const behavior = options.behavior || "smooth";
+  const shouldScroll = options.scroll !== false;
   treeDisplayMode = mode;
   updateTreeModeButtons();
   if (viewMode !== "tree") {
@@ -5113,7 +5126,8 @@ function applyTreeDisplayMode(mode = treeDisplayMode, options = {}) {
     clearQuickFamilyFilter(false);
     renderScene();
     applyZoom();
-    fitOverview(options.behavior || "smooth");
+    fitOverview(behavior);
+    if (shouldScroll) scrollTreeIntoView(behavior);
     savePrefs();
     return;
   }
@@ -5121,24 +5135,32 @@ function applyTreeDisplayMode(mode = treeDisplayMode, options = {}) {
   if (mode === "branch") {
     if (focusPersonTarget) {
       setFocusedBranch(focusPersonTarget.id, false);
+      requestAnimationFrame(() => {
+        fitOverview(behavior);
+        if (shouldScroll) scrollTreeIntoView(behavior);
+      });
     } else {
       renderScene();
       applyZoom();
-      centerVisibleTree(options.behavior || "smooth");
+      fitOverview(behavior);
+      if (shouldScroll) scrollTreeIntoView(behavior);
     }
     savePrefs();
     return;
   }
   if (focusedBranchPersonId) clearFocusedBranch(false);
   clearQuickFamilyFilter(false);
-  scale = Math.max(0.9, Math.min(1.15, scale || 1));
+  scale = Math.max(0.92, Math.min(1.08, scale || 1));
   renderScene();
   applyZoom();
-  if (focusPersonTarget) {
-    focusPerson(focusPersonTarget.id, false, true);
-  } else {
-    centerVisibleTree(options.behavior || "smooth");
-  }
+  requestAnimationFrame(() => {
+    if (focusPersonTarget) {
+      focusPerson(focusPersonTarget.id, false, true);
+    } else {
+      centerVisibleTree(behavior);
+    }
+    if (shouldScroll) scrollTreeIntoView(behavior);
+  });
   savePrefs();
 }
 
