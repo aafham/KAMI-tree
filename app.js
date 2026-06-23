@@ -229,6 +229,7 @@ let openBirthdayDates = new Set();
 let autoOpenedBirthdayKey = "";
 let birthdayCalendarView = "year";
 let birthdayPlannerMonth = new Date().getMonth();
+let birthdaySearchExpanded = false;
 let focusedBranchPersonId = "";
 let focusedBranchPeople = new Set();
 let activeQuickFamilyFilter = "";
@@ -902,9 +903,7 @@ function updateStats() {
       const next = new Date(todayMid.getFullYear(), birthDate.getMonth(), birthDate.getDate());
       if (next < todayMid) next.setFullYear(next.getFullYear() + 1);
       const diff = next.getTime() - todayMid.getTime();
-      const name = formatDisplayName(person.name);
-      const split = splitNameByBin(name);
-      const upcomingName = split.first || name;
+      const upcomingName = getShortDisplayName(person.name);
       if (diff < bestDiff) {
         bestDiff = diff;
         bestMatches.length = 0;
@@ -2239,8 +2238,7 @@ function createPersonCard(person, depth) {
   const nameWrap = document.createElement("div");
   const name = document.createElement("div");
   name.className = "person-name";
-  const split = splitNameByBin(displayName || person.name || "");
-  const firstName = formatDisplayName(person.firstName || split.first || person.name || "");
+  const firstName = formatDisplayName(person.firstName || getShortDisplayName(displayName || person.name || "") || person.name || "");
   name.textContent = firstName || displayName || person.name || "";
   const meta = document.createElement("div");
   meta.className = "person-meta";
@@ -2613,7 +2611,7 @@ function renderBirthdayPage() {
           <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
             <span class="birthday-number">${index + 1}</span>
             <span class="birthday-person-main">
-              <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+              <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
               <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
             </span>
           </button>
@@ -2646,7 +2644,7 @@ function renderBirthdayPage() {
 function renderBirthdaySummary(entries, byDate, nextBirthdayKey, today) {
   if (!birthdaySummary) return;
   const nextEntries = byDate.get(nextBirthdayKey) || [];
-  const nextName = nextEntries.length ? formatDisplayName(nextEntries[0].person.name) : "-";
+  const nextName = nextEntries.length ? getShortDisplayName(nextEntries[0].person.name) : "-";
   const nextMeta = nextEntries.length ? formatBirthdayCountdown(nextEntries[0], today) : (lang === "en" ? "No birthday recorded" : "Tiada birthday direkodkan");
   birthdaySummary.innerHTML = `
     <span>${entries.length} ${lang === "en" ? "birthdays" : "birthday"}</span>
@@ -2663,19 +2661,21 @@ function renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today) {
     return;
   }
   const first = nextEntries[0];
-  const names = nextEntries.map((entry) => formatDisplayName(entry.person.name));
+  const names = nextEntries.map((entry) => getShortDisplayName(entry.person.name));
   const nameText = names.length > 1 ? `${names[0]} +${names.length - 1}` : names[0];
+  const fullNameText = formatDisplayName(first.person.name);
   birthdayFeatured.innerHTML = `
     <div class="birthday-featured-main">
       <span class="birthday-featured-label">${lang === "en" ? "Next Birthday" : "Birthday Terdekat"}</span>
       <strong>${escapeHtml(nameText)}</strong>
+      <small>${escapeHtml(fullNameText)}</small>
       <span>${escapeHtml(formatBirthdayDate(first))} · ${escapeHtml(formatBirthdayCountdown(first, today))}</span>
     </div>
     <div class="birthday-featured-actions">
       ${nextEntries.slice(0, 3).map((entry) => `
         <button class="birthday-mini-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-          <span class="birthday-mini-avatar">${escapeHtml(initials(formatDisplayName(entry.person.name)))}</span>
-          <span>${escapeHtml(formatDisplayName(entry.person.name))}</span>
+          <span class="birthday-mini-avatar">${escapeHtml(initials(getShortDisplayName(entry.person.name)))}</span>
+          <span>${escapeHtml(getShortDisplayName(entry.person.name))}</span>
         </button>
       `).join("")}
       <button class="btn small" type="button" data-birthday-jump="${escapeHtml(nextBirthdayKey)}">${lang === "en" ? "View in calendar" : "Lihat dalam kalendar"}</button>
@@ -2722,6 +2722,13 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
   const openedKeys = [...openBirthdayDates].filter((key) => key.startsWith(`${monthIndex}-`));
   const selectedKey = openedKeys[openedKeys.length - 1] || (nextBirthdayKey?.startsWith(`${monthIndex}-`) ? nextBirthdayKey : "");
   const selectedEntries = selectedKey ? byDate.get(selectedKey) || [] : [];
+  const selectedDay = selectedKey ? Number(selectedKey.split("-")[1]) : null;
+  const panelTitle = selectedEntries.length
+    ? `${selectedDay} ${monthName}`
+    : `${lang === "en" ? "Birthdays in" : "Birthday bulan"} ${monthName}`;
+  const panelSubtitle = selectedEntries.length
+    ? `${selectedEntries.length} ${lang === "en" ? "birthday on this date" : "birthday pada tarikh ini"}`
+    : `${monthEntries.length} ${lang === "en" ? "birthday this month" : "birthday bulan ini"}`;
   const emptyCells = Array.from({ length: firstDay }, () => `<span class="planner-day planner-day--empty"></span>`).join("");
   const dayCells = Array.from({ length: daysInMonth }, (_, index) => {
     const day = index + 1;
@@ -2740,7 +2747,7 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
       <button class="${classes}" type="button" data-planner-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
         <span class="planner-day-number">${day}</span>
         ${dayEntries.length ? `<span class="planner-day-count">${dayEntries.length}</span>` : ""}
-        ${dayEntries.slice(0, 2).map((entry) => `<em>${escapeHtml(formatDisplayName(entry.person.name))}</em>`).join("")}
+        ${dayEntries.slice(0, 2).map((entry) => `<em>${escapeHtml(getShortDisplayName(entry.person.name))}</em>`).join("")}
       </button>
     `;
   }).join("");
@@ -2761,6 +2768,10 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
           </select>
         </label>
       </div>
+      <div class="planner-quick-actions">
+        <button class="btn ghost small" type="button" data-planner-current>${lang === "en" ? "This month" : "Bulan ini"}</button>
+        <button class="btn ghost small" type="button" data-planner-next-birthday>${lang === "en" ? "Next birthday" : "Birthday terdekat"}</button>
+      </div>
       <div class="planner-weekdays">
         ${weekLabels.map((day) => `<span>${escapeHtml(day)}</span>`).join("")}
       </div>
@@ -2770,13 +2781,14 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
     </section>
     <aside class="birthday-planner-panel">
       <div class="planner-panel-card">
-        <h3>${selectedEntries.length ? (lang === "en" ? "Selected date" : "Tarikh dipilih") : (lang === "en" ? "This month" : "Bulan ini")}</h3>
+        <h3>${escapeHtml(panelTitle)}</h3>
+        <p>${escapeHtml(panelSubtitle)}</p>
         <div class="birthday-list">
           ${(selectedEntries.length ? selectedEntries : monthEntries).length ? (selectedEntries.length ? selectedEntries : monthEntries).map((entry, index) => `
             <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
               <span class="birthday-number">${index + 1}</span>
               <span class="birthday-person-main">
-                <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+                <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
                 <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
               </span>
             </button>
@@ -2797,6 +2809,18 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
   birthdayPlanner.querySelector("[data-planner-month]")?.addEventListener("change", (event) => {
     birthdayPlannerMonth = Number(event.target.value) || 0;
     renderBirthdayPage();
+  });
+  birthdayPlanner.querySelector("[data-planner-current]")?.addEventListener("click", () => {
+    birthdayPlannerMonth = today.getMonth();
+    renderBirthdayPage();
+    scrollToBirthdayDate(`${today.getMonth()}-${today.getDate()}`);
+  });
+  birthdayPlanner.querySelector("[data-planner-next-birthday]")?.addEventListener("click", () => {
+    if (!nextBirthdayKey) return;
+    birthdayPlannerMonth = Number(nextBirthdayKey.split("-")[0]);
+    openBirthdayDates.add(nextBirthdayKey);
+    renderBirthdayPage();
+    scrollToBirthdayDate(nextBirthdayKey);
   });
   birthdayPlanner.querySelectorAll("[data-planner-date]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -2826,7 +2850,7 @@ function renderBirthdayMonthDetail(monthIndex, byDate) {
     const dayEntries = byDate.get(key) || [];
     return dayEntries.map((entry) => `
       <button class="birthday-person compact" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-        <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+        <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
         <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry))}</span>
       </button>
     `).join("");
@@ -2848,15 +2872,27 @@ function renderBirthdaySearchResults() {
     birthdaySearchResults.innerHTML = `<div class="birthday-empty">${escapeHtml(t.birthdayNoSearch)}</div>`;
     return;
   }
-  birthdaySearchResults.innerHTML = matches.map((entry) => `
+  const visibleMatches = birthdaySearchExpanded ? matches : matches.slice(0, 6);
+  const resultLabel = lang === "en" ? `${matches.length} results found` : `${matches.length} hasil ditemui`;
+  birthdaySearchResults.innerHTML = `
+    <div class="birthday-search-result-head">
+      <strong>${escapeHtml(resultLabel)}</strong>
+      ${matches.length > 6 ? `<button class="btn ghost small" type="button" data-birthday-search-toggle>${birthdaySearchExpanded ? (lang === "en" ? "Show less" : "Tutup") : (lang === "en" ? "View all" : "Lihat semua")}</button>` : ""}
+    </div>
+    ${visibleMatches.map((entry) => `
     <button class="birthday-person birthday-person--search" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-      <span class="birthday-search-avatar">${escapeHtml(initials(formatDisplayName(entry.person.name)))}</span>
+      <span class="birthday-search-avatar">${escapeHtml(initials(getShortDisplayName(entry.person.name)))}</span>
       <span class="birthday-person-main">
-        <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+        <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
+        <small>${escapeHtml(formatDisplayName(entry.person.name))}</small>
         <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry))}</span>
       </span>
     </button>
-  `).join("");
+  `).join("")}`;
+  birthdaySearchResults.querySelector("[data-birthday-search-toggle]")?.addEventListener("click", () => {
+    birthdaySearchExpanded = !birthdaySearchExpanded;
+    renderBirthdaySearchResults();
+  });
   bindPersonLinkClicks(birthdaySearchResults);
 }
 
@@ -3083,6 +3119,8 @@ function renderDirectoryPage() {
     return;
   }
   directoryList.innerHTML = people.map(({ person, depth, gender }) => {
+    const shortName = getShortDisplayName(person.name);
+    const fullName = formatDisplayName(person.name);
     const birthDate = parseDateValue(person.birth);
     const age = birthDate && !person.death ? calcAge(birthDate) : null;
     const badges = [
@@ -3097,9 +3135,10 @@ function renderDirectoryPage() {
     return `
       <article class="directory-card">
         <button class="directory-person" type="button" data-person-link="${escapeHtml(person.id)}">
-          <span class="directory-avatar">${escapeHtml(initials(formatDisplayName(person.name)))}</span>
+          <span class="directory-avatar">${escapeHtml(initials(shortName))}</span>
           <span class="directory-main">
-            <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
+            <strong>${escapeHtml(shortName)}</strong>
+            ${fullName && fullName !== shortName ? `<small>${escapeHtml(fullName)}</small>` : ""}
             ${person.nickname ? `<small>${escapeHtml(person.nickname)}</small>` : ""}
             <span class="directory-badges">
               ${badges.map((badge) => `<span class="directory-badge">${escapeHtml(badge)}</span>`).join("")}
@@ -3272,7 +3311,7 @@ function splitNameByBin(fullName) {
   const name = String(fullName || "").trim();
   if (!name) return { first: "", last: "" };
   const parts = name.split(/\s+/);
-  const idx = parts.findIndex((p) => /^(bin|binti|bt)$/i.test(p));
+  const idx = parts.findIndex((p) => /^(bin|binti|bt|bte|ibn)$/i.test(p.replace(/\./g, "")));
   if (idx > 0 && idx < parts.length - 1) {
     return {
       first: parts.slice(0, idx).join(" "),
@@ -3283,6 +3322,13 @@ function splitNameByBin(fullName) {
     first: parts[0],
     last: parts.slice(1).join(" ")
   };
+}
+
+function getShortDisplayName(value) {
+  const displayName = formatDisplayName(value);
+  if (!displayName) return "";
+  const split = splitNameByBin(displayName);
+  return split.first || displayName;
 }
 
 function detectGenderFromName(fullName) {
@@ -4044,7 +4090,10 @@ if (birthdayBackBtn) {
 }
 
 if (birthdaySearchInput) {
-  birthdaySearchInput.addEventListener("input", renderBirthdaySearchResults);
+  birthdaySearchInput.addEventListener("input", () => {
+    birthdaySearchExpanded = false;
+    renderBirthdaySearchResults();
+  });
 }
 
 if (birthdayViewYearBtn) {
@@ -4334,7 +4383,8 @@ function renderMobileSearchResults() {
   }
   mobileSearchResults.innerHTML = results.map((person) => `
     <button class="mobile-search-result" type="button" data-person-link="${escapeHtml(person.id)}">
-      <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
+      <strong>${escapeHtml(getShortDisplayName(person.name))}</strong>
+      ${formatDisplayName(person.name) !== getShortDisplayName(person.name) ? `<small>${escapeHtml(formatDisplayName(person.name))}</small>` : ""}
       <span>${escapeHtml(person.relation || formatDates(person.birth, person.death))}</span>
     </button>
   `).join("");
