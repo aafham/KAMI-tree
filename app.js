@@ -2306,6 +2306,27 @@ function createPersonCard(person, depth) {
   return card;
 }
 
+function getTreeLineStrokeWidth() {
+  const safeScale = Math.max(0.35, Number.isFinite(scale) ? scale : 1);
+  return Math.max(1.1, Math.min(5.6, 2.4 / safeScale));
+}
+
+function applyTreeLineStrokeStyle(lineEl, stroke) {
+  lineEl.setAttribute("stroke", stroke);
+  lineEl.setAttribute("stroke-width", getTreeLineStrokeWidth().toFixed(2));
+  lineEl.setAttribute("stroke-linecap", "round");
+  lineEl.setAttribute("vector-effect", "non-scaling-stroke");
+}
+
+function refreshTreeLineStrokeWidths() {
+  if (!treeLines) return;
+  const strokeWidth = getTreeLineStrokeWidth().toFixed(2);
+  treeLines.querySelectorAll("path, line").forEach((lineEl) => {
+    lineEl.setAttribute("stroke-width", strokeWidth);
+    lineEl.setAttribute("vector-effect", "non-scaling-stroke");
+  });
+}
+
 function drawLines(root, visibleNodes) {
   if (!showLines) {
     treeLines.innerHTML = "";
@@ -2336,15 +2357,13 @@ function drawLines(root, visibleNodes) {
 
       if (childPoints.length > 0) {
         const midY = (parentBottomY + Math.min(...childPoints.map((p) => p.y))) / 2;
-        const stroke = `${branchPalette[node.branchId] || "#7a8a80"}B8`;
+        const stroke = `${branchPalette[node.branchId] || "#7a8a80"}D8`;
 
         childPoints.forEach((point) => {
           const branch = document.createElementNS("http://www.w3.org/2000/svg", "path");
           branch.setAttribute("d", `M ${parentCenterX} ${parentBottomY} V ${midY} H ${point.x} V ${point.y}`);
           branch.setAttribute("fill", "none");
-          branch.setAttribute("stroke", stroke);
-          branch.setAttribute("stroke-width", "2.2");
-          branch.setAttribute("stroke-linecap", "round");
+          applyTreeLineStrokeStyle(branch, stroke);
           branch.setAttribute("stroke-linejoin", "round");
           treeLines.appendChild(branch);
         });
@@ -2363,9 +2382,7 @@ function drawLines(root, visibleNodes) {
         line.setAttribute("y1", y);
         line.setAttribute("x2", x2 - 2);
         line.setAttribute("y2", y);
-        line.setAttribute("stroke", `${branchPalette[node.branchId] || "#7a8a80"}B8`);
-        line.setAttribute("stroke-width", "2.2");
-        line.setAttribute("stroke-linecap", "round");
+        applyTreeLineStrokeStyle(line, `${branchPalette[node.branchId] || "#7a8a80"}D8`);
         treeLines.appendChild(line);
       }
     }
@@ -3696,6 +3713,7 @@ function applyZoom() {
   document.body.dataset.treeMode = treeDisplayMode;
   treeCanvas.style.transform = `scale(${scale})`;
   treeLines.style.transform = `scale(${scale})`;
+  refreshTreeLineStrokeWidths();
   treeZoom.style.width = `${baseSize.width * scale}px`;
   treeZoom.style.height = `${baseSize.height * scale}px`;
   updateMinimap();
