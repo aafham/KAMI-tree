@@ -1995,6 +1995,8 @@ function renderScene() {
   treeCanvas.style.height = `${baseSize.height}px`;
   treeLines.setAttribute("width", baseSize.width);
   treeLines.setAttribute("height", baseSize.height);
+  treeLines.style.width = `${baseSize.width}px`;
+  treeLines.style.height = `${baseSize.height}px`;
 
   renderGenerationLabels();
 
