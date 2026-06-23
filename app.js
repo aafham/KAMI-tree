@@ -57,6 +57,9 @@ const birthdayBackBtn = document.getElementById("birthday-back");
 const birthdaySearchInput = document.getElementById("birthday-search");
 const birthdayOpenAllBtn = document.getElementById("birthday-open-all");
 const birthdayCloseAllBtn = document.getElementById("birthday-close-all");
+const birthdayTodayBtn = document.getElementById("birthday-today");
+const birthdayFeatured = document.getElementById("birthday-featured");
+const birthdaySummary = document.getElementById("birthday-summary");
 const birthdaySearchResults = document.getElementById("birthday-search-results");
 const birthdayCalendar = document.getElementById("birthday-calendar");
 const birthdayMonthLists = document.getElementById("birthday-month-lists");
@@ -2538,6 +2541,7 @@ function renderBirthdayPage() {
   const currentDateKey = `${today.getMonth()}-${today.getDate()}`;
   const nextBirthdayKey = getNextBirthdayKey(entries, today);
   syncAutoOpenBirthday(nextBirthdayKey);
+  if (birthdayTodayBtn) birthdayTodayBtn.textContent = lang === "en" ? "Today" : "Hari Ini";
 
   entries.forEach((entry) => {
     byMonth[entry.month].push(entry);
@@ -2548,6 +2552,8 @@ function renderBirthdayPage() {
 
   birthdayCalendar.innerHTML = "";
   birthdayMonthLists.innerHTML = "";
+  renderBirthdaySummary(entries, byDate, nextBirthdayKey, today);
+  renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today);
 
   months.forEach((monthName, monthIndex) => {
     const monthCard = document.createElement("section");
@@ -2569,7 +2575,7 @@ function renderBirthdayPage() {
       dayButtons.push(`
         <button class="${dayClasses}" type="button" data-birthday-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
           <span>${day}</span>
-          ${dayEntries.length ? `<i>${dayEntries.length}</i>` : ""}
+          ${dayEntries.length > 1 ? `<i>${dayEntries.length}</i>` : ""}
         </button>
       `);
     }
@@ -2581,18 +2587,27 @@ function renderBirthdayPage() {
     birthdayCalendar.appendChild(monthCard);
     renderBirthdayMonthDetail(monthIndex, byDate);
 
-    const listCard = document.createElement("section");
+    const listCard = document.createElement("details");
     listCard.className = "birthday-list-card";
+    if (shouldOpenBirthdayMonth(monthIndex, today, nextBirthdayKey, byMonth[monthIndex])) {
+      listCard.open = true;
+    }
     const monthEntries = byMonth[monthIndex];
     listCard.innerHTML = `
-      <h3>${escapeHtml(monthName)}</h3>
+      <summary>
+        <span>
+          <strong>${escapeHtml(monthName)}</strong>
+          <em>${monthEntries.length} ${lang === "en" ? "birthday" : "birthday"}</em>
+        </span>
+        <span class="birthday-month-count">${monthEntries.length}</span>
+      </summary>
       <div class="birthday-list">
         ${monthEntries.length ? monthEntries.map((entry, index) => `
           <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
             <span class="birthday-number">${index + 1}</span>
             <span class="birthday-person-main">
               <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
-              <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+              <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
             </span>
           </button>
         `).join("") : `<div class="birthday-empty">${escapeHtml(t.birthdayNoDate)}</div>`}
@@ -2620,6 +2635,58 @@ function renderBirthdayPage() {
   renderBirthdaySearchResults();
 }
 
+function renderBirthdaySummary(entries, byDate, nextBirthdayKey, today) {
+  if (!birthdaySummary) return;
+  const nextEntries = byDate.get(nextBirthdayKey) || [];
+  const nextName = nextEntries.length ? formatDisplayName(nextEntries[0].person.name) : "-";
+  const nextMeta = nextEntries.length ? formatBirthdayCountdown(nextEntries[0], today) : (lang === "en" ? "No birthday recorded" : "Tiada birthday direkodkan");
+  birthdaySummary.innerHTML = `
+    <span>${entries.length} ${lang === "en" ? "birthdays" : "birthday"}</span>
+    <span>${lang === "en" ? "Next" : "Terdekat"}: ${escapeHtml(nextName)}</span>
+    <span>${escapeHtml(nextMeta)}</span>
+  `;
+}
+
+function renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today) {
+  if (!birthdayFeatured) return;
+  const nextEntries = byDate.get(nextBirthdayKey) || [];
+  if (!entries.length || !nextEntries.length) {
+    birthdayFeatured.innerHTML = `<div class="birthday-empty">${escapeHtml((i18n[lang] || i18n.ms).birthdayNoDate)}</div>`;
+    return;
+  }
+  const first = nextEntries[0];
+  const names = nextEntries.map((entry) => formatDisplayName(entry.person.name));
+  const nameText = names.length > 1 ? `${names[0]} +${names.length - 1}` : names[0];
+  birthdayFeatured.innerHTML = `
+    <div class="birthday-featured-main">
+      <span class="birthday-featured-label">${lang === "en" ? "Next Birthday" : "Birthday Terdekat"}</span>
+      <strong>${escapeHtml(nameText)}</strong>
+      <span>${escapeHtml(formatBirthdayDate(first))} · ${escapeHtml(formatBirthdayCountdown(first, today))}</span>
+    </div>
+    <div class="birthday-featured-actions">
+      ${nextEntries.slice(0, 3).map((entry) => `
+        <button class="birthday-mini-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+          <span class="birthday-mini-avatar">${escapeHtml(initials(formatDisplayName(entry.person.name)))}</span>
+          <span>${escapeHtml(formatDisplayName(entry.person.name))}</span>
+        </button>
+      `).join("")}
+      <button class="btn small" type="button" data-birthday-jump="${escapeHtml(nextBirthdayKey)}">${lang === "en" ? "View in calendar" : "Lihat dalam kalendar"}</button>
+    </div>
+  `;
+  bindPersonLinkClicks(birthdayFeatured);
+  birthdayFeatured.querySelector("[data-birthday-jump]")?.addEventListener("click", () => {
+    openBirthdayDates.add(nextBirthdayKey);
+    renderBirthdayPage();
+    scrollToBirthdayDate(nextBirthdayKey);
+  });
+}
+
+function shouldOpenBirthdayMonth(monthIndex, today, nextBirthdayKey, monthEntries) {
+  if (monthIndex === today.getMonth()) return true;
+  if (nextBirthdayKey?.startsWith(`${monthIndex}-`)) return true;
+  return monthEntries.some((entry) => openBirthdayDates.has(`${entry.month}-${entry.day}`));
+}
+
 function renderBirthdayMonthDetail(monthIndex, byDate) {
   if (!birthdayCalendar) return;
   const detail = birthdayCalendar.querySelector(`[data-birthday-detail="${monthIndex}"]`);
@@ -2632,7 +2699,7 @@ function renderBirthdayMonthDetail(monthIndex, byDate) {
     return dayEntries.map((entry) => `
       <button class="birthday-person compact" type="button" data-person-link="${escapeHtml(entry.person.id)}">
         <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
-        <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+        <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry))}</span>
       </button>
     `).join("");
   }).join("");
@@ -2654,9 +2721,12 @@ function renderBirthdaySearchResults() {
     return;
   }
   birthdaySearchResults.innerHTML = matches.map((entry) => `
-    <button class="birthday-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-      <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
-      <span>${escapeHtml(formatBirthdayDate(entry))}</span>
+    <button class="birthday-person birthday-person--search" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+      <span class="birthday-search-avatar">${escapeHtml(initials(formatDisplayName(entry.person.name)))}</span>
+      <span class="birthday-person-main">
+        <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+        <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry))}</span>
+      </span>
     </button>
   `).join("");
   bindPersonLinkClicks(birthdaySearchResults);
@@ -2976,6 +3046,34 @@ function getBirthdayEntries() {
 function formatBirthdayDate(entry) {
   const months = getMonthLabels();
   return `${entry.day} ${months[entry.month]}`;
+}
+
+function getNextBirthdayInfo(entry, today = new Date()) {
+  if (!entry) return null;
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const next = new Date(todayMid.getFullYear(), entry.month, entry.day);
+  if (next < todayMid) next.setFullYear(next.getFullYear() + 1);
+  const diff = Math.round((next - todayMid) / 86400000);
+  return { date: next, diff };
+}
+
+function formatBirthdayCountdown(entry, today = new Date()) {
+  const info = getNextBirthdayInfo(entry, today);
+  if (!info) return "";
+  const nextAge = calcAge(entry.date, info.date);
+  if (info.diff === 0) {
+    return lang === "en" ? `today · turns ${nextAge}` : `hari ini · jadi ${nextAge} tahun`;
+  }
+  if (info.diff === 1) {
+    return lang === "en" ? `tomorrow · turns ${nextAge}` : `esok · jadi ${nextAge} tahun`;
+  }
+  return lang === "en" ? `${info.diff} days left · turns ${nextAge}` : `${info.diff} hari lagi · jadi ${nextAge} tahun`;
+}
+
+function scrollToBirthdayDate(key) {
+  if (!birthdayCalendar || !key) return;
+  const target = birthdayCalendar.querySelector(`[data-birthday-date="${CSS.escape(key)}"]`);
+  target?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 }
 
 function getNextBirthdayKey(entries, today = new Date()) {
@@ -3830,6 +3928,18 @@ if (birthdayCloseAllBtn) {
   birthdayCloseAllBtn.addEventListener("click", () => {
     openBirthdayDates.clear();
     renderBirthdayPage();
+  });
+}
+
+if (birthdayTodayBtn) {
+  birthdayTodayBtn.addEventListener("click", () => {
+    const today = new Date();
+    const key = `${today.getMonth()}-${today.getDate()}`;
+    if (getBirthdayEntries().some((entry) => `${entry.month}-${entry.day}` === key)) {
+      openBirthdayDates.add(key);
+      renderBirthdayPage();
+    }
+    scrollToBirthdayDate(key);
   });
 }
 

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260214" />
+  <link rel="stylesheet" href="styles.css?v=20260215" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -302,14 +302,17 @@
           <div>
             <p class="kicker" data-i18n="birthdayKicker">Kalendar Keluarga</p>
             <h2 data-i18n="birthdayTitle">Semua Birthday</h2>
+            <p class="birthday-head-sub" id="birthday-summary">-</p>
           </div>
         </div>
+        <div class="birthday-featured" id="birthday-featured"></div>
         <div class="birthday-tools">
           <label class="birthday-search">
             <span class="label" data-i18n="birthdaySearchLabel">Cari nama birthday</span>
             <input id="birthday-search" class="input" type="search" placeholder="Cari nama..." data-i18n-placeholder="birthdaySearchPlaceholder" />
           </label>
           <div class="birthday-toggle-actions">
+            <button id="birthday-today" class="btn ghost small" type="button">Hari Ini</button>
             <button id="birthday-open-all" class="btn ghost small" type="button" data-i18n="birthdayOpenAll">Buka Semua</button>
             <button id="birthday-close-all" class="btn ghost small" type="button" data-i18n="birthdayCloseAll">Tutup Semua</button>
           </div>
@@ -319,6 +322,8 @@
           <span><i class="legend-dot legend-today"></i><span data-i18n="birthdayLegendToday">Hari ini</span></span>
           <span><i class="legend-dot legend-range"></i><span data-i18n="birthdayLegendRange">Menuju birthday terdekat</span></span>
           <span><i class="legend-dot legend-next"></i><span data-i18n="birthdayLegendNext">Birthday terdekat</span></span>
+          <span><i class="legend-dot legend-birthday"></i><span>Ada birthday</span></span>
+          <span><i class="legend-dot legend-selected"></i><span>Dipilih</span></span>
         </div>
         <div id="birthday-calendar" class="birthday-calendar"></div>
         <div id="birthday-month-lists" class="birthday-month-lists"></div>
@@ -546,6 +551,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260214" defer></script>
+  <script src="app.js?v=20260215" defer></script>
 </body>
 </html>
