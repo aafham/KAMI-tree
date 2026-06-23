@@ -2032,6 +2032,20 @@ body[data-view="timeline"].story-open .timeline-section {
   gap: 6px;
 }
 
+.birthday-view-switch {
+  display: inline-flex;
+  gap: 6px;
+  padding: 5px;
+  margin: 0 0 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 7%, var(--card));
+  border: 1px solid rgba(79, 138, 106, 0.12);
+}
+
+.birthday-view-switch .btn {
+  box-shadow: none;
+}
+
 .legend-dot {
   width: 12px;
   height: 12px;
@@ -2065,6 +2079,178 @@ body[data-view="timeline"].story-open .timeline-section {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 14px;
   margin-bottom: 20px;
+}
+
+.birthday-planner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.birthday-planner[hidden] {
+  display: none !important;
+}
+
+.birthday-planner-card,
+.planner-panel-card {
+  background: var(--card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.birthday-planner-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(180px, 240px);
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.birthday-planner-head h3 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1;
+}
+
+.birthday-planner-head .btn {
+  min-width: 42px;
+  min-height: 42px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.planner-month-jump {
+  display: grid;
+  gap: 4px;
+}
+
+.planner-month-jump span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.planner-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.planner-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.planner-day {
+  position: relative;
+  min-height: 104px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bg-soft) 74%, var(--card));
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  padding: 10px;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+
+.planner-day--empty {
+  min-height: 104px;
+}
+
+.planner-day:disabled {
+  color: var(--muted);
+}
+
+.planner-day.has-birthday {
+  cursor: pointer;
+  background: color-mix(in srgb, var(--primary) 11%, var(--card));
+  border-color: color-mix(in srgb, var(--primary) 42%, transparent);
+}
+
+.planner-day.is-upcoming-range {
+  background: color-mix(in srgb, #e14d4d 12%, var(--card));
+  border-color: color-mix(in srgb, #e14d4d 34%, transparent);
+}
+
+.planner-day.is-today {
+  background: color-mix(in srgb, #f5b83d 30%, var(--card));
+  border-color: color-mix(in srgb, #b7791f 62%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, #f5b83d 28%, transparent);
+}
+
+.planner-day.is-next-birthday {
+  background: color-mix(in srgb, #d92d20 18%, var(--card));
+  border-color: #d92d20;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #d92d20 20%, transparent);
+}
+
+.planner-day.is-open {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+.planner-day-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border: 1px solid rgba(79, 138, 106, 0.14);
+  font-weight: 800;
+}
+
+.planner-day-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.planner-day em {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.birthday-planner-panel {
+  position: sticky;
+  top: 88px;
+}
+
+.planner-panel-card h3 {
+  margin: 0 0 12px;
+  font-family: "Fraunces", serif;
 }
 
 .birthday-month-card,
@@ -2502,6 +2688,8 @@ body[data-view="timeline"].story-open .timeline-section {
 [data-theme="dark"] .birthday-month-card,
 [data-theme="dark"] .birthday-list-card,
 [data-theme="dark"] .birthday-featured,
+[data-theme="dark"] .birthday-planner-card,
+[data-theme="dark"] .planner-panel-card,
 [data-theme="dark"] .directory-card,
 [data-theme="dark"] .directory-person,
 [data-theme="dark"] .timeline-filters-card,
@@ -2538,10 +2726,22 @@ body[data-view="timeline"].story-open .timeline-section {
 
 [data-theme="dark"] .birthday-head-sub span,
 [data-theme="dark"] .birthday-mini-person,
+[data-theme="dark"] .birthday-view-switch,
 [data-theme="dark"] .birthday-month-count {
   background: #101915;
   border-color: rgba(123, 199, 163, 0.22);
   color: #f4f8f5;
+}
+
+[data-theme="dark"] .planner-day {
+  background: #101915;
+  border-color: rgba(220, 235, 226, 0.14);
+  color: #f4f8f5;
+}
+
+[data-theme="dark"] .planner-day-number {
+  background: #182620;
+  border-color: rgba(123, 199, 163, 0.22);
 }
 
 [data-theme="dark"] .birthday-number {
@@ -3665,8 +3865,14 @@ body.hide-tags .person-tags {
 
   .birthday-calendar,
   .birthday-month-lists,
+  .birthday-planner,
   .directory-list {
     grid-template-columns: 1fr;
+  }
+
+  .birthday-view-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .birthday-featured {
@@ -3683,6 +3889,29 @@ body.hide-tags .person-tags {
 
   .birthday-search-results {
     grid-template-columns: 1fr;
+  }
+
+  .birthday-planner-head {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .planner-month-jump {
+    grid-column: 1 / -1;
+  }
+
+  .planner-day,
+  .planner-day--empty {
+    min-height: 78px;
+    border-radius: 13px;
+    padding: 8px;
+  }
+
+  .planner-day em {
+    display: none;
+  }
+
+  .birthday-planner-panel {
+    position: static;
   }
 
   .directory-head {

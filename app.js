@@ -62,7 +62,10 @@ const birthdayFeatured = document.getElementById("birthday-featured");
 const birthdaySummary = document.getElementById("birthday-summary");
 const birthdaySearchResults = document.getElementById("birthday-search-results");
 const birthdayCalendar = document.getElementById("birthday-calendar");
+const birthdayPlanner = document.getElementById("birthday-planner");
 const birthdayMonthLists = document.getElementById("birthday-month-lists");
+const birthdayViewYearBtn = document.getElementById("birthday-view-year");
+const birthdayViewPlannerBtn = document.getElementById("birthday-view-planner");
 const zoomFitBtn = document.getElementById("zoom-fit");
 const langToggleBtn = document.getElementById("lang-toggle");
 const clearCacheBtn = document.getElementById("clear-cache");
@@ -224,6 +227,8 @@ let timelineMoreOpen = false;
 let initialFocusDone = false;
 let openBirthdayDates = new Set();
 let autoOpenedBirthdayKey = "";
+let birthdayCalendarView = "year";
+let birthdayPlannerMonth = new Date().getMonth();
 let focusedBranchPersonId = "";
 let focusedBranchPeople = new Set();
 let activeQuickFamilyFilter = "";
@@ -2551,9 +2556,11 @@ function renderBirthdayPage() {
   });
 
   birthdayCalendar.innerHTML = "";
+  if (birthdayPlanner) birthdayPlanner.innerHTML = "";
   birthdayMonthLists.innerHTML = "";
   renderBirthdaySummary(entries, byDate, nextBirthdayKey, today);
   renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today);
+  updateBirthdayViewSwitch();
 
   months.forEach((monthName, monthIndex) => {
     const monthCard = document.createElement("section");
@@ -2631,6 +2638,7 @@ function renderBirthdayPage() {
     });
   });
 
+  renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey, today);
   bindPersonLinkClicks(birthdayMonthLists);
   renderBirthdaySearchResults();
 }
@@ -2685,6 +2693,126 @@ function shouldOpenBirthdayMonth(monthIndex, today, nextBirthdayKey, monthEntrie
   if (monthIndex === today.getMonth()) return true;
   if (nextBirthdayKey?.startsWith(`${monthIndex}-`)) return true;
   return monthEntries.some((entry) => openBirthdayDates.has(`${entry.month}-${entry.day}`));
+}
+
+function updateBirthdayViewSwitch() {
+  const isPlanner = birthdayCalendarView === "planner";
+  if (birthdayCalendar) birthdayCalendar.hidden = isPlanner;
+  if (birthdayPlanner) birthdayPlanner.hidden = !isPlanner;
+  birthdayViewYearBtn?.classList.toggle("is-active", !isPlanner);
+  birthdayViewYearBtn?.classList.toggle("ghost", isPlanner);
+  birthdayViewYearBtn?.setAttribute("aria-pressed", (!isPlanner).toString());
+  birthdayViewPlannerBtn?.classList.toggle("is-active", isPlanner);
+  birthdayViewPlannerBtn?.classList.toggle("ghost", !isPlanner);
+  birthdayViewPlannerBtn?.setAttribute("aria-pressed", isPlanner.toString());
+  if (birthdayViewYearBtn) birthdayViewYearBtn.textContent = lang === "en" ? "12 Months" : "12 Bulan";
+  if (birthdayViewPlannerBtn) birthdayViewPlannerBtn.textContent = lang === "en" ? "Month Planner" : "Planner Bulan";
+}
+
+function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey, today) {
+  if (!birthdayPlanner) return;
+  const months = getMonthLabels();
+  const monthIndex = Math.max(0, Math.min(11, birthdayPlannerMonth));
+  const monthName = months[monthIndex];
+  const year = today.getFullYear();
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const firstDay = new Date(year, monthIndex, 1).getDay();
+  const weekLabels = lang === "en" ? ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] : ["Ahad", "Isn", "Sel", "Rab", "Kha", "Jum", "Sab"];
+  const monthEntries = byMonth[monthIndex] || [];
+  const openedKeys = [...openBirthdayDates].filter((key) => key.startsWith(`${monthIndex}-`));
+  const selectedKey = openedKeys[openedKeys.length - 1] || (nextBirthdayKey?.startsWith(`${monthIndex}-`) ? nextBirthdayKey : "");
+  const selectedEntries = selectedKey ? byDate.get(selectedKey) || [] : [];
+  const emptyCells = Array.from({ length: firstDay }, () => `<span class="planner-day planner-day--empty"></span>`).join("");
+  const dayCells = Array.from({ length: daysInMonth }, (_, index) => {
+    const day = index + 1;
+    const key = `${monthIndex}-${day}`;
+    const dayEntries = byDate.get(key) || [];
+    const isOpen = openBirthdayDates.has(key);
+    const classes = [
+      "planner-day",
+      dayEntries.length ? "has-birthday" : "",
+      key === currentDateKey ? "is-today" : "",
+      isBirthdayDateInRange(key, currentDateKey, nextBirthdayKey) ? "is-upcoming-range" : "",
+      key === nextBirthdayKey ? "is-next-birthday" : "",
+      isOpen ? "is-open" : ""
+    ].filter(Boolean).join(" ");
+    return `
+      <button class="${classes}" type="button" data-planner-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
+        <span class="planner-day-number">${day}</span>
+        ${dayEntries.length ? `<span class="planner-day-count">${dayEntries.length}</span>` : ""}
+        ${dayEntries.slice(0, 2).map((entry) => `<em>${escapeHtml(formatDisplayName(entry.person.name))}</em>`).join("")}
+      </button>
+    `;
+  }).join("");
+
+  birthdayPlanner.innerHTML = `
+    <section class="birthday-planner-card">
+      <div class="birthday-planner-head">
+        <button class="btn ghost small" type="button" data-planner-prev aria-label="${lang === "en" ? "Previous month" : "Bulan lepas"}">‹</button>
+        <div>
+          <p class="kicker">${lang === "en" ? "Birthday Planner" : "Planner Birthday"}</p>
+          <h3>${escapeHtml(monthName)} ${year}</h3>
+        </div>
+        <button class="btn ghost small" type="button" data-planner-next aria-label="${lang === "en" ? "Next month" : "Bulan depan"}">›</button>
+        <label class="planner-month-jump">
+          <span>${lang === "en" ? "Jump to" : "Lompat ke"}</span>
+          <select class="select" data-planner-month>
+            ${months.map((month, index) => `<option value="${index}" ${index === monthIndex ? "selected" : ""}>${escapeHtml(month)}</option>`).join("")}
+          </select>
+        </label>
+      </div>
+      <div class="planner-weekdays">
+        ${weekLabels.map((day) => `<span>${escapeHtml(day)}</span>`).join("")}
+      </div>
+      <div class="planner-grid">
+        ${emptyCells}${dayCells}
+      </div>
+    </section>
+    <aside class="birthday-planner-panel">
+      <div class="planner-panel-card">
+        <h3>${selectedEntries.length ? (lang === "en" ? "Selected date" : "Tarikh dipilih") : (lang === "en" ? "This month" : "Bulan ini")}</h3>
+        <div class="birthday-list">
+          ${(selectedEntries.length ? selectedEntries : monthEntries).length ? (selectedEntries.length ? selectedEntries : monthEntries).map((entry, index) => `
+            <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+              <span class="birthday-number">${index + 1}</span>
+              <span class="birthday-person-main">
+                <strong>${escapeHtml(formatDisplayName(entry.person.name))}</strong>
+                <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
+              </span>
+            </button>
+          `).join("") : `<div class="birthday-empty">${escapeHtml((i18n[lang] || i18n.ms).birthdayNoDate)}</div>`}
+        </div>
+      </div>
+    </aside>
+  `;
+
+  birthdayPlanner.querySelector("[data-planner-prev]")?.addEventListener("click", () => {
+    birthdayPlannerMonth = (birthdayPlannerMonth + 11) % 12;
+    renderBirthdayPage();
+  });
+  birthdayPlanner.querySelector("[data-planner-next]")?.addEventListener("click", () => {
+    birthdayPlannerMonth = (birthdayPlannerMonth + 1) % 12;
+    renderBirthdayPage();
+  });
+  birthdayPlanner.querySelector("[data-planner-month]")?.addEventListener("change", (event) => {
+    birthdayPlannerMonth = Number(event.target.value) || 0;
+    renderBirthdayPage();
+  });
+  birthdayPlanner.querySelectorAll("[data-planner-date]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.plannerDate;
+      if (openBirthdayDates.has(key)) {
+        openBirthdayDates.delete(key);
+      } else {
+        openBirthdayDates.add(key);
+      }
+      renderBirthdayPage();
+      if (birthdayCalendarView === "planner") {
+        requestAnimationFrame(() => scrollToBirthdayDate(key));
+      }
+    });
+  });
+  bindPersonLinkClicks(birthdayPlanner);
 }
 
 function renderBirthdayMonthDetail(monthIndex, byDate) {
@@ -3071,8 +3199,10 @@ function formatBirthdayCountdown(entry, today = new Date()) {
 }
 
 function scrollToBirthdayDate(key) {
-  if (!birthdayCalendar || !key) return;
-  const target = birthdayCalendar.querySelector(`[data-birthday-date="${CSS.escape(key)}"]`);
+  if (!key) return;
+  const target = birthdayCalendarView === "planner"
+    ? birthdayPlanner?.querySelector(`[data-planner-date="${CSS.escape(key)}"]`)
+    : birthdayCalendar?.querySelector(`[data-birthday-date="${CSS.escape(key)}"]`);
   target?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 }
 
@@ -3917,6 +4047,22 @@ if (birthdaySearchInput) {
   birthdaySearchInput.addEventListener("input", renderBirthdaySearchResults);
 }
 
+if (birthdayViewYearBtn) {
+  birthdayViewYearBtn.addEventListener("click", () => {
+    birthdayCalendarView = "year";
+    renderBirthdayPage();
+  });
+}
+
+if (birthdayViewPlannerBtn) {
+  birthdayViewPlannerBtn.addEventListener("click", () => {
+    birthdayCalendarView = "planner";
+    birthdayPlannerMonth = new Date().getMonth();
+    renderBirthdayPage();
+    requestAnimationFrame(() => birthdayPlanner?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  });
+}
+
 if (birthdayOpenAllBtn) {
   birthdayOpenAllBtn.addEventListener("click", () => {
     openBirthdayDates = new Set(getBirthdayEntries().map((entry) => `${entry.month}-${entry.day}`));
@@ -3935,8 +4081,11 @@ if (birthdayTodayBtn) {
   birthdayTodayBtn.addEventListener("click", () => {
     const today = new Date();
     const key = `${today.getMonth()}-${today.getDate()}`;
+    birthdayPlannerMonth = today.getMonth();
     if (getBirthdayEntries().some((entry) => `${entry.month}-${entry.day}` === key)) {
       openBirthdayDates.add(key);
+      renderBirthdayPage();
+    } else if (birthdayCalendarView === "planner") {
       renderBirthdayPage();
     }
     scrollToBirthdayDate(key);
