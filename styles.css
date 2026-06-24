@@ -4534,17 +4534,20 @@ input[type="search"] {
   grid-area: actions;
   grid-column: 2 / 3;
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: 10px;
+  grid-template-columns: max-content max-content;
+  gap: 12px;
   align-items: start;
+  justify-content: start;
 }
 
 .action-cluster,
 .export-actions {
-  min-height: 56px;
+  width: max-content;
+  max-width: 100%;
+  min-height: 0;
   align-items: center;
-  padding: 7px;
-  border-radius: 20px;
+  padding: 8px;
+  border-radius: 18px;
   background: color-mix(in srgb, var(--card) 78%, var(--bg-soft));
   border: 1px solid color-mix(in srgb, var(--primary) 13%, transparent);
   box-shadow: 0 14px 34px rgba(31, 42, 36, 0.06);
@@ -4557,7 +4560,9 @@ input[type="search"] {
 }
 
 .action-cluster--zoom {
-  justify-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  justify-self: start;
   margin-left: 0;
   background: color-mix(in srgb, var(--primary) 5%, var(--card));
   border-color: color-mix(in srgb, var(--primary) 16%, transparent);
@@ -4569,7 +4574,7 @@ input[type="search"] {
 }
 
 .actions-zoom .export-actions {
-  justify-self: stretch;
+  justify-self: start;
 }
 
 .btn {
