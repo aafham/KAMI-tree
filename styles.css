@@ -4424,6 +4424,10 @@ body.hide-tags .person-tags {
 .controls {
   display: grid;
   grid-template-columns: minmax(360px, 0.9fr) minmax(560px, 1.25fr);
+  grid-template-areas:
+    "search search"
+    "relationship actions"
+    "generation actions";
   gap: 16px;
   padding: clamp(16px, 1.6vw, 24px);
   border-radius: 24px;
@@ -4452,6 +4456,7 @@ body.hide-tags .person-tags {
 }
 
 .controls > div.control-group:first-of-type {
+  grid-area: search;
   grid-column: 1 / -1;
   padding: 0;
 }
@@ -4489,6 +4494,7 @@ input[type="search"] {
 }
 
 .relationship-finder {
+  grid-area: relationship;
   grid-column: 1 / 2;
   align-self: start;
   min-width: 0;
@@ -4525,11 +4531,12 @@ input[type="search"] {
 }
 
 .actions-zoom {
+  grid-area: actions;
   grid-column: 2 / 3;
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 10px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .action-cluster,
@@ -4575,7 +4582,8 @@ input[type="search"] {
 }
 
 .generation-row {
-  grid-column: 1 / -1;
+  grid-area: generation;
+  grid-column: auto;
   padding-top: 4px;
   align-items: center;
 }
@@ -4648,6 +4656,11 @@ input[type="search"] {
 @media (max-width: 1180px) {
   .controls {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "search"
+      "relationship"
+      "actions"
+      "generation";
   }
 
   .relationship-finder,
