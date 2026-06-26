@@ -3410,19 +3410,24 @@ body.overview-zoom .person-age {
 
 .person-tags {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .tag {
-  font-size: calc(12px * var(--card-scale));
-  padding: 4px 8px;
-  border-radius: 10px;
+  min-height: 22px;
+  padding: 3px 8px;
+  border-radius: 999px;
   background: color-mix(in srgb, var(--branch-color, var(--primary)) 15%, transparent);
   color: var(--branch-color, var(--primary));
-  line-height: 1;
+  font-size: min(12px, calc(12px * var(--card-scale)));
+  font-weight: 600;
+  line-height: 1.1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 body.hide-birthdate .person-birth {
