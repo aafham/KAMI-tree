@@ -416,6 +416,7 @@ const i18n = {
     genderLabel: "Jantina",
     genderMale: "Lelaki",
     genderFemale: "Perempuan",
+    genderUnknown: "Tidak pasti",
     controlsToggleOpen: "Buka Panel",
     controlsToggleClose: "Tutup Panel",
     resetView: "Reset View",
@@ -664,6 +665,7 @@ const i18n = {
     genderLabel: "Gender",
     genderMale: "Male",
     genderFemale: "Female",
+    genderUnknown: "Unknown",
     controlsToggleOpen: "Show Panel",
     controlsToggleClose: "Hide Panel",
     resetView: "Reset View",
@@ -2240,6 +2242,11 @@ function createPersonCard(person, depth) {
   name.className = "person-name";
   const firstName = formatDisplayName(person.firstName || getShortDisplayName(displayName || person.name || "") || person.name || "");
   name.textContent = firstName || displayName || person.name || "";
+  const gender = getPersonGender(person);
+  const genderPill = document.createElement("div");
+  genderPill.className = "person-gender-pill";
+  genderPill.dataset.gender = gender || "unknown";
+  genderPill.textContent = getGenderLabel(person);
   const meta = document.createElement("div");
   meta.className = "person-meta";
   const birthLine = document.createElement("div");
@@ -2262,6 +2269,7 @@ function createPersonCard(person, depth) {
   if (birthLine.textContent) meta.appendChild(birthLine);
   if (deathLine.textContent) meta.appendChild(deathLine);
   nameWrap.appendChild(name);
+  nameWrap.appendChild(genderPill);
   nameWrap.appendChild(meta);
 
   header.appendChild(avatar);
@@ -2281,7 +2289,6 @@ function createPersonCard(person, depth) {
     tags.appendChild(tag);
   });
   if (isPartnered(person.id)) {
-    const gender = getPersonGender(person);
     const spouseLabel = gender === "male" ? i18n[lang].spouseHusband : gender === "female" ? i18n[lang].spouseWife : "";
     const existingText = tagsQueue.join(" ").toLowerCase();
     const spouseLower = spouseLabel.toLowerCase();
@@ -3342,6 +3349,14 @@ function getPersonGender(person) {
   return person?.gender && person.gender !== "unknown" ? person.gender : detectGenderFromName(person?.name);
 }
 
+function getGenderLabel(person) {
+  const t = i18n[lang] || i18n.ms;
+  const gender = getPersonGender(person);
+  if (gender === "male") return t.genderMale;
+  if (gender === "female") return t.genderFemale;
+  return t.genderUnknown;
+}
+
 function getPersonStatus(person) {
   if (!person) return "unknown";
   if (person.status) return person.status;
@@ -3823,6 +3838,7 @@ function openModal(person) {
   storyTitle.textContent = formatDisplayName(person.name);
   storyContent.innerHTML = `
     <div class="story-detail"><strong>${t.modalRelation}</strong><span>${person.relation || "-"}</span></div>
+    <div class="story-detail"><strong>${t.genderLabel}</strong><span>${getGenderLabel(person)}</span></div>
     <div class="story-detail"><strong>${t.modalBirth}</strong><span>${formatDateDisplay(person.birth) || "-"}${ageText}</span></div>
     <div class="story-detail"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>

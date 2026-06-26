@@ -3350,6 +3350,37 @@ body.overview-zoom .person-name {
   min-height: auto;
 }
 
+.person-gender-pill {
+  width: max-content;
+  max-width: 100%;
+  margin-top: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-2) 22%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--primary-2) 38%, transparent);
+  color: color-mix(in srgb, var(--ink) 72%, var(--primary));
+  font-size: calc(11px * var(--card-scale));
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.person-gender-pill[data-gender="male"] {
+  background: color-mix(in srgb, #8bb8d4 32%, var(--card));
+  border-color: color-mix(in srgb, #4c88ad 42%, transparent);
+  color: #28536b;
+}
+
+.person-gender-pill[data-gender="female"] {
+  background: color-mix(in srgb, #d8c7f2 36%, var(--card));
+  border-color: color-mix(in srgb, #9c7ad1 40%, transparent);
+  color: #5d4386;
+}
+
+body.overview-zoom .person-gender-pill {
+  font-size: 10px;
+  padding: 2px 7px;
+}
+
 .gen-badge {
   display: inline-block;
   font-size: 10px;
@@ -3418,6 +3449,17 @@ body.hide-tags .person-tags {
 
 [data-theme="dark"] .badge-self {
   color: #0b1410;
+}
+
+[data-theme="dark"] .person-gender-pill {
+  color: #f4f8f5;
+  background: rgba(157, 199, 226, 0.14);
+  border-color: rgba(157, 199, 226, 0.26);
+}
+
+[data-theme="dark"] .person-gender-pill[data-gender="female"] {
+  background: rgba(216, 199, 242, 0.16);
+  border-color: rgba(216, 199, 242, 0.28);
 }
 
 .generation-divider {
