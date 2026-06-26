@@ -354,6 +354,11 @@ const i18n = {
     profileCopyLink: "Copy link",
     profileLinkCopied: "Link ahli telah disalin.",
     profileLinkCopyFail: "Tak dapat copy link. URL sudah dikemas kini di address bar.",
+    profileFamilyStats: "Ringkasan keluarga",
+    profileChildrenCount: "Anak",
+    profileGrandchildrenCount: "Cucu",
+    profileGreatGrandchildrenCount: "Cicit",
+    profileInlawsCount: "Menantu",
     focusedBranchClear: "Tunjuk Semua",
     focusedBranchActive: "Family view: {name}",
     focusedBranchHint: "Paparan ini hanya tunjuk keluarga terdekat.",
@@ -603,6 +608,11 @@ const i18n = {
     profileCopyLink: "Copy link",
     profileLinkCopied: "Person link copied.",
     profileLinkCopyFail: "Could not copy the link. The URL was updated in the address bar.",
+    profileFamilyStats: "Family summary",
+    profileChildrenCount: "Children",
+    profileGrandchildrenCount: "Grandchildren",
+    profileGreatGrandchildrenCount: "Great-grandchildren",
+    profileInlawsCount: "In-laws",
     focusedBranchClear: "Show All",
     focusedBranchActive: "Family view: {name}",
     focusedBranchHint: "This view only shows close family.",
@@ -3547,6 +3557,68 @@ function getDescendantIds(personId) {
   return [...result];
 }
 
+function getFamilyCountSummary(personId) {
+  const childIds = new Set(getChildIds(personId).filter((id) => peopleById.has(id)));
+  const grandchildIds = new Set();
+  const greatGrandchildIds = new Set();
+  const inlawIds = new Set();
+
+  childIds.forEach((childId) => {
+    getChildIds(childId).forEach((grandchildId) => {
+      if (peopleById.has(grandchildId)) grandchildIds.add(grandchildId);
+    });
+  });
+
+  grandchildIds.forEach((grandchildId) => {
+    getChildIds(grandchildId).forEach((greatGrandchildId) => {
+      if (peopleById.has(greatGrandchildId)) greatGrandchildIds.add(greatGrandchildId);
+    });
+  });
+
+  (treeData?.unions || []).forEach((union) => {
+    const partner1IsChild = childIds.has(union.partner1);
+    const partner2IsChild = childIds.has(union.partner2);
+    if (partner1IsChild && union.partner2 && peopleById.has(union.partner2)) inlawIds.add(union.partner2);
+    if (partner2IsChild && union.partner1 && peopleById.has(union.partner1)) inlawIds.add(union.partner1);
+  });
+
+  childIds.forEach((childId) => inlawIds.delete(childId));
+
+  return {
+    children: childIds.size,
+    grandchildren: grandchildIds.size,
+    greatGrandchildren: greatGrandchildIds.size,
+    inlaws: inlawIds.size
+  };
+}
+
+function renderFamilyCountSummary(person) {
+  const t = i18n[lang] || i18n.ms;
+  const stats = getFamilyCountSummary(person.id);
+  const items = [
+    ["children", t.profileChildrenCount],
+    ["grandchildren", t.profileGrandchildrenCount],
+    ["greatGrandchildren", t.profileGreatGrandchildrenCount],
+    ["inlaws", t.profileInlawsCount]
+  ].filter(([key]) => stats[key] > 0);
+
+  if (!items.length) return "";
+
+  return `
+    <section class="profile-family-stats" aria-label="${escapeHtml(t.profileFamilyStats)}">
+      <strong>${escapeHtml(t.profileFamilyStats)}</strong>
+      <div>
+        ${items.map(([key, label]) => `
+          <span>
+            <b>${stats[key]}</b>
+            ${escapeHtml(label)}
+          </span>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function getQuickFamilyIds(personId, mode) {
   if (!personId || !peopleById.has(personId)) return new Set();
   const family = getIndividualFamily(personId);
@@ -3843,6 +3915,7 @@ function openModal(person) {
     <div class="story-detail"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
     <div class="story-detail"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
+    ${renderFamilyCountSummary(person)}
     ${renderLineageBreadcrumb(person)}
     ${renderProfileActions(person)}
     ${renderIndividualLineage(person)}
