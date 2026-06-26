@@ -4886,6 +4886,361 @@ input[type="search"] {
   }
 }
 
+/* Cross-page UI polish */
+.tree-toolbar {
+  border-radius: 18px;
+  padding: 9px 12px;
+}
+
+.tree-toolbar-actions {
+  gap: 7px;
+}
+
+.tree-view-modes {
+  border-radius: 12px;
+}
+
+.tree-toolbar-actions > .btn,
+.tree-view-modes .btn {
+  min-height: 36px;
+}
+
+body[data-view="birthday"] .tree-toolbar,
+body[data-view="birthday"] .tree-scroll-guide,
+body[data-view="birthday"] .brand-minimap-wrap,
+body[data-view="directory"] .brand-minimap-wrap {
+  display: none !important;
+}
+
+.story-panel {
+  border-radius: 22px;
+  padding: 20px;
+}
+
+.story-panel h2 {
+  line-height: 1.05;
+}
+
+.story-panel .profile-actions {
+  gap: 10px;
+}
+
+.story-panel .profile-actions .btn {
+  min-height: 42px;
+  border-radius: 14px;
+}
+
+.lineage-path,
+.lineage-row,
+.story-panel [class*="lineage"] {
+  border-radius: 16px;
+}
+
+.birthday-section {
+  padding: clamp(18px, 2.4vw, 30px);
+}
+
+.birthday-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  padding: 4px 0 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.birthday-head > div {
+  display: grid;
+  justify-items: start;
+  gap: 7px;
+}
+
+.birthday-head h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1;
+}
+
+.birthday-head .btn {
+  align-self: start;
+  min-height: 42px;
+  border-radius: 14px;
+}
+
+.birthday-head-sub {
+  margin-top: 2px;
+}
+
+.birthday-featured {
+  margin-top: 18px;
+  border-radius: 22px;
+  padding: clamp(16px, 2vw, 24px);
+}
+
+.birthday-tools {
+  grid-template-columns: minmax(260px, 1fr) auto;
+  align-items: end;
+  padding: 14px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.birthday-search-results {
+  grid-column: 1 / -1;
+}
+
+.birthday-legend {
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.birthday-view-switch {
+  border-radius: 999px;
+  padding: 6px;
+}
+
+.birthday-view-switch .btn {
+  border-radius: 999px;
+}
+
+.directory-section {
+  border-radius: 24px;
+}
+
+.directory-head {
+  align-items: start;
+  padding-bottom: 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.directory-toolbar,
+.directory-tools {
+  padding: 12px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 11%, transparent);
+}
+
+.directory-toolbar {
+  grid-template-columns: minmax(260px, 1fr) auto;
+}
+
+.directory-tools {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.directory-tools .label,
+.directory-toolbar .label {
+  font-weight: 700;
+}
+
+.directory-tools .select,
+.directory-search .input {
+  min-height: 46px;
+  border-radius: 14px;
+}
+
+.directory-summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 7%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.directory-card {
+  border-radius: 18px;
+}
+
+.settings-card {
+  width: min(780px, calc(100vw - 28px));
+}
+
+.settings-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px;
+  margin: 10px 0 4px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 7%, var(--bg-soft));
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.settings-tab {
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.settings-tab.is-active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(79, 138, 106, 0.18);
+}
+
+.settings-section[hidden] {
+  display: none !important;
+}
+
+.settings-section {
+  margin-top: 12px;
+}
+
+[data-theme="dark"] .birthday-tools,
+[data-theme="dark"] .birthday-legend,
+[data-theme="dark"] .directory-toolbar,
+[data-theme="dark"] .directory-tools,
+[data-theme="dark"] .settings-tabs {
+  background: rgba(20, 34, 28, 0.78);
+  border-color: rgba(220, 235, 226, 0.12);
+}
+
+@media (max-width: 720px) {
+  .mobile-topbar {
+    justify-content: center;
+    gap: 7px;
+    min-height: 58px;
+  }
+
+  .mobile-topbar-action,
+  .mobile-topbar .btn.icon {
+    min-height: 40px;
+    border-radius: 14px;
+  }
+
+  .tree-toolbar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: calc(58px + env(safe-area-inset-bottom));
+    z-index: 1250;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 9px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+    backdrop-filter: blur(14px);
+  }
+
+  .tree-toolbar > div:first-child {
+    display: none;
+  }
+
+  .tree-toolbar-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .tree-view-modes {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tree-toolbar-actions > .btn {
+    display: none;
+  }
+
+  .tree-toolbar-actions > [data-tree-action="fit"],
+  .tree-toolbar-actions > [data-tree-action="reset"],
+  .tree-toolbar-actions > [data-tree-action="minimap"] {
+    display: inline-flex;
+  }
+
+  .tree-toolbar-actions > [data-tree-action="fit"],
+  .tree-toolbar-actions > [data-tree-action="reset"],
+  .tree-toolbar-actions > [data-tree-action="minimap"] {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 6px;
+    justify-content: center;
+  }
+
+  .view-switch {
+    display: none;
+  }
+
+  .tree-section {
+    padding-bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+
+  .brand-minimap-wrap {
+    bottom: calc(166px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+  }
+
+  .brand-minimap-wrap:not(.is-open) .minimap-handle {
+    display: none;
+  }
+
+  .mobile-panel-btn {
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-sheet {
+    bottom: calc(54px + env(safe-area-inset-bottom));
+  }
+
+  .birthday-head {
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-head .btn {
+    width: max-content;
+  }
+
+  .birthday-featured,
+  .birthday-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-toggle-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .birthday-toggle-actions .btn {
+    width: 100%;
+  }
+
+  .directory-toolbar,
+  .directory-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .directory-summary {
+    display: flex;
+    border-radius: 14px;
+  }
+
+  .settings-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .settings-tab {
+    width: 100%;
+  }
+}
+
 @keyframes cardIn {
   from {
     opacity: 0;

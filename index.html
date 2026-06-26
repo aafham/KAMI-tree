@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260218" />
+  <link rel="stylesheet" href="styles.css?v=20260219" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -421,8 +421,14 @@
     <div class="settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
       <button class="settings-close" type="button" aria-label="Tutup" data-settings-close="true">×</button>
       <h2 id="settings-title" data-i18n="settingsTitle">Settings</h2>
+      <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+        <button class="settings-tab is-active" type="button" role="tab" aria-selected="true" data-settings-tab="display">Paparan</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="navigation">Navigasi</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="tools">Alat</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="about">Info</button>
+      </div>
 
-      <div class="settings-section">
+      <div class="settings-section" data-settings-panel="display">
         <h3 data-i18n="settingsDisplay">Paparan</h3>
         <div class="settings-grid">
           <div class="settings-slider">
@@ -498,7 +504,7 @@
         </div>
       </div>
 
-      <div class="settings-section">
+      <div class="settings-section" data-settings-panel="navigation" hidden>
         <h3 data-i18n="settingsNav">Navigation</h3>
         <div class="settings-grid">
           <label class="toggle">
@@ -520,7 +526,7 @@
         </div>
       </div>
 
-      <div class="settings-section">
+      <div class="settings-section" data-settings-panel="tools" hidden>
         <h3 data-i18n="settingsTools">Tools</h3>
         <div class="settings-grid settings-grid--tools">
           <button id="setting-reset-settings" class="btn ghost small" type="button" data-i18n="settingsReset">
@@ -544,7 +550,7 @@
         </div>
       </div>
 
-      <div class="settings-section">
+      <div class="settings-section" data-settings-panel="about" hidden>
         <h3 data-i18n="settingsAbout">About</h3>
         <div class="settings-about">
           <span data-i18n="settingsDataVersion">Data version</span>
@@ -556,6 +562,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260218" defer></script>
+  <script src="app.js?v=20260219" defer></script>
 </body>
 </html>

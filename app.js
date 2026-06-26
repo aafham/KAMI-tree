@@ -5062,6 +5062,19 @@ if (settingsModal) {
     if (!event.target.dataset.settingsClose) return;
     closeSettingsModal();
   });
+  settingsModal.querySelectorAll("[data-settings-tab]").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.settingsTab;
+      settingsModal.querySelectorAll("[data-settings-tab]").forEach((item) => {
+        const isActive = item === tab;
+        item.classList.toggle("is-active", isActive);
+        item.setAttribute("aria-selected", isActive.toString());
+      });
+      settingsModal.querySelectorAll("[data-settings-panel]").forEach((panel) => {
+        panel.hidden = panel.dataset.settingsPanel !== target;
+      });
+    });
+  });
   closeSettingsModal();
 }
 
