@@ -4875,7 +4875,11 @@ input[type="search"] {
   }
 
   body.controls-collapsed .stats {
-    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+
+  body.controls-collapsed .tree-section {
+    padding-top: 0;
   }
 
   .stat-card {
