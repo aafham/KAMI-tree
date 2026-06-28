@@ -5226,6 +5226,19 @@ body[data-view="directory"] .brand-minimap-wrap {
     border-radius: 20px;
     background: color-mix(in srgb, var(--card) 88%, transparent);
     backdrop-filter: blur(14px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  body:not(.controls-collapsed) .tree-toolbar {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+  }
+
+  body.controls-collapsed .tree-toolbar {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
   }
 
   .tree-toolbar > div:first-child {
@@ -5287,6 +5300,10 @@ body[data-view="directory"] .brand-minimap-wrap {
 
   .bottom-sheet {
     bottom: calc(54px + env(safe-area-inset-bottom));
+  }
+
+  body:not(.controls-collapsed) .bottom-sheet {
+    bottom: 0;
   }
 
   .birthday-head {
