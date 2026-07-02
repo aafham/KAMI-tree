@@ -17,20 +17,20 @@
     },
     {
       "id": "p2",
-      "name": "MOHAMAD ISA BIN MOHAMAD ARIFF",
+      "name": "Mohamad Isa bin Mohamad Ariff",
       "birth": "1924-05-03",
       "death": "1991-01-24",
       "relation": "Wan",
       "note": "Suami",
       "photo": "",
-      "nickname": "MOHAMAD ISA",
+      "nickname": "Mohamad Isa",
       "gender": "male",
       "status": "deceased",
       "branchId": "root"
     },
     {
       "id": "p3",
-      "name": "Noor Azmah Binti Mohamad Isa",
+      "name": "Noor Azmah binti Mohamad Isa",
       "birth": "1956-02-13",
       "death": "",
       "relation": "Anak sulung",
@@ -43,7 +43,7 @@
     },
     {
       "id": "p4",
-      "name": "Hamidun Bin Mat",
+      "name": "Hamidun bin Mat",
       "birth": "1952-10-26",
       "death": "2021-10-25",
       "relation": "Menantu",
@@ -56,7 +56,7 @@
     },
     {
       "id": "p5",
-      "name": "Noor Azizan Bin Mohamad Isa",
+      "name": "Noor Azizan bin Mohamad Isa",
       "birth": "1960-04-12",
       "death": "",
       "relation": "Anak kedua",
@@ -69,7 +69,7 @@
     },
     {
       "id": "p6",
-      "name": "Rohana @ Norliza Binti Hj Yusof",
+      "name": "Rohana @ Norliza binti Hj Yusof",
       "birth": "1959-07-22",
       "death": "",
       "relation": "Menantu",
@@ -82,7 +82,7 @@
     },
     {
       "id": "p7",
-      "name": "Noor Azri Bin Mohamad Isa",
+      "name": "Noor Azri bin Mohamad Isa",
       "birth": "1962-09-07",
       "death": "",
       "relation": "Anak ketiga",
@@ -95,7 +95,7 @@
     },
     {
       "id": "p8",
-      "name": "Noraini Binti Hj Saidin",
+      "name": "Noraini binti Hj Saidin",
       "birth": "1961-06-02",
       "death": "",
       "relation": "Menantu",
@@ -108,7 +108,7 @@
     },
     {
       "id": "p9",
-      "name": "Noor Aziah Binti Mohamad Isa",
+      "name": "Noor Aziah binti Mohamad Isa",
       "birth": "1972-07-05",
       "death": "",
       "relation": "Anak keempat",
@@ -121,7 +121,7 @@
     },
     {
       "id": "p10",
-      "name": "Mohd Yusof Bin Mahat",
+      "name": "Mohd Yusof bin Mahat",
       "birth": "1972-12-16",
       "death": "",
       "relation": "Menantu",
@@ -134,7 +134,7 @@
     },
     {
       "id": "p11",
-      "name": "Ahmad Hafizi Bin Hamidun",
+      "name": "Ahmad Hafizi bin Hamidun",
       "birth": "1982-01-24",
       "death": "",
       "relation": "Cucu",
@@ -147,7 +147,7 @@
     },
     {
       "id": "p48",
-      "name": "Siti Mahida Binti Duim",
+      "name": "Siti Mahida binti Duim",
       "birth": "1983-02-18",
       "death": "",
       "relation": "Menantu",
@@ -160,7 +160,7 @@
     },
     {
       "id": "p49",
-      "name": "Ahmad Al-Atiff Bin Ahmad Hafizi",
+      "name": "Ahmad Al-Atiff bin Ahmad Hafizi",
       "birth": "2011-09-16",
       "death": "",
       "relation": "Cicit",
@@ -173,7 +173,7 @@
     },
     {
       "id": "p50",
-      "name": "Ahmad Al Afiff Bin Ahmad Hafizi",
+      "name": "Ahmad Al Afiff bin Ahmad Hafizi",
       "birth": "2017-01-13",
       "death": "",
       "relation": "Cicit",
@@ -186,7 +186,7 @@
     },
     {
       "id": "p51",
-      "name": "Aleena Marissa Binti Ahmad Hafizi",
+      "name": "Aleena Marissa binti Ahmad Hafizi",
       "birth": "2021-10-01",
       "death": "",
       "relation": "Cicit",
@@ -199,7 +199,7 @@
     },
     {
       "id": "p12",
-      "name": "Ahmad Nazif Bin Hamidun",
+      "name": "Ahmad Nazif bin Hamidun",
       "birth": "1985-05-25",
       "death": "",
       "relation": "Cucu",
@@ -212,7 +212,7 @@
     },
     {
       "id": "p60",
-      "name": "Nurul Anis Syuhada Binti Jusoh",
+      "name": "Nurul Anis Syuhada binti Jusoh",
       "birth": "1987-02-21",
       "death": "",
       "relation": "Menantu",
@@ -225,7 +225,7 @@
     },
     {
       "id": "p61",
-      "name": "Ahmad Nabil Fahmi Bin Ahmad Nazif",
+      "name": "Ahmad Nabil Fahmi bin Ahmad Nazif",
       "birth": "2013-07-16",
       "death": "",
       "relation": "Cicit",
@@ -238,7 +238,7 @@
     },
     {
       "id": "p62",
-      "name": "Nuha Farhana Binti Ahmad Nazif",
+      "name": "Nuha Farhana binti Ahmad Nazif",
       "birth": "2019-05-18",
       "death": "",
       "relation": "Cicit",
@@ -251,7 +251,7 @@
     },
     {
       "id": "p63",
-      "name": "Nurin Farzana Binti Ahmad Nazif",
+      "name": "Nurin Farzana binti Ahmad Nazif",
       "birth": "2023-11-13",
       "death": "",
       "relation": "Cicit",
@@ -264,7 +264,7 @@
     },
     {
       "id": "p14",
-      "name": "Nur Aina Binti Hamidun",
+      "name": "Nur Aina binti Hamidun",
       "birth": "1992-11-19",
       "death": "",
       "relation": "Cucu",
@@ -277,7 +277,7 @@
     },
     {
       "id": "p32",
-      "name": "Mohd Syazwan Akmal Bin Mohd Azmi",
+      "name": "Mohd Syazwan Akmal bin Mohd Azmi",
       "birth": "1992-01-06",
       "death": "",
       "relation": "Menantu",
@@ -290,7 +290,7 @@
     },
     {
       "id": "p33",
-      "name": "Alfiy Akmal Bin Mohd Syazwan Akmal",
+      "name": "Alfiy Akmal bin Mohd Syazwan Akmal",
       "birth": "2019-05-20",
       "death": "",
       "relation": "Cicit",
@@ -303,7 +303,7 @@
     },
     {
       "id": "p34",
-      "name": "Auni Alyssa Binti Mohd Syazwan Akmal",
+      "name": "Auni Alyssa binti Mohd Syazwan Akmal",
       "birth": "2022-05-25",
       "death": "",
       "relation": "Cicit",
@@ -316,7 +316,7 @@
     },
     {
       "id": "p35",
-      "name": "Airin Aryssa Binti Mohd Syazwan Akmal",
+      "name": "Airin Aryssa binti Mohd Syazwan Akmal",
       "birth": "2023-09-27",
       "death": "",
       "relation": "Cicit",
@@ -329,7 +329,7 @@
     },
     {
       "id": "p44",
-      "name": "Nazifah Binti Hamidun",
+      "name": "Nazifah binti Hamidun",
       "birth": "1984-04-12",
       "death": "",
       "relation": "Cucu",
@@ -342,7 +342,7 @@
     },
     {
       "id": "p45",
-      "name": "Md Halmi Bin Mat Isa",
+      "name": "Md Halmi bin Mat Isa",
       "birth": "",
       "death": "2025-11-19",
       "relation": "Menantu",
@@ -355,7 +355,7 @@
     },
     {
       "id": "p46",
-      "name": "Nur Nabila Wilda Binti Md Halmi",
+      "name": "Nur Nabila Wilda binti Md Halmi",
       "birth": "2016-02-16",
       "death": "",
       "relation": "Cicit",
@@ -368,7 +368,7 @@
     },
     {
       "id": "p47",
-      "name": "Nur Nadira Wilda Binti Md Halmi",
+      "name": "Nur Nadira Wilda binti Md Halmi",
       "birth": "2018-12-17",
       "death": "",
       "relation": "Cicit",
@@ -381,7 +381,7 @@
     },
     {
       "id": "p15",
-      "name": "Nurul Anisah Binti Noor Azizan",
+      "name": "Nurul Anisah binti Noor Azizan",
       "birth": "1987-08-12",
       "death": "",
       "relation": "Cucu",
@@ -394,7 +394,7 @@
     },
     {
       "id": "p16",
-      "name": "Khairul Anuar Bin Karia",
+      "name": "Khairul Anuar bin Karia",
       "birth": "1984-12-29",
       "death": "",
       "relation": "Menantu",
@@ -407,7 +407,7 @@
     },
     {
       "id": "p17",
-      "name": "Ahmad Aqil Bin Khairul Anuar",
+      "name": "Ahmad Aqil bin Khairul Anuar",
       "birth": "2015-07-14",
       "death": "",
       "relation": "Cicit",
@@ -420,7 +420,7 @@
     },
     {
       "id": "p18",
-      "name": "Nur Aafiyah Binti Khairul Anuar",
+      "name": "Nur Aafiyah binti Khairul Anuar",
       "birth": "2018-05-12",
       "death": "",
       "relation": "Cicit",
@@ -433,7 +433,7 @@
     },
     {
       "id": "p19",
-      "name": "Nur Alya Amani Binti Khairul Anuar",
+      "name": "Nur Alya Amani binti Khairul Anuar",
       "birth": "2023-07-23",
       "death": "",
       "relation": "Cicit",
@@ -446,7 +446,7 @@
     },
     {
       "id": "p36",
-      "name": "Nurul Fahimah Binti Noor Azizan",
+      "name": "Nurul Fahimah binti Noor Azizan",
       "birth": "1991-03-08",
       "death": "",
       "relation": "Cucu",
@@ -459,7 +459,7 @@
     },
     {
       "id": "p37",
-      "name": "Mohd Hanif Bin Lamin",
+      "name": "Mohd Hanif bin Lamin",
       "birth": "1991-05-30",
       "death": "",
       "relation": "Menantu",
@@ -472,7 +472,7 @@
     },
     {
       "id": "p38",
-      "name": "Aisyah Nuha Binti Mohd Hanif",
+      "name": "Aisyah Nuha binti Mohd Hanif",
       "birth": "2018-09-02",
       "death": "",
       "relation": "Cicit",
@@ -485,7 +485,7 @@
     },
     {
       "id": "p39",
-      "name": "Auni Nasuha Binti Mohd Hanif",
+      "name": "Auni Nasuha binti Mohd Hanif",
       "birth": "2023-05-29",
       "death": "",
       "relation": "Cicit",
@@ -498,7 +498,7 @@
     },
     {
       "id": "p40",
-      "name": "Ahmad Thaqif Bin Mohd Hanif",
+      "name": "Ahmad Thaqif bin Mohd Hanif",
       "birth": "2025-04-02",
       "death": "",
       "relation": "Cicit",
@@ -511,7 +511,7 @@
     },
     {
       "id": "p52",
-      "name": "Nur Nasihah Binti Noor Azri",
+      "name": "Nur Nasihah binti Noor Azri",
       "birth": "1989-10-21",
       "death": "",
       "relation": "Cucu",
@@ -524,7 +524,7 @@
     },
     {
       "id": "p53",
-      "name": "Muadz Bin Husain",
+      "name": "Muadz bin Husain",
       "birth": "1986-07-18",
       "death": "",
       "relation": "Menantu",
@@ -537,7 +537,7 @@
     },
     {
       "id": "p54",
-      "name": "Nur Muhammad Bin Muadz",
+      "name": "Nur Muhammad bin Muadz",
       "birth": "2018-06-11",
       "death": "",
       "relation": "Cicit",
@@ -550,7 +550,7 @@
     },
     {
       "id": "p55",
-      "name": "Nur Nuha Musfirah Binti Muadz",
+      "name": "Nur Nuha Musfirah binti Muadz",
       "birth": "2020-11-15",
       "death": "",
       "relation": "Cicit",
@@ -563,7 +563,7 @@
     },
     {
       "id": "p56",
-      "name": "Nur Maisarah Izzati Binti Muadz",
+      "name": "Nur Maisarah Izzati binti Muadz",
       "birth": "2023-07-15",
       "death": "",
       "relation": "Cicit",
@@ -576,7 +576,7 @@
     },
     {
       "id": "p64",
-      "name": "Nur Ahmad Syatir Bin Noor Azri",
+      "name": "Nur Ahmad Syatir bin Noor Azri",
       "birth": "1992-10-26",
       "death": "",
       "relation": "Cucu",
@@ -589,7 +589,7 @@
     },
     {
       "id": "p65",
-      "name": "Shafiqah Nabilah Binti Bsime",
+      "name": "Shafiqah Nabilah binti Bsime",
       "birth": "1991-12-18",
       "death": "",
       "relation": "Menantu",
@@ -602,7 +602,7 @@
     },
     {
       "id": "p66",
-      "name": "Nur Ahmad Qowiy Bin Nur Ahmad Syatir",
+      "name": "Nur Ahmad Qowiy bin Nur Ahmad Syatir",
       "birth": "2016-12-21",
       "death": "",
       "relation": "Cicit",
@@ -615,7 +615,7 @@
     },
     {
       "id": "p67",
-      "name": "Nur Hana Saffiyah Binti Nur Ahmad Syatir",
+      "name": "Nur Hana Saffiyah binti Nur Ahmad Syatir",
       "birth": "2018-08-08",
       "death": "",
       "relation": "Cicit",
@@ -628,7 +628,7 @@
     },
     {
       "id": "p68",
-      "name": "Nur Hannan Syakila Binti Nur Ahmad Syatir",
+      "name": "Nur Hannan Syakila binti Nur Ahmad Syatir",
       "birth": "2019-07-13",
       "death": "",
       "relation": "Cicit",
@@ -641,7 +641,7 @@
     },
     {
       "id": "p69",
-      "name": "Nur Haura Khadijah Binti Nur Ahmad Syatir",
+      "name": "Nur Haura Khadijah binti Nur Ahmad Syatir",
       "birth": "2021-02-16",
       "death": "",
       "relation": "Cicit",
@@ -654,7 +654,7 @@
     },
     {
       "id": "p70",
-      "name": "Nur Haniyah Nusaibah Binti Nur Ahmad Syatir",
+      "name": "Nur Haniyah Nusaibah binti Nur Ahmad Syatir",
       "birth": "2025-01-01",
       "death": "",
       "relation": "Cicit",
@@ -667,7 +667,7 @@
     },
     {
       "id": "p57",
-      "name": "Nur Syatirah Binti Noor Azri",
+      "name": "Nur Syatirah binti Noor Azri",
       "birth": "1994-07-27",
       "death": "",
       "relation": "Cucu",
@@ -680,7 +680,7 @@
     },
     {
       "id": "p58",
-      "name": "Nor Najmi Naqiyuddin Bin Abd Rahman",
+      "name": "Nor Najmi Naqiyuddin bin Abd Rahman",
       "birth": "1994-12-21",
       "death": "",
       "relation": "Menantu",
@@ -693,7 +693,7 @@
     },
     {
       "id": "p59",
-      "name": "Umar Abdul Aziz Bin Noor Azri",
+      "name": "Umar Abdul Aziz bin Noor Azri",
       "birth": "1998-08-14",
       "death": "",
       "relation": "Cucu",
@@ -706,7 +706,7 @@
     },
     {
       "id": "p41",
-      "name": "Ahmad Afham Bin Noor Azizan",
+      "name": "Ahmad Afham bin Noor Azizan",
       "birth": "1994-11-21",
       "death": "",
       "relation": "Cucu",
@@ -719,7 +719,7 @@
     },
     {
       "id": "p42",
-      "name": "Ahmad Afiq Bin Noor Azizan",
+      "name": "Ahmad Afiq bin Noor Azizan",
       "birth": "2001-04-25",
       "death": "",
       "relation": "Cucu",
@@ -732,7 +732,7 @@
     },
     {
       "id": "p43",
-      "name": "Nur Az Zahra Binti Noor Azizan",
+      "name": "Nur Az Zahra binti Noor Azizan",
       "birth": "2013-02-05",
       "death": "",
       "relation": "Cucu",
@@ -745,7 +745,7 @@
     },
     {
       "id": "p20",
-      "name": "Nur Nafisah Binti Nur Ahmad Wafiy",
+      "name": "Nur Nafisah binti Nur Ahmad Wafiy",
       "birth": "2014-08-12",
       "death": "",
       "relation": "Cicit",
@@ -758,7 +758,7 @@
     },
     {
       "id": "p21",
-      "name": "Ahmad Naufal Bin Nur Ahmad Wafiy",
+      "name": "Ahmad Naufal bin Nur Ahmad Wafiy",
       "birth": "2016-09-27",
       "death": "",
       "relation": "Cicit",
@@ -771,7 +771,7 @@
     },
     {
       "id": "p22",
-      "name": "Ahmad Nabhan Bin Nur Ahmad Wafiy",
+      "name": "Ahmad Nabhan bin Nur Ahmad Wafiy",
       "birth": "2019-03-08",
       "death": "",
       "relation": "Cicit",
@@ -784,7 +784,7 @@
     },
     {
       "id": "p23",
-      "name": "Nur Fasihah Binti Nur Ahmad Wafiy",
+      "name": "Nur Fasihah binti Nur Ahmad Wafiy",
       "birth": "2023-03-17",
       "death": "",
       "relation": "Cicit",
@@ -797,7 +797,7 @@
     },
     {
       "id": "p30",
-      "name": "Nur Ahmad Wafiy Bin Noor Azri",
+      "name": "Nur Ahmad Wafiy bin Noor Azri",
       "birth": "1986-11-21",
       "death": "",
       "relation": "Cucu",
@@ -810,7 +810,7 @@
     },
     {
       "id": "p31",
-      "name": "Norliza Binti Mat Salleh",
+      "name": "Norliza binti Mat Salleh",
       "birth": "1988-07-16",
       "death": "",
       "relation": "Menantu",
@@ -823,7 +823,7 @@
     },
     {
       "id": "p25",
-      "name": "Muhammad Farhan Bin Mohd Yusof",
+      "name": "Muhammad Farhan bin Mohd Yusof",
       "birth": "1996-12-20",
       "death": "",
       "relation": "Cucu",
@@ -836,7 +836,7 @@
     },
     {
       "id": "p26",
-      "name": "Muhammad Irfan Bin Mohd Yusof",
+      "name": "Muhammad Irfan bin Mohd Yusof",
       "birth": "2000-05-28",
       "death": "",
       "relation": "Cucu",
@@ -849,7 +849,7 @@
     },
     {
       "id": "p27",
-      "name": "Muhammad Afnan Bin Mohd Yusof",
+      "name": "Muhammad Afnan bin Mohd Yusof",
       "birth": "2001-10-28",
       "death": "",
       "relation": "Cucu",
@@ -862,7 +862,7 @@
     },
     {
       "id": "p28",
-      "name": "Ezatul Ain Binti Mohd Yusof",
+      "name": "Ezatul Ain binti Mohd Yusof",
       "birth": "2005-11-22",
       "death": "",
       "relation": "Cucu",
@@ -875,7 +875,7 @@
     },
     {
       "id": "p29",
-      "name": "Nur Muhammad Bin Mohd Yusof",
+      "name": "Nur Muhammad bin Mohd Yusof",
       "birth": "2013-01-06",
       "death": "",
       "relation": "Cucu",
