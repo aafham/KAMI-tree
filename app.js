@@ -192,6 +192,7 @@ const DATA_KEY = "familyTreeData";
 const SELF_STORAGE_KEY = "familyTreeSelfId";
 const FAVORITES_STORAGE_KEY = "familyTreeFavoriteIds";
 const RECENT_STORAGE_KEY = "familyTreeRecentIds";
+const PREFS_SCHEMA_VERSION = "2026-07-10a";
 const FORCE_RESET = false;
 const MOBILE_CONTROLS_KEY = "ft_controls_collapsed";
 
@@ -1565,9 +1566,10 @@ function initFromData(data) {
     document.body.dataset.theme = app.dataset.theme || "light";
   }
 
-  if (prefs.scale) scale = prefs.scale;
+  if (Number.isFinite(Number(prefs.scale))) {
+    scale = Math.max(0.6, Math.min(2.2, Number(prefs.scale)));
+  }
   hiddenGenerations.clear();
-  if (prefs.viewMode) viewMode = prefs.viewMode;
   if (prefs.branchFilter) branchFilterValue = prefs.branchFilter;
   if (prefs.lang) lang = prefs.lang;
   if (prefs.compactMode) compactMode = true;
@@ -1699,30 +1701,14 @@ async function recoverEmptyViewAsync() {
   }
 }
 
-let stored = loadStoredData();
+let stored = null;
+let cachedStored = loadStoredData();
 if (FORCE_RESET) {
   localStorage.removeItem(DATA_KEY);
   localStorage.removeItem(STORAGE_KEY);
-  stored = null;
+  cachedStored = null;
   hiddenGenerations.clear();
   branchFilterValue = "all";
-}
-if (stored) {
-  const errors = validateTreeData(stored);
-  if (errors.length === 0 && stored.people.length > 0) {
-    const ok = initFromData(stored);
-    if (forceFreshData) {
-      localStorage.removeItem(DATA_KEY);
-      stored = null;
-      forceFreshData = false;
-    }
-    if (!ok) {
-      localStorage.removeItem(DATA_KEY);
-      stored = null;
-    }
-  } else {
-    stored = null;
-  }
 }
 
 if (!treeCanvas || !treeCanvas.children.length) {
@@ -1733,12 +1719,10 @@ fetch(`data.json?v=${Date.now()}`, { cache: "no-store" })
   .then((res) => res.json())
   .then((data) => {
     treeCanvas.textContent = "";
-    if (!stored) {
-      treeData = data;
-      storeData();
-      stored = data;
-      initFromData(data);
-    }
+    treeData = data;
+    storeData();
+    stored = data;
+    initFromData(data);
     ensureTreeVisible();
     if (!treeCanvas.children.length) {
       treeData = data;
@@ -1746,14 +1730,14 @@ fetch(`data.json?v=${Date.now()}`, { cache: "no-store" })
       initFromData(data);
       return;
     }
-    if (data?.dataVersion && stored.dataVersion === data.dataVersion) {
-      return;
-    }
-    treeData = data;
-    storeData();
-    initFromData(data);
   })
   .catch((err) => {
+    const errors = cachedStored ? validateTreeData(cachedStored) : ["No cached data"];
+    if (cachedStored && errors.length === 0 && cachedStored.people.length > 0) {
+      stored = cachedStored;
+      initFromData(cachedStored);
+      return;
+    }
     if (!stored) {
       const t = i18n[lang] || i18n.ms;
       treeCanvas.textContent = t.loadFail;
@@ -1765,17 +1749,29 @@ fetch(`data.json?v=${Date.now()}`, { cache: "no-store" })
 function loadPrefs() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    if (parsed.schemaVersion !== PREFS_SCHEMA_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      return {};
+    }
+    return parsed;
   } catch (err) {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore storage cleanup errors
+    }
     return {};
   }
 }
 
 function savePrefs() {
   const payload = {
+    schemaVersion: PREFS_SCHEMA_VERSION,
     theme: app.dataset.theme,
     scale,
-    viewMode,
     branchFilter: branchFilterValue,
     lang,
     compactMode,
