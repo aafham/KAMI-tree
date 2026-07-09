@@ -1712,6 +1712,8 @@ body[data-view="timeline"].story-open .timeline-section {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.6;
+  display: grid;
+  gap: 14px;
 }
 
 .story-detail {
@@ -1730,25 +1732,118 @@ body[data-view="timeline"].story-open .timeline-section {
   font-weight: 600;
 }
 
-.profile-actions {
+.profile-hero-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 24%, #fff), color-mix(in srgb, #f5b83d 12%, #fff));
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
+  box-shadow: 0 18px 42px rgba(31, 42, 36, 0.08);
+  color: var(--ink);
+}
+
+.profile-hero-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 900;
+  font-size: 22px;
+  box-shadow: 0 12px 28px rgba(31, 42, 36, 0.14);
+}
+
+.profile-hero-card p {
+  margin: 0 0 4px;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.profile-hero-card h3 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.04;
+}
+
+.profile-hero-card span:not(.profile-hero-avatar) {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.profile-info-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 14px 0;
+  gap: 10px;
+}
+
+.profile-info-tile,
+.profile-story-card {
+  display: grid;
+  gap: 5px;
+  padding: 13px 14px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--card) 88%, var(--primary) 12%);
+  border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+  color: var(--ink);
+}
+
+.profile-info-tile strong,
+.profile-story-card strong {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.profile-info-tile span {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.profile-story-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.profile-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 10px;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--primary) 7%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 .profile-actions .btn {
   width: 100%;
   justify-content: center;
+  border-radius: 999px;
 }
 
 .profile-family-stats {
   display: grid;
   gap: 10px;
-  margin: 14px 0;
-  padding: 12px;
+  margin: 0;
+  padding: 14px;
   border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
-  border-radius: 16px;
+  border-radius: 22px;
   background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, var(--card)), var(--card));
   box-shadow: var(--shadow-soft);
 }
@@ -1766,13 +1861,14 @@ body[data-view="timeline"].story-open .timeline-section {
 }
 
 .profile-family-stats span {
-  min-height: 66px;
+  min-height: 82px;
   display: grid;
   align-content: center;
+  justify-items: center;
   gap: 2px;
   padding: 10px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--card) 86%, var(--primary) 14%);
+  border-radius: 18px;
+  background: color-mix(in srgb, #fff 90%, var(--primary) 10%);
   border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
   color: var(--muted);
   font-size: 12px;
@@ -1840,9 +1936,9 @@ body[data-view="timeline"].story-open .timeline-section {
 .lineage-breadcrumb {
   display: grid;
   gap: 8px;
-  margin: 14px 0;
-  padding: 12px;
-  border-radius: 16px;
+  margin: 0;
+  padding: 14px;
+  border-radius: 22px;
   background: color-mix(in srgb, var(--primary) 10%, var(--card));
   border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
 }
@@ -1890,11 +1986,14 @@ body[data-view="timeline"].story-open .timeline-section {
 }
 
 .lineage-section {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 0;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--card);
   display: grid;
   gap: 10px;
+  box-shadow: var(--shadow-soft);
 }
 
 .lineage-section h3 {
@@ -1906,9 +2005,12 @@ body[data-view="timeline"].story-open .timeline-section {
 
 .lineage-row {
   display: grid;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: 130px 1fr;
   gap: 10px;
   align-items: start;
+  padding: 12px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bg-soft) 62%, var(--card));
 }
 
 .lineage-row strong {
@@ -1931,13 +2033,29 @@ body[data-view="timeline"].story-open .timeline-section {
 .lineage-chip {
   border: 1px solid rgba(79, 138, 106, 0.22);
   border-radius: 999px;
-  padding: 6px 9px;
+  padding: 5px 10px 5px 5px;
   background: color-mix(in srgb, var(--primary) 10%, var(--card));
   color: var(--ink);
   font: inherit;
   font-size: 13px;
   line-height: 1.2;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.lineage-chip span {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary) 34%, #fff);
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 900;
 }
 
 .lineage-chip:hover {
@@ -2030,9 +2148,9 @@ body[data-view="timeline"].story-open .timeline-section {
 
 .birthday-section {
   margin-top: 28px;
-  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--primary) 10%, var(--bg-soft)), var(--bg-soft-2));
   border-radius: var(--radius);
-  padding: 22px;
+  padding: 26px;
   box-shadow: var(--shadow);
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
@@ -2075,12 +2193,12 @@ body[data-view="timeline"].story-open .timeline-section {
   gap: 16px;
   align-items: center;
   margin: 0 0 16px;
-  padding: 16px;
-  border-radius: 18px;
+  padding: 22px;
+  border-radius: 26px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--primary) 18%, var(--card)) 0%, color-mix(in srgb, #f5b83d 16%, var(--card)) 100%);
+    linear-gradient(135deg, color-mix(in srgb, var(--primary) 16%, #fff) 0%, color-mix(in srgb, #f5b83d 12%, #fff) 100%);
   border: 1px solid rgba(79, 138, 106, 0.16);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 22px 52px rgba(31, 42, 36, 0.08);
 }
 
 .birthday-featured-main {
@@ -2253,9 +2371,9 @@ body[data-view="timeline"].story-open .timeline-section {
 
 .birthday-calendar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 14px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
 }
 
 .birthday-planner {
@@ -2274,8 +2392,8 @@ body[data-view="timeline"].story-open .timeline-section {
 .planner-panel-card {
   background: var(--card);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
-  padding: 16px;
+  border-radius: 26px;
+  padding: 22px;
   box-shadow: var(--shadow-soft);
 }
 
@@ -2290,7 +2408,7 @@ body[data-view="timeline"].story-open .timeline-section {
 .birthday-planner-head h3 {
   margin: 0;
   font-family: "Fraunces", serif;
-  font-size: clamp(28px, 4vw, 46px);
+  font-size: clamp(34px, 4vw, 58px);
   line-height: 1;
 }
 
@@ -2333,14 +2451,14 @@ body[data-view="timeline"].story-open .timeline-section {
 .planner-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 
 .planner-day {
   position: relative;
-  min-height: 104px;
+  min-height: 112px;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 16px;
+  border-radius: 20px;
   background: color-mix(in srgb, var(--bg-soft) 74%, var(--card));
   color: var(--ink);
   font: inherit;
@@ -2449,40 +2567,49 @@ body[data-view="timeline"].story-open .timeline-section {
 .birthday-list-card {
   background: var(--card);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: var(--shadow-soft);
+  border-radius: 26px;
+  padding: 20px;
+  box-shadow: 0 18px 46px rgba(31, 42, 36, 0.07);
 }
 
 .birthday-month-card h3,
 .birthday-list-card h3 {
-  margin: 0 0 10px;
+  margin: 0 0 16px;
   font-family: "Fraunces", serif;
-  font-size: 18px;
+  font-size: 28px;
+  line-height: 1;
+  text-align: center;
 }
 
 .birthday-days {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  gap: 9px;
 }
 
 .birthday-day {
   position: relative;
-  min-height: 34px;
+  min-height: 44px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 999px;
   background: color-mix(in srgb, var(--bg-soft) 70%, var(--card));
   color: var(--muted);
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
 .birthday-day.has-birthday {
   cursor: pointer;
   color: var(--ink);
-  background: color-mix(in srgb, var(--primary) 14%, var(--card));
-  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  background: color-mix(in srgb, #9ff0bf 34%, var(--card));
+  border-color: color-mix(in srgb, #54c884 68%, transparent);
+}
+
+.birthday-day.has-birthday:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(31, 42, 36, 0.1);
 }
 
 .birthday-day.has-birthday.is-open {
@@ -2552,7 +2679,7 @@ body[data-view="timeline"].story-open .timeline-section {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 .birthday-month-lists {
@@ -2617,12 +2744,19 @@ body[data-view="timeline"].story-open .timeline-section {
   gap: 2px;
   text-align: left;
   border: 1px solid rgba(79, 138, 106, 0.18);
-  border-radius: 12px;
-  padding: 9px 10px;
-  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  border-radius: 18px;
+  padding: 11px 12px;
+  background: color-mix(in srgb, var(--card) 88%, var(--primary) 12%);
   color: var(--ink);
   font: inherit;
   cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.birthday-person:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  box-shadow: var(--shadow-soft);
 }
 
 .birthday-person--numbered {
@@ -2652,8 +2786,8 @@ body[data-view="timeline"].story-open .timeline-section {
 }
 
 .birthday-number {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
@@ -2661,7 +2795,7 @@ body[data-view="timeline"].story-open .timeline-section {
   background: var(--card);
   border: 1px solid rgba(79, 138, 106, 0.22);
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 900;
   font-size: 13px;
 }
 
@@ -3235,6 +3369,22 @@ body[data-view="timeline"].story-open .timeline-section {
 [data-theme="dark"] .timeline-item .timeline-age,
 [data-theme="dark"] .timeline-item .timeline-relation {
   color: rgba(244, 245, 242, 0.82);
+}
+
+[data-theme="dark"] .profile-hero-card,
+[data-theme="dark"] .profile-info-tile,
+[data-theme="dark"] .profile-story-card,
+[data-theme="dark"] .lineage-row,
+[data-theme="dark"] .birthday-featured,
+[data-theme="dark"] .birthday-person {
+  background: color-mix(in srgb, var(--card) 82%, var(--primary) 18%);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .profile-family-stats span,
+[data-theme="dark"] .birthday-number,
+[data-theme="dark"] .planner-day-number {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .timeline-year-rail {
@@ -5141,6 +5291,54 @@ input[type="search"] {
 
   .relationship-finder summary small {
     line-height: 1.35;
+  }
+
+  .profile-hero-card {
+    grid-template-columns: 56px minmax(0, 1fr);
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .profile-hero-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+  }
+
+  .profile-info-grid,
+  .profile-family-stats div,
+  .profile-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .lineage-row {
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-section {
+    padding: 16px;
+  }
+
+  .birthday-featured {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .birthday-featured-actions {
+    justify-content: flex-start;
+  }
+
+  .birthday-calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-month-card {
+    padding: 16px;
+  }
+
+  .birthday-day {
+    min-height: 40px;
+    font-size: 13px;
   }
 
   .action-cluster,
