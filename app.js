@@ -982,6 +982,7 @@ function updateSheetHandleState() {
 }
 
 function ensureTreeVisible() {
+  if (viewMode !== "tree") return;
   if (!treeCanvas || !treeData?.people?.length) return;
   if (treeCanvas.children.length > 0) return;
   scale = 1;
@@ -1639,14 +1640,14 @@ function initFromData(data) {
   document.body.classList.toggle("controls-collapsed", controlsCollapsed);
   updateSheetHandleState();
   if (!timelineSection) viewMode = "tree";
+  restoreFromUrl();
   applyViewMode();
   renderScene();
   applyZoom();
-  treeWrap.scrollTo({ left: 0, top: 0 });
+  if (viewMode === "tree") treeWrap.scrollTo({ left: 0, top: 0 });
   setTreeStatus("");
   ensureTreeVisible();
-  restoreFromUrl();
-  if (!hasUrlFocus()) {
+  if (viewMode === "tree" && !hasUrlFocus()) {
     requestAnimationFrame(focusInitialTree);
   }
   if (pathMode) applyLineageHighlight();
