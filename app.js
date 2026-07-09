@@ -936,7 +936,7 @@ function updateStats() {
       const monthLabels = lang === "en" ? monthsEn : monthsMs;
       const day = first.next.getDate();
       const monthLabel = monthLabels[first.next.getMonth()];
-      const age = bestMatches.length === 1 ? calcAge(first.birthDate, first.next) : null;
+      const age = bestMatches.length === 1 ? calcAge(first.birthDate, todayMid) : null;
       const daysAway = Math.round((first.next.getTime() - todayMid.getTime()) / 86400000);
       let meta = `${day} ${monthLabel}`;
       if (bestMatches.length > 1) {
@@ -3244,7 +3244,7 @@ function getNextBirthdayInfo(entry, today = new Date()) {
 function formatBirthdayCountdown(entry, today = new Date()) {
   const info = getNextBirthdayInfo(entry, today);
   if (!info) return "";
-  const nextAge = calcAge(entry.date, info.date);
+  const nextAge = calcAge(entry.date, today);
   if (info.diff === 0) {
     return lang === "en" ? `today · turns ${nextAge}` : `hari ini · jadi ${nextAge} tahun`;
   }
