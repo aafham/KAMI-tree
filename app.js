@@ -192,7 +192,7 @@ const DATA_KEY = "familyTreeData";
 const SELF_STORAGE_KEY = "familyTreeSelfId";
 const FAVORITES_STORAGE_KEY = "familyTreeFavoriteIds";
 const RECENT_STORAGE_KEY = "familyTreeRecentIds";
-const PREFS_SCHEMA_VERSION = "2026-07-10a";
+const PREFS_SCHEMA_VERSION = "2026-07-10b";
 const FORCE_RESET = false;
 const MOBILE_CONTROLS_KEY = "ft_controls_collapsed";
 
