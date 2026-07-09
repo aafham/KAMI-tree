@@ -4217,7 +4217,8 @@ function renderPersonChips(people) {
   if (!people.length) return `<span class="lineage-empty">${escapeHtml(t.lineageNone)}</span>`;
   return people.map((person) => `
     <button class="lineage-chip" type="button" data-person-link="${escapeHtml(person.id)}">
-      ${escapeHtml(formatDisplayName(person.name))}
+      <span>${escapeHtml(initials(getShortDisplayName(person.name)))}</span>
+      ${escapeHtml(getShortDisplayName(person.name))}
     </button>
   `).join("");
 }
@@ -4495,14 +4496,30 @@ function openModal(person) {
   const birthDate = parseDateValue(person.birth);
   const age = !person.death ? calcAge(birthDate) : null;
   const ageText = age !== null ? ` (${t.ageLabel}: ${age})` : "";
+  const displayName = formatDisplayName(person.name);
+  const shortName = getShortDisplayName(displayName);
+  const statusText = person.death
+    ? (lang === "en" ? "Deceased" : "Meninggal")
+    : (lang === "en" ? "Living" : "Masih hidup");
   storyTitle.textContent = formatDisplayName(person.name);
   storyContent.innerHTML = `
-    <div class="story-detail"><strong>${t.modalRelation}</strong><span>${person.relation || "-"}</span></div>
-    <div class="story-detail"><strong>${t.genderLabel}</strong><span>${getGenderLabel(person)}</span></div>
-    <div class="story-detail"><strong>${t.modalBirth}</strong><span>${formatDateDisplay(person.birth) || "-"}${ageText}</span></div>
-    <div class="story-detail"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
-    <div class="story-detail"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
-    <div class="story-detail"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
+    <section class="profile-hero-card">
+      <span class="profile-hero-avatar">${escapeHtml(initials(shortName || displayName))}</span>
+      <div>
+        <p>${escapeHtml(t.lineageTitle)}</p>
+        <h3>${escapeHtml(displayName)}</h3>
+        <span>${escapeHtml(shortName || displayName)} · ${escapeHtml(person.relation || "-")}</span>
+      </div>
+    </section>
+    <section class="profile-info-grid">
+      <div class="profile-info-tile"><strong>${escapeHtml(t.genderLabel)}</strong><span>${escapeHtml(getGenderLabel(person))}</span></div>
+      <div class="profile-info-tile"><strong>Status</strong><span>${escapeHtml(statusText)}</span></div>
+      <div class="profile-info-tile"><strong>${escapeHtml(t.modalRelation)}</strong><span>${escapeHtml(person.relation || "-")}</span></div>
+      <div class="profile-info-tile"><strong>${escapeHtml(t.modalBirth)}</strong><span>${escapeHtml(formatDateDisplay(person.birth) || "-")}${escapeHtml(ageText)}</span></div>
+      <div class="profile-info-tile"><strong>${escapeHtml(t.modalDeath)}</strong><span>${escapeHtml(formatDateDisplay(person.death) || "-")}</span></div>
+      <div class="profile-info-tile"><strong>${escapeHtml(t.modalNote)}</strong><span>${escapeHtml(person.note || "-")}</span></div>
+    </section>
+    ${person.story ? `<section class="profile-story-card"><strong>${escapeHtml(t.modalStory)}</strong><p>${escapeHtml(person.story)}</p></section>` : ""}
     ${renderFamilyCountSummary(person)}
     ${renderLineageBreadcrumb(person)}
     ${renderProfileActions(person)}
