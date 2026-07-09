@@ -105,6 +105,10 @@ const settingsShowAge = document.getElementById("setting-show-age");
 const settingsShowTags = document.getElementById("setting-show-tags");
 const settingsDataVersion = document.getElementById("settings-data-version");
 const dataHealthPanel = document.getElementById("data-health-panel");
+const dataHealthExportCsvBtn = document.getElementById("data-health-export-csv");
+const exportJsonDataBtn = document.getElementById("export-json-data");
+const importJsonDataBtn = document.getElementById("import-json-data");
+const resetJsonDataBtn = document.getElementById("reset-json-data");
 const statPeople = document.getElementById("stat-people");
 const statCouples = document.getElementById("stat-couples");
 const statMale = document.getElementById("stat-male");
@@ -320,6 +324,14 @@ const i18n = {
     relationshipParent: "{a} ialah ibu/bapa kepada {b}.",
     relationshipChild: "{a} ialah anak kepada {b}.",
     relationshipSibling: "{a} ialah adik-beradik kepada {b}.",
+    relationshipOlderBrother: "{a} ialah abang kepada {b}.",
+    relationshipOlderSister: "{a} ialah kakak kepada {b}.",
+    relationshipYoungerSibling: "{a} ialah adik kepada {b}.",
+    relationshipFather: "{a} ialah ayah kepada {b}.",
+    relationshipMother: "{a} ialah mak kepada {b}.",
+    relationshipGrandfather: "{a} ialah tok kepada {b}.",
+    relationshipGrandmother: "{a} ialah nenek kepada {b}.",
+    relationshipGreatGrandparent: "{a} ialah moyang kepada {b}.",
     relationshipGrandparent: "{a} ialah atok/nenek kepada {b}.",
     relationshipGrandchild: "{a} ialah cucu kepada {b}.",
     relationshipUncleAunt: "{a} ialah pakcik/makcik kepada {b}.",
@@ -600,6 +612,14 @@ const i18n = {
     relationshipParent: "{a} is a parent of {b}.",
     relationshipChild: "{a} is a child of {b}.",
     relationshipSibling: "{a} is a sibling of {b}.",
+    relationshipOlderBrother: "{a} is an older brother of {b}.",
+    relationshipOlderSister: "{a} is an older sister of {b}.",
+    relationshipYoungerSibling: "{a} is a younger sibling of {b}.",
+    relationshipFather: "{a} is the father of {b}.",
+    relationshipMother: "{a} is the mother of {b}.",
+    relationshipGrandfather: "{a} is the grandfather of {b}.",
+    relationshipGrandmother: "{a} is the grandmother of {b}.",
+    relationshipGreatGrandparent: "{a} is a great-grandparent of {b}.",
     relationshipGrandparent: "{a} is a grandparent of {b}.",
     relationshipGrandchild: "{a} is a grandchild of {b}.",
     relationshipUncleAunt: "{a} is an uncle/aunt of {b}.",
@@ -1251,6 +1271,11 @@ function getSiblingIds(personId) {
   return union ? (union.children || []).filter((id) => id !== personId) : [];
 }
 
+function getSiblingOrder(personId) {
+  const union = getParentUnion(personId);
+  return union ? (union.children || []).indexOf(personId) : -1;
+}
+
 function getSpouseIds(personId) {
   const result = [];
   (treeData?.unions || []).forEach((union) => {
@@ -1323,11 +1348,30 @@ function describeRelationshipResult(aId, bId) {
   const path = findRelationshipPath(aId, bId);
   if (aId === bId) return { text: formatText(t.relationshipSelf, vars), path: [aId] };
   if (getSpouseIds(aId).includes(bId)) return { text: formatText(t.relationshipSpouse, vars), path };
-  if (getChildIds(aId).includes(bId)) return { text: formatText(t.relationshipParent, vars), path };
+  if (getChildIds(aId).includes(bId)) {
+    const key = getPersonGender(a) === "female" ? "relationshipMother" : "relationshipFather";
+    return { text: formatText(t[key] || t.relationshipParent, vars), path };
+  }
   if (getParentIds(aId).includes(bId)) return { text: formatText(t.relationshipChild, vars), path };
-  if (getSiblingIds(aId).includes(bId)) return { text: formatText(t.relationshipSibling, vars), path };
-  if (getGrandchildIds(aId).includes(bId)) return { text: formatText(t.relationshipGrandparent, vars), path };
+  if (getSiblingIds(aId).includes(bId)) {
+    const aOrder = getSiblingOrder(aId);
+    const bOrder = getSiblingOrder(bId);
+    const older = aOrder >= 0 && bOrder >= 0 && aOrder < bOrder;
+    const key = older
+      ? (getPersonGender(a) === "female" ? "relationshipOlderSister" : "relationshipOlderBrother")
+      : "relationshipYoungerSibling";
+    return { text: formatText(t[key] || t.relationshipSibling, vars), path };
+  }
+  if (getGrandchildIds(aId).includes(bId)) {
+    const key = getPersonGender(a) === "female" ? "relationshipGrandmother" : "relationshipGrandfather";
+    return { text: formatText(t[key] || t.relationshipGrandparent, vars), path };
+  }
   if (getGrandparentIds(aId).includes(bId)) return { text: formatText(t.relationshipGrandchild, vars), path };
+  const greatGrandchildIds = [];
+  getGrandchildIds(aId).forEach((grandchildId) => {
+    getChildIds(grandchildId).forEach((childId) => greatGrandchildIds.push(childId));
+  });
+  if ([...new Set(greatGrandchildIds)].includes(bId)) return { text: formatText(t.relationshipGreatGrandparent, vars), path };
   if (getNephewNieceIds(aId).includes(bId)) return { text: formatText(t.relationshipUncleAunt, vars), path };
   if (getUncleAuntIds(aId).includes(bId)) return { text: formatText(t.relationshipNephewNiece, vars), path };
   if (getCousinIds(aId).includes(bId)) return { text: formatText(t.relationshipCousin, vars), path };
@@ -1892,6 +1936,79 @@ function getDataHealthIssues() {
   ];
 }
 
+function getFatherNameFromFullName(name) {
+  const parts = String(name || "").trim().split(/\s+/);
+  const stopIndex = parts.findIndex((part) => ["bin", "binti", "bt"].includes(part.toLowerCase()));
+  if (stopIndex < 0 || stopIndex + 1 >= parts.length) return "";
+  return parts.slice(stopIndex + 1).join(" ").trim();
+}
+
+function getDataHealthSuggestion(issue, person) {
+  if (!issue || !person) return "";
+  if (issue.key === "parents") {
+    const fatherName = getFatherNameFromFullName(person.name);
+    if (fatherName) return `${lang === "en" ? "Suggested father" : "Cadangan ayah"}: ${fatherName}`;
+  }
+  if (issue.key === "duplicate") {
+    return lang === "en" ? "Consider adding nickname or full-name display." : "Pertimbang tambah nickname atau papar nama penuh.";
+  }
+  return "";
+}
+
+function exportDataHealthCsv() {
+  const issues = getDataHealthIssues();
+  const rows = [];
+  issues.forEach((issue) => {
+    issue.people.forEach((person) => {
+      rows.push({
+        issue: issue.title,
+        id: person.id,
+        displayName: getShortDisplayName(person.name),
+        fullName: formatDisplayName(person.name),
+        suggestion: getDataHealthSuggestion(issue, person)
+      });
+    });
+  });
+  downloadCsv("kami-tree-data-health.csv", ["issue", "id", "displayName", "fullName", "suggestion"], rows);
+}
+
+function exportJsonData() {
+  if (!treeData) return;
+  downloadTextFile(
+    "kami-tree-data.json",
+    JSON.stringify(treeData, null, 2),
+    "application/json;charset=utf-8"
+  );
+}
+
+function importJsonData() {
+  const t = i18n[lang] || i18n.ms;
+  const raw = prompt(lang === "en" ? "Paste KAMI Tree JSON backup here:" : "Paste backup JSON KAMI Tree di sini:");
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data.people) || !Array.isArray(data.unions)) {
+      throw new Error("Invalid data shape");
+    }
+    treeData = data;
+    storeData();
+    initFromData(data);
+    alert(lang === "en" ? "Data imported." : "Data berjaya diimport.");
+  } catch {
+    alert(lang === "en" ? "Invalid JSON backup." : "Backup JSON tidak sah.");
+  }
+}
+
+async function resetJsonData() {
+  localStorage.removeItem(DATA_KEY);
+  const res = await fetch(`data.json?ts=${Date.now()}`);
+  const data = await res.json();
+  treeData = data;
+  storeData();
+  initFromData(data);
+  alert(lang === "en" ? "Original data restored." : "Data asal digunakan semula.");
+}
+
 function renderDataHealthPanel() {
   if (!dataHealthPanel || !treeData?.people) return;
   const t = i18n[lang] || i18n.ms;
@@ -1924,7 +2041,10 @@ function renderDataHealthPanel() {
               ${issue.people.slice(0, 14).map((person) => `
                 <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
                   <span class="quick-person-avatar">${escapeHtml(initials(getShortDisplayName(person.name)))}</span>
-                  <span>${escapeHtml(getShortDisplayName(person.name))}</span>
+                  <span>
+                    ${escapeHtml(getShortDisplayName(person.name))}
+                    ${getDataHealthSuggestion(issue, person) ? `<small>${escapeHtml(getDataHealthSuggestion(issue, person))}</small>` : ""}
+                  </span>
                 </button>
               `).join("")}
             </div>
@@ -1943,11 +2063,20 @@ function renderDataHealthPanel() {
 }
 
 function loadStoredData() {
-  return null;
+  try {
+    const raw = localStorage.getItem(DATA_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data.people) || !Array.isArray(data.unions)) return null;
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 function storeData() {
-  // no-op: view-only mode, always use data.json
+  if (!treeData?.people || !treeData?.unions) return;
+  localStorage.setItem(DATA_KEY, JSON.stringify(treeData));
 }
 
 function buildLayout() {
@@ -2810,6 +2939,7 @@ function renderTimeline() {
     item.className = "timeline-item";
     if (person.death) item.classList.add("deceased");
     const node = nodeByPersonId.get(person.id);
+    const depth = depthMap.get(person.id);
     if (node && Number.isFinite(node.branchId)) {
       item.classList.add("timeline-branch");
       item.style.setProperty("--branch-color", branchPalette[node.branchId] || "var(--primary)");
@@ -2823,17 +2953,31 @@ function renderTimeline() {
     const age = !person.death ? calcAge(birthDate) : null;
     const hasBirth = Boolean(person.birth);
     const hasDeath = Boolean(person.death);
-    const metaLine = hasBirth && hasDeath
-      ? `${formatDateDisplay(person.birth)} - ${formatDateDisplay(person.death)}`
-      : hasBirth
-        ? `${t.bornPrefix}${formatDateDisplay(person.birth)}`
-        : t.datesUnknown;
-    const ageLine = age !== null ? `${t.ageLabel}: ${age}` : "";
+    const displayName = formatDisplayName(person.name);
+    const shortName = getShortDisplayName(displayName);
+    const birthYear = parseYear(person.birth);
+    const yearLabel = birthYear || "----";
+    const genderLabel = getGenderLabel(person);
+    const relationLabel = localizeTagText(person.relation || "", lang);
+    const birthMeta = hasBirth ? `${t.bornPrefix}${formatDateDisplay(person.birth)}` : t.datesUnknown;
+    const ageMeta = age !== null ? `${age} ${lang === "en" ? "years old" : "tahun"}` : "";
+    const generationMeta = depth ? `Gen ${depth}` : "";
+    const metaParts = [birthMeta, ageMeta, genderLabel, relationLabel, generationMeta].filter(Boolean);
+    const deathLine = hasDeath ? `${t.diedPrefix}${formatDateDisplay(person.death)}` : "";
+    const noteLine = localizeTagText(person.note || "", lang);
     item.innerHTML = `
-      <div class="timeline-name">${formatDisplayName(person.name)}</div>
-      <div class="timeline-meta">${metaLine}</div>
-      ${ageLine ? `<div class="timeline-age">${ageLine}</div>` : ""}
-      <div class="timeline-relation">${person.relation || ""}</div>
+      <div class="timeline-year-rail">
+        <strong>${escapeHtml(String(yearLabel))}</strong>
+        <span aria-hidden="true"></span>
+      </div>
+      <div class="timeline-avatar">${escapeHtml(initials(shortName || displayName))}</div>
+      <div class="timeline-body">
+        <div class="timeline-name">${escapeHtml(shortName || displayName)}</div>
+        <div class="timeline-meta">${metaParts.map(escapeHtml).join(" | ")}</div>
+        ${deathLine ? `<div class="timeline-death">${escapeHtml(deathLine)}</div>` : ""}
+        ${noteLine ? `<div class="timeline-relation">${escapeHtml(noteLine)}</div>` : ""}
+      </div>
+      <div class="timeline-arrow" aria-hidden="true">›</div>
     `;
     item.addEventListener("click", () => {
       if (isMobileView()) {
@@ -5976,6 +6120,22 @@ if (birthdayExportCsvBtn) {
   birthdayExportCsvBtn.addEventListener("click", exportBirthdayCsv);
 }
 
+if (dataHealthExportCsvBtn) {
+  dataHealthExportCsvBtn.addEventListener("click", exportDataHealthCsv);
+}
+
+if (exportJsonDataBtn) {
+  exportJsonDataBtn.addEventListener("click", exportJsonData);
+}
+
+if (importJsonDataBtn) {
+  importJsonDataBtn.addEventListener("click", importJsonData);
+}
+
+if (resetJsonDataBtn) {
+  resetJsonDataBtn.addEventListener("click", resetJsonData);
+}
+
 function fitOverview(behavior = "auto") {
   if (!treeWrap || !treeCanvas) return;
   if (!treeCanvas.children.length) return;
@@ -6524,6 +6684,19 @@ if (minimap) {
 function restoreFromUrl() {
   if (!GENERATION_FILTER_ENABLED) return;
   const params = new URLSearchParams(window.location.search);
+  const viewParam = params.get("view");
+  if (["tree", "birthday", "directory", "timeline"].includes(viewParam)) {
+    viewMode = viewParam;
+  }
+  const monthParam = Number(params.get("birthdayMonth"));
+  if (Number.isInteger(monthParam) && monthParam >= 1 && monthParam <= 12) {
+    birthdayPlannerMonth = monthParam - 1;
+    birthdayCalendarView = "planner";
+  }
+  const directoryQuery = params.get("directoryQuery");
+  if (directoryQuery) directoryFilters.query = directoryQuery;
+  const timelineQuery = params.get("timelineQuery");
+  if (timelineQuery) timelineFilters.query = timelineQuery;
   const focusId = params.get("focus");
   const genParam = params.get("gen");
   if (genParam) {
@@ -6540,6 +6713,7 @@ function restoreFromUrl() {
 
 function updateUrlState() {
   const params = new URLSearchParams(window.location.search);
+  params.set("view", viewMode || "tree");
   if (selectedPersonId) {
     params.set("focus", selectedPersonId);
   } else {
@@ -6554,6 +6728,22 @@ function updateUrlState() {
     params.set("gen", visible.join(","));
   } else {
     params.delete("gen");
+  }
+
+  if (viewMode === "birthday") {
+    params.set("birthdayMonth", String((birthdayPlannerMonth || 0) + 1));
+  } else {
+    params.delete("birthdayMonth");
+  }
+  if (viewMode === "directory" && directoryFilters.query) {
+    params.set("directoryQuery", directoryFilters.query);
+  } else {
+    params.delete("directoryQuery");
+  }
+  if (viewMode === "timeline" && timelineFilters.query) {
+    params.set("timelineQuery", timelineFilters.query);
+  } else {
+    params.delete("timelineQuery");
   }
 
   const query = params.toString();

@@ -8,12 +8,12 @@ README ini juga berfungsi sebagai checklist projek. Item bertanda `[x]` sudah di
 
 - Live website utama: https://kami-tree.vercel.app/
 - Data semasa: 68 ahli keluarga, 15 hubungan keluarga/pasangan, dan 67 tarikh birthday dalam `data.json`.
-- Mode data semasa: view-only. Data utama dibaca daripada `data.json`.
-- `storeData()` sengaja dibuat `no-op`, jadi perubahan edit tidak kekal selepas reload.
+- Mode data semasa: data utama dibaca daripada `data.json`, dan Settings > Tools menyokong export/import JSON ke browser `localStorage` untuk backup/testing.
+- `storeData()` menyimpan data semasa ke browser jika import JSON digunakan.
 - Semakan asas terakhir: `app.js` lulus `node --check`.
 - Semakan live utama dibuat melalui link Vercel. Local server hanya pilihan developer jika perlu debug.
 - Website ada dua pengalaman utama: desktop/web view dan mobile view.
-- README dikemas kini pada 2026-06-23.
+- README dikemas kini pada 2026-07-09.
 
 ## Link Website
 
@@ -56,6 +56,7 @@ http://localhost:5500
 - Paparan tree salasilah keluarga.
 - Zoom, fit screen, drag/pan, dan minimap.
 - Search nama dan fokus terus ke ahli keluarga.
+- Relationship finder dengan label keluarga dekat yang lebih spesifik seperti ayah, mak, anak, abang, kakak, adik, tok, nenek, cucu, moyang, pakcik/makcik, anak saudara dan sepupu.
 - Paparan umum untuk kembali ke root/permulaan keluarga.
 - Pilih/Fokus Diri Saya per browser/device.
 - Reset Diri Saya dalam settings.
@@ -99,6 +100,8 @@ http://localhost:5500
 - Layout tree sudah disemak untuk elak card individu bertindih ketika zoom normal, zoom in, zoom out, dan English label.
 - Mobile control panel dibuat sebagai bottom sheet yang default tertutup, boleh buka/tutup, dan tidak menutup home/tree secara kekal.
 - Settings untuk tema, bahasa BM/EN, saiz kad, minimap, drag, tarikh lahir, umur, dan tags.
+- Settings > Tools ada Data Health, export Data Health CSV, export JSON, import JSON dan reset data asal.
+- URL boleh simpan view semasa seperti tree, birthday, directory atau timeline supaya link lebih mudah dikongsi.
 - Settings modal dipolish dengan section Paparan, Navigasi, Alat, Data sementara, hint ringkas, dan layout mobile yang lebih kemas.
 - Panel profil dipolish dengan detail row yang lebih jelas dan button aksi dalam grid dua kolum.
 - Umur dikira ikut tahun sahaja, bukan ikut tarikh lahir penuh.
@@ -822,17 +825,17 @@ Gunakan reset jika website nampak pelik selepas banyak setting:
 
 - [x] Export JPEG tersedia.
 - [x] Export PDF tersedia.
-- [ ] Putuskan sama ada import/export JSON mahu disokong dalam UI.
-- [ ] Jika mahu view-only, buang kod import/export JSON yang tidak digunakan.
-- [ ] Jika mahu editable, tambah UI backup JSON.
-- [ ] Tambah restore/import JSON dengan validation.
-- [ ] Tambah export CSV untuk birthday list.
-- [ ] Tambah export CSV untuk directory ahli.
+- [x] Import/export JSON disokong dalam Settings > Tools untuk browser/local backup.
+- [x] UI backup JSON tersedia.
+- [x] Restore/import JSON ada validation asas.
+- [x] Tambah export CSV untuk birthday list.
+- [x] Tambah export CSV untuk directory ahli.
+- [x] Tambah export CSV untuk data health report.
 
 ### 13. Edit/Admin
 
-- [x] Mode semasa jelas sebagai view-only dalam README.
-- [x] `storeData()` tidak menyimpan perubahan kerana guna `data.json` sebagai sumber utama.
+- [x] Mode semasa jelas dalam README: data asal daripada `data.json`, import JSON optional disimpan dalam browser.
+- [x] `storeData()` menyimpan data import ke browser/localStorage.
 - [ ] Putuskan sama ada website ini public view-only atau ada admin mode.
 - [ ] Jika view-only, sembunyikan/buang semua flow edit.
 - [ ] Jika admin mode, ganti password hardcoded `1234`.

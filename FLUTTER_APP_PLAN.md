@@ -77,7 +77,29 @@ Website KAMI Tree sekarang sudah ada fungsi besar berikut:
   - Branch keluarga.
   - Keyword BM.
 - Relationship finder.
+- Relationship finder sudah dipertingkat untuk keluarga dekat:
+  - ayah/mak kepada anak
+  - anak kepada ayah/mak
+  - abang/kakak/adik ikut susunan anak dalam union
+  - tok/nenek, cucu, moyang, cicit
+  - pakcik/makcik, anak saudara, sepupu untuk cabang dekat
 - Focus self menggunakan pilihan device/browser masing-masing.
+- Website Settings > Tools sudah ada Data Health, export Data Health CSV, export JSON, import JSON dan reset data asal.
+- URL website boleh simpan view semasa seperti tree, birthday, directory dan timeline.
+
+## Status Flutter App Terkini
+
+- Home, Tree, Directory, Birthday, Timeline dan Settings sudah tersedia.
+- Favourite/pin ahli keluarga dan recent viewed sudah ada.
+- Onboarding boleh pilih diri sendiri.
+- Profile boleh set diri sendiri dan toggle favourite.
+- Relationship helper sudah lebih spesifik untuk hubungan keluarga dekat.
+- Data Health dalam Settings boleh dibuka untuk lihat ahli bermasalah.
+- Data Health boleh beri cadangan ayah daripada nama selepas `bin`, `binti` atau `bt`.
+- Backup JSON boleh share/copy.
+- Import JSON boleh dibuat melalui paste backup dalam Settings > Data.
+- Reset data custom kepada data asal app sudah ada.
+- Tree minimap sudah ada viewport dan boleh ditekan untuk lompat lokasi.
 - General view disediakan supaya pengguna tidak wajib pilih diri sendiri.
 - Directory page sudah ada UI khusus.
 - Directory boleh search/filter/sort ahli.

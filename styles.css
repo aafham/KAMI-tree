@@ -1216,6 +1216,18 @@ input[type="file"].input {
   box-shadow: 0 8px 18px rgba(31, 42, 36, 0.06);
 }
 
+.quick-person-chip span:last-child {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+
+.quick-person-chip small {
+  color: var(--muted);
+  font-weight: 600;
+}
+
 .quick-person-chip:hover,
 .quick-person-chip:focus-visible {
   border-color: color-mix(in srgb, var(--primary) 52%, transparent);
@@ -3088,7 +3100,7 @@ body[data-view="timeline"].story-open .timeline-section {
 
 .timeline-list {
   display: grid;
-  gap: 12px;
+  gap: 18px;
 }
 
 .timeline-detail {
@@ -3154,46 +3166,53 @@ body[data-view="timeline"].story-open .timeline-section {
 
 .timeline-item {
   background: var(--card);
-  border-radius: 12px;
-  padding: 12px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  padding: 22px 24px;
+  border: 1px solid rgba(0, 0, 0, 0.055);
+  box-shadow: 0 18px 45px rgba(26, 37, 31, 0.07);
   cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  display: grid;
+  grid-template-columns: 118px 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .timeline-item.timeline-branch {
-  background: color-mix(in srgb, var(--branch-color, var(--primary)) 22%, #fff);
-  border-color: color-mix(in srgb, var(--branch-color, var(--primary)) 60%, #fff);
-  border-left: 6px solid var(--branch-color, var(--primary));
+  background: color-mix(in srgb, var(--branch-color, var(--primary)) 10%, #fff);
+  border-color: color-mix(in srgb, var(--branch-color, var(--primary)) 26%, #fff);
 }
 
 .timeline-item.branch-soft-peach {
+  --branch-color: var(--soft-peach);
   background: color-mix(in srgb, var(--soft-peach) 28%, #fff);
   border-color: color-mix(in srgb, var(--soft-peach) 60%, #fff);
-  border-left: 6px solid var(--soft-peach);
 }
 
 .timeline-item.branch-baby-blue {
+  --branch-color: var(--baby-blue);
   background: color-mix(in srgb, var(--baby-blue) 28%, #fff);
   border-color: color-mix(in srgb, var(--baby-blue) 60%, #fff);
-  border-left: 6px solid var(--baby-blue);
 }
 
 .timeline-item.branch-mint-green {
+  --branch-color: var(--mint-green);
   background: color-mix(in srgb, var(--mint-green) 28%, #fff);
   border-color: color-mix(in srgb, var(--mint-green) 60%, #fff);
-  border-left: 6px solid var(--mint-green);
 }
 
 .timeline-item.branch-lavender {
+  --branch-color: var(--lavender);
   background: color-mix(in srgb, var(--lavender) 28%, #fff);
   border-color: color-mix(in srgb, var(--lavender) 60%, #fff);
-  border-left: 6px solid var(--lavender);
 }
 
 [data-theme="dark"] .timeline-item {
   background: color-mix(in srgb, var(--card) 85%, #000);
   border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.26);
 }
 
 [data-theme="dark"] .timeline-item.timeline-branch {
@@ -3218,11 +3237,57 @@ body[data-view="timeline"].story-open .timeline-section {
   color: rgba(244, 245, 242, 0.82);
 }
 
+.timeline-year-rail {
+  min-height: 84px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-self: stretch;
+}
+
+.timeline-year-rail strong {
+  font-family: "Fraunces", serif;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 0.95;
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.timeline-year-rail span {
+  width: 3px;
+  min-height: 42px;
+  margin-top: 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--branch-color, var(--primary)) 28%, transparent);
+}
+
+.timeline-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--branch-color, var(--primary)) 34%, #fff);
+  color: color-mix(in srgb, var(--branch-color, var(--primary)) 68%, #10221a);
+  font-weight: 700;
+  font-size: 18px;
+  border: 1px solid color-mix(in srgb, var(--branch-color, var(--primary)) 28%, #fff);
+  box-shadow: 0 12px 28px rgba(26, 37, 31, 0.08);
+}
+
+.timeline-body {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
 .timeline-meta,
 .timeline-age,
 .timeline-relation {
-  font-size: 13px;
+  font-size: 16px;
   color: var(--muted);
+  line-height: 1.35;
 }
 
 .timeline-age {
@@ -3230,13 +3295,31 @@ body[data-view="timeline"].story-open .timeline-section {
 }
 
 .timeline-item:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 22px 55px rgba(26, 37, 31, 0.11);
+  border-color: color-mix(in srgb, var(--branch-color, var(--primary)) 26%, rgba(0, 0, 0, 0.08));
 }
 
 .timeline-item.deceased {
-  opacity: 0.7;
-  border-color: rgba(0, 0, 0, 0.2);
+  opacity: 0.82;
+}
+
+.timeline-death {
+  color: #b42318;
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+[data-theme="dark"] .timeline-death {
+  color: #ff9b94;
+}
+
+.timeline-arrow {
+  font-size: 42px;
+  line-height: 1;
+  color: var(--ink);
+  opacity: 0.86;
 }
 
 body.compact .person-meta:last-child {
@@ -3252,13 +3335,10 @@ body.compact .person-name {
 }
 
 .timeline-name {
-  font-weight: 600;
-}
-
-.timeline-meta,
-.timeline-relation {
-  font-size: 13px;
-  color: var(--muted);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.05;
+  color: var(--ink);
 }
 
 .tree-wrap:active {
@@ -3856,6 +3936,13 @@ body.hide-tags .person-tags {
   gap: 10px 12px;
 }
 
+.settings-tool-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .data-health-panel {
   display: grid;
   gap: 12px;
@@ -4350,6 +4437,50 @@ body.hide-tags .person-tags {
 
   .relationship-finder summary small {
     margin-left: 0;
+  }
+
+  .timeline-list {
+    gap: 14px;
+  }
+
+  .timeline-item {
+    grid-template-columns: 76px 44px minmax(0, 1fr) 18px;
+    gap: 10px;
+    padding: 16px 14px;
+    border-radius: 20px;
+  }
+
+  .timeline-year-rail {
+    min-height: 76px;
+  }
+
+  .timeline-year-rail strong {
+    font-size: 27px;
+  }
+
+  .timeline-year-rail span {
+    min-height: 34px;
+    margin-top: 9px;
+  }
+
+  .timeline-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .timeline-name {
+    font-size: 19px;
+  }
+
+  .timeline-meta,
+  .timeline-death,
+  .timeline-relation {
+    font-size: 13px;
+  }
+
+  .timeline-arrow {
+    font-size: 30px;
   }
 
   input[type="search"],
@@ -5121,9 +5252,7 @@ input[type="search"] {
     font-size: 14px;
   }
 
-  .person-meta,
-  .timeline-meta,
-  .timeline-relation {
+  .person-meta {
     font-size: 12px;
   }
 
