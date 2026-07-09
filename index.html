@@ -95,6 +95,7 @@
               <div id="export-menu" class="export-menu" hidden>
                 <button id="export-png" class="btn ghost small" type="button" data-i18n="exportPng">Image (JPEG)</button>
                 <button id="export-pdf" class="btn ghost small" type="button" data-i18n="exportPdf">File (PDF)</button>
+                <button id="export-branch-csv" class="btn ghost small" type="button" data-i18n="exportBranchCsv">Branch CSV</button>
               </div>
             </div>
           </div>
@@ -274,6 +275,10 @@
         </div>
         <div class="timeline-filters-card">
           <div class="timeline-filters primary">
+            <label class="timeline-filter timeline-filter--wide">
+              <span data-i18n="timelineSearch">Cari timeline</span>
+              <input id="timeline-search" class="input" type="search" placeholder="Cari nama..." data-i18n-placeholder="timelineSearchPlaceholder" />
+            </label>
             <label class="timeline-filter">
               <span data-i18n="timelineMonth">Bulan Lahir</span>
               <select id="timeline-month" class="select"></select>
@@ -329,6 +334,7 @@
           </label>
           <div class="birthday-toggle-actions">
             <button id="birthday-today" class="btn ghost small" type="button">Hari Ini</button>
+            <button id="birthday-export-csv" class="btn ghost small" type="button" data-i18n="exportBirthdayCsv">Export CSV</button>
             <button id="birthday-open-all" class="btn ghost small" type="button" data-i18n="birthdayOpenAll">Buka Semua</button>
             <button id="birthday-close-all" class="btn ghost small" type="button" data-i18n="birthdayCloseAll">Tutup Semua</button>
           </div>
@@ -363,6 +369,7 @@
             <input id="directory-search" class="input" type="search" placeholder="Cari nama..." data-i18n-placeholder="directorySearchPlaceholder" />
           </label>
           <button id="directory-more-btn" class="btn ghost small directory-more-btn" type="button" aria-expanded="false" data-i18n="timelineMore">Tapis lagi</button>
+          <button id="directory-export-csv" class="btn ghost small" type="button" data-i18n="exportDirectoryCsv">Export CSV</button>
         </div>
         <div id="directory-active-filters" class="active-filters directory-active-filters" hidden></div>
         <div class="directory-tools" id="directory-more-panel" aria-hidden="true">
@@ -544,6 +551,7 @@
 
       <div class="settings-section" data-settings-panel="tools" hidden>
         <h3 data-i18n="settingsTools">Tools</h3>
+        <div id="data-health-panel" class="data-health-panel" aria-live="polite"></div>
         <div class="settings-grid settings-grid--tools">
           <button id="setting-reset-settings" class="btn ghost small" type="button" data-i18n="settingsReset">
             Reset settings

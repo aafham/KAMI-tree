@@ -1193,6 +1193,13 @@ input[type="file"].input {
   gap: 8px;
 }
 
+.quick-people-actions {
+  display: flex;
+  flex: 0 0 100%;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
 .quick-person-chip {
   display: inline-flex;
   align-items: center;
@@ -3012,6 +3019,10 @@ body[data-view="timeline"].story-open .timeline-section {
   color: var(--muted);
 }
 
+.timeline-filter--wide {
+  grid-column: span 2;
+}
+
 .timeline-filter .input,
 .timeline-filter .select {
   font-size: 14px;
@@ -3843,6 +3854,57 @@ body.hide-tags .person-tags {
 .settings-grid--tools {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px 12px;
+}
+
+.data-health-panel {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.data-health-head,
+.data-health-issue {
+  padding: 14px;
+  border: 1px solid rgba(79, 138, 106, 0.16);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 86%, var(--primary) 4%);
+}
+
+.data-health-head div,
+.data-health-issue > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.data-health-head strong,
+.data-health-issue strong {
+  color: var(--ink);
+}
+
+.data-health-head span,
+.data-health-issue span,
+.data-health-issue p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.data-health-chips,
+.data-health-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.data-health-list {
+  display: grid;
+  gap: 10px;
+}
+
+.data-health-people {
+  margin-top: 10px;
 }
 
 .settings-grid--tools .settings-close-btn {

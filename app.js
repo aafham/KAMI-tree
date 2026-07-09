@@ -16,6 +16,7 @@ const focusSelfBtn = document.getElementById("focus-self");
 const toggleThemeBtn = document.getElementById("toggle-theme");
 const exportPngBtn = document.getElementById("export-png");
 const exportPdfBtn = document.getElementById("export-pdf");
+const exportBranchCsvBtn = document.getElementById("export-branch-csv");
 const exportMenuBtn = document.getElementById("export-menu-btn");
 const exportMenu = document.getElementById("export-menu");
 const modal = document.getElementById("person-modal");
@@ -58,6 +59,7 @@ const birthdaySearchInput = document.getElementById("birthday-search");
 const birthdayOpenAllBtn = document.getElementById("birthday-open-all");
 const birthdayCloseAllBtn = document.getElementById("birthday-close-all");
 const birthdayTodayBtn = document.getElementById("birthday-today");
+const birthdayExportCsvBtn = document.getElementById("birthday-export-csv");
 const birthdayFeatured = document.getElementById("birthday-featured");
 const birthdaySummary = document.getElementById("birthday-summary");
 const birthdaySearchResults = document.getElementById("birthday-search-results");
@@ -102,6 +104,7 @@ const settingsShowBirthdate = document.getElementById("setting-show-birthdate");
 const settingsShowAge = document.getElementById("setting-show-age");
 const settingsShowTags = document.getElementById("setting-show-tags");
 const settingsDataVersion = document.getElementById("settings-data-version");
+const dataHealthPanel = document.getElementById("data-health-panel");
 const statPeople = document.getElementById("stat-people");
 const statCouples = document.getElementById("stat-couples");
 const statMale = document.getElementById("stat-male");
@@ -118,6 +121,7 @@ const recentPeopleCard = document.getElementById("recent-people-card");
 const recentPeopleList = document.getElementById("recent-people-list");
 const themePresetSelect = document.getElementById("theme-preset");
 const timelineGenSelect = document.getElementById("timeline-gen");
+const timelineSearchInput = document.getElementById("timeline-search");
 const timelineMonthSelect = document.getElementById("timeline-month");
 const timelineGenderSelect = document.getElementById("timeline-gender");
 const timelineSortSelect = document.getElementById("timeline-sort");
@@ -138,6 +142,7 @@ const directoryBranchSelect = document.getElementById("directory-branch");
 const directoryStatusSelect = document.getElementById("directory-status");
 const directorySortSelect = document.getElementById("directory-sort");
 const directoryClearBtn = document.getElementById("directory-clear");
+const directoryExportCsvBtn = document.getElementById("directory-export-csv");
 const directorySummary = document.getElementById("directory-summary");
 const directoryList = document.getElementById("directory-list");
 const directoryMoreBtn = document.getElementById("directory-more-btn");
@@ -227,6 +232,7 @@ let showBirthdate = true;
 let showAge = true;
 let showTags = true;
 let timelineFilters = {
+  query: "",
   generation: "all",
   month: "all",
   gender: "all",
@@ -257,6 +263,9 @@ let directoryFilters = {
   sort: "generation"
 };
 let directoryMoreOpen = false;
+let quickFavoritesExpanded = false;
+let quickRecentExpanded = false;
+let selectedDataHealthIssue = "all";
 
 const prefs = loadPrefs();
 const i18n = {
@@ -367,6 +376,8 @@ const i18n = {
     profilePin: "Pin",
     profilePinned: "Pinned",
     profileCopyLink: "Copy link",
+    profileShareText: "Share text",
+    profilePrint: "Print",
     profileLinkCopied: "Link ahli telah disalin.",
     profileLinkCopyFail: "Tak dapat copy link. URL sudah dikemas kini di address bar.",
     profileFamilyStats: "Ringkasan keluarga",
@@ -392,6 +403,8 @@ const i18n = {
     spouseHusband: "Suami",
     spouseWife: "Isteri",
     timelineTitle: "Timeline Keluarga",
+    timelineSearch: "Cari timeline",
+    timelineSearchPlaceholder: "Cari nama, relation, nota...",
     modalClose: "Tutup",
     modalEdit: "Edit",
     modalRelation: "Hubungan",
@@ -427,6 +440,10 @@ const i18n = {
     exportDate: "Tarikh eksport: {date}",
     exportPngFail: "Gagal export PNG: library tidak tersedia.",
     exportPdfFail: "Gagal export PDF: library tidak tersedia.",
+    exportDirectoryCsv: "Directory CSV",
+    exportBirthdayCsv: "Birthday CSV",
+    exportBranchCsv: "Branch CSV",
+    exportCsvDone: "CSV telah dimuat turun.",
     ageLabel: "Umur",
     minimapTitle: "Minimap",
     minimapHint: "Klik pada kotak kecil untuk lompat lokasi. Kotak putih menunjukkan kawasan semasa.",
@@ -516,7 +533,19 @@ const i18n = {
     settingsDataVersion: "Versi data",
     settingsClose: "Tutup",
     settingsDangerTitle: "Data sementara",
-    settingsDangerHint: "Clear cache akan buang pilihan dan data sementara browser."
+    settingsDangerHint: "Clear cache akan buang pilihan dan data sementara browser.",
+    dataHealthTitle: "Semakan data",
+    dataHealthOk: "Tiada isu besar dikesan.",
+    dataHealthReview: "{count} perkara perlu disemak.",
+    dataHealthMissingBirth: "Tarikh lahir kosong",
+    dataHealthMissingGender: "Jantina belum jelas",
+    dataHealthMissingParents: "Mak / ayah kosong",
+    dataHealthDuplicateName: "Nama display sama",
+    dataHealthShowAll: "Semua",
+    dataHealthOpen: "Buka profil",
+    quickViewAll: "Lihat semua",
+    quickShowLess: "Ringkas",
+    quickClear: "Kosongkan"
   },
   en: {
     appKicker: "Family Lineage",
@@ -627,6 +656,8 @@ const i18n = {
     profilePin: "Pin",
     profilePinned: "Pinned",
     profileCopyLink: "Copy link",
+    profileShareText: "Share text",
+    profilePrint: "Print",
     profileLinkCopied: "Person link copied.",
     profileLinkCopyFail: "Could not copy the link. The URL was updated in the address bar.",
     profileFamilyStats: "Family summary",
@@ -652,6 +683,8 @@ const i18n = {
     spouseHusband: "Husband",
     spouseWife: "Wife",
     timelineTitle: "Family Timeline",
+    timelineSearch: "Search timeline",
+    timelineSearchPlaceholder: "Search name, relation, notes...",
     modalClose: "Close",
     modalEdit: "Edit",
     modalRelation: "Relation",
@@ -687,6 +720,10 @@ const i18n = {
     exportDate: "Export date: {date}",
     exportPngFail: "PNG export failed: library not available.",
     exportPdfFail: "PDF export failed: library not available.",
+    exportDirectoryCsv: "Directory CSV",
+    exportBirthdayCsv: "Birthday CSV",
+    exportBranchCsv: "Branch CSV",
+    exportCsvDone: "CSV downloaded.",
     ageLabel: "Age",
     minimapTitle: "Minimap",
     minimapHint: "Tap the minimap to jump. The white box shows your current view.",
@@ -776,12 +813,49 @@ const i18n = {
     settingsDataVersion: "Data version",
     settingsClose: "Close",
     settingsDangerTitle: "Temporary data",
-    settingsDangerHint: "Clear cache removes browser choices and temporary data."
+    settingsDangerHint: "Clear cache removes browser choices and temporary data.",
+    dataHealthTitle: "Data health check",
+    dataHealthOk: "No major issue detected.",
+    dataHealthReview: "{count} items need review.",
+    dataHealthMissingBirth: "Missing birth dates",
+    dataHealthMissingGender: "Missing gender",
+    dataHealthMissingParents: "Missing parents",
+    dataHealthDuplicateName: "Duplicate display names",
+    dataHealthShowAll: "All",
+    dataHealthOpen: "Open profile",
+    quickViewAll: "View all",
+    quickShowLess: "Show less",
+    quickClear: "Clear"
   }
 };
 
 function formatText(template, vars = {}) {
   return template.replace(/\{(\w+)\}/g, (_, key) => (vars[key] !== undefined ? vars[key] : ""));
+}
+
+function csvEscape(value) {
+  const text = value === null || value === undefined ? "" : String(value);
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function downloadTextFile(filename, text, type = "text/plain;charset=utf-8") {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function downloadCsv(filename, headers, rows) {
+  const csv = [
+    headers.map(csvEscape).join(","),
+    ...rows.map((row) => headers.map((header) => csvEscape(row[header])).join(","))
+  ].join("\n");
+  downloadTextFile(filename, csv, "text/csv;charset=utf-8");
 }
 
 function setTreeStatus(message = "", isError = false) {
@@ -1018,10 +1092,11 @@ function populateTimelineMonths() {
 function updateTimelineActiveFilters() {
   if (!timelineActiveFilters) return;
   const t = i18n[lang] || i18n.ms;
-  const defaults = { generation: "all", month: "all", gender: "all", sort: "year" };
+  const defaults = { query: "", generation: "all", month: "all", gender: "all", sort: "year" };
   const chips = [];
 
   const labelMap = {
+    query: t.timelineSearch,
     generation: t.timelineGenLabel,
     month: t.timelineMonth,
     gender: t.timelineGender,
@@ -1034,6 +1109,12 @@ function updateTimelineActiveFilters() {
     return opt ? opt.textContent : value;
   };
 
+  if ((timelineFilters.query || "") !== defaults.query) {
+    chips.push({
+      key: "query",
+      text: `${labelMap.query}: ${timelineFilters.query} ✕`
+    });
+  }
   if (timelineFilters.generation !== defaults.generation) {
     chips.push({
       key: "generation",
@@ -1072,6 +1153,10 @@ function updateTimelineActiveFilters() {
     btn.dataset.filter = chip.key;
     btn.textContent = chip.text;
     btn.addEventListener("click", () => {
+      if (chip.key === "query") {
+        timelineFilters.query = defaults.query;
+        if (timelineSearchInput) timelineSearchInput.value = defaults.query;
+      }
       if (chip.key === "generation") {
         timelineFilters.generation = defaults.generation;
         if (timelineGenSelect) timelineGenSelect.value = defaults.generation;
@@ -1099,7 +1184,8 @@ function updateTimelineActiveFilters() {
   resetAll.className = "chip reset-all";
   resetAll.textContent = t.timelineResetAll;
   resetAll.addEventListener("click", () => {
-    timelineFilters = { generation: "all", month: "all", gender: "all", sort: "year" };
+    timelineFilters = { query: "", generation: "all", month: "all", gender: "all", sort: "year" };
+    if (timelineSearchInput) timelineSearchInput.value = "";
     if (timelineGenSelect) timelineGenSelect.value = "all";
     if (timelineMonthSelect) timelineMonthSelect.value = "all";
     if (timelineGenderSelect) timelineGenderSelect.value = "all";
@@ -1728,22 +1814,132 @@ function renderQuickPersonChip(person) {
 
 function renderQuickPeople() {
   if (!quickPeopleSection) return;
+  const t = i18n[lang] || i18n.ms;
   const favoritePeople = getPeopleFromIds(Array.from(favoritePersonIds));
-  const recentPeople = getPeopleFromIds(recentPersonIds).filter((person) => !favoritePersonIds.has(person.id)).slice(0, 8);
+  const recentAll = getPeopleFromIds(recentPersonIds).filter((person) => !favoritePersonIds.has(person.id));
+  const visibleFavoritePeople = quickFavoritesExpanded ? favoritePeople : favoritePeople.slice(0, 8);
+  const visibleRecentPeople = quickRecentExpanded ? recentAll : recentAll.slice(0, 8);
+  const renderQuickToolbar = (type, total, expanded) => total > 8 || total > 0
+    ? `<div class="quick-people-actions">
+        ${total > 8 ? `<button class="btn ghost small" type="button" data-quick-list="${type}" data-quick-action="toggle">${escapeHtml(expanded ? t.quickShowLess : t.quickViewAll)}</button>` : ""}
+        <button class="btn ghost small" type="button" data-quick-list="${type}" data-quick-action="clear">${escapeHtml(t.quickClear)}</button>
+      </div>`
+    : "";
 
   if (favoritePeopleCard && favoritePeopleList) {
     favoritePeopleCard.hidden = favoritePeople.length === 0;
-    favoritePeopleList.innerHTML = favoritePeople.map(renderQuickPersonChip).join("");
+    favoritePeopleList.innerHTML = `${renderQuickToolbar("favorites", favoritePeople.length, quickFavoritesExpanded)}${visibleFavoritePeople.map(renderQuickPersonChip).join("")}`;
     bindPersonLinkClicks(favoritePeopleList);
   }
 
   if (recentPeopleCard && recentPeopleList) {
-    recentPeopleCard.hidden = recentPeople.length === 0;
-    recentPeopleList.innerHTML = recentPeople.map(renderQuickPersonChip).join("");
+    recentPeopleCard.hidden = recentAll.length === 0;
+    recentPeopleList.innerHTML = `${renderQuickToolbar("recent", recentAll.length, quickRecentExpanded)}${visibleRecentPeople.map(renderQuickPersonChip).join("")}`;
     bindPersonLinkClicks(recentPeopleList);
   }
 
-  quickPeopleSection.hidden = favoritePeople.length === 0 && recentPeople.length === 0;
+  quickPeopleSection.querySelectorAll("[data-quick-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const list = btn.dataset.quickList;
+      const action = btn.dataset.quickAction;
+      if (action === "toggle" && list === "favorites") quickFavoritesExpanded = !quickFavoritesExpanded;
+      if (action === "toggle" && list === "recent") quickRecentExpanded = !quickRecentExpanded;
+      if (action === "clear" && list === "favorites") {
+        favoritePersonIds.clear();
+        saveFavoritePeople();
+      }
+      if (action === "clear" && list === "recent") {
+        recentPersonIds = [];
+        saveRecentPeople();
+      }
+      renderQuickPeople();
+    });
+  });
+
+  quickPeopleSection.hidden = favoritePeople.length === 0 && recentAll.length === 0;
+}
+
+function getDataHealthIssues() {
+  const t = i18n[lang] || i18n.ms;
+  if (!treeData?.people) return [];
+  const displayCounts = new Map();
+  treeData.people.forEach((person) => {
+    const key = getShortDisplayName(person.name).toLowerCase();
+    displayCounts.set(key, (displayCounts.get(key) || 0) + 1);
+  });
+  const depthMap = getPersonDepthMap();
+  return [
+    {
+      key: "birth",
+      title: t.dataHealthMissingBirth,
+      people: treeData.people.filter((person) => !parseDateValue(person.birth))
+    },
+    {
+      key: "gender",
+      title: t.dataHealthMissingGender,
+      people: treeData.people.filter((person) => !["male", "female"].includes(getPersonGender(person)))
+    },
+    {
+      key: "parents",
+      title: t.dataHealthMissingParents,
+      people: treeData.people.filter((person) => Number(depthMap.get(person.id) || 1) > 1 && !getParentUnion(person.id))
+    },
+    {
+      key: "duplicate",
+      title: t.dataHealthDuplicateName,
+      people: treeData.people.filter((person) => (displayCounts.get(getShortDisplayName(person.name).toLowerCase()) || 0) > 1)
+    }
+  ];
+}
+
+function renderDataHealthPanel() {
+  if (!dataHealthPanel || !treeData?.people) return;
+  const t = i18n[lang] || i18n.ms;
+  const issues = getDataHealthIssues();
+  const issueCount = issues.reduce((total, issue) => total + issue.people.length, 0);
+  const selectedIssue = selectedDataHealthIssue === "all"
+    ? null
+    : issues.find((issue) => issue.key === selectedDataHealthIssue);
+  const visibleIssues = selectedIssue ? [selectedIssue] : issues;
+  dataHealthPanel.innerHTML = `
+    <div class="data-health-head">
+      <div>
+        <strong>${escapeHtml(t.dataHealthTitle)}</strong>
+        <span>${escapeHtml(issueCount ? formatText(t.dataHealthReview, { count: issueCount }) : t.dataHealthOk)}</span>
+      </div>
+    </div>
+    <div class="data-health-chips">
+      <button class="chip ${selectedDataHealthIssue === "all" ? "is-active" : ""}" type="button" data-data-health-filter="all">${escapeHtml(t.dataHealthShowAll)}</button>
+      ${issues.map((issue) => `<button class="chip ${selectedDataHealthIssue === issue.key ? "is-active" : ""}" type="button" data-data-health-filter="${escapeHtml(issue.key)}">${escapeHtml(issue.title)} (${issue.people.length})</button>`).join("")}
+    </div>
+    <div class="data-health-list">
+      ${visibleIssues.map((issue) => `
+        <section class="data-health-issue">
+          <div>
+            <strong>${escapeHtml(issue.title)}</strong>
+            <span>${issue.people.length}</span>
+          </div>
+          ${issue.people.length ? `
+            <div class="data-health-people">
+              ${issue.people.slice(0, 14).map((person) => `
+                <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
+                  <span class="quick-person-avatar">${escapeHtml(initials(getShortDisplayName(person.name)))}</span>
+                  <span>${escapeHtml(getShortDisplayName(person.name))}</span>
+                </button>
+              `).join("")}
+            </div>
+          ` : `<p>${escapeHtml(t.dataHealthOk)}</p>`}
+        </section>
+      `).join("")}
+    </div>
+  `;
+  dataHealthPanel.querySelectorAll("[data-data-health-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedDataHealthIssue = btn.dataset.dataHealthFilter || "all";
+      renderDataHealthPanel();
+    });
+  });
+  bindPersonLinkClicks(dataHealthPanel);
 }
 
 function loadStoredData() {
@@ -2547,7 +2743,9 @@ function renderTimeline() {
       return { person, birth, birthMonth, birthDay, birthTime, order, gender, nameSort, parentKey };
     });
 
+  const queryTerms = expandSearchTerms(timelineFilters.query || "");
   const filtered = entries.filter(({ person, birth, birthMonth, gender }) => {
+    if (queryTerms.length && !queryTerms.some((term) => getPersonSearchText(person).includes(term))) return false;
     if (timelineFilters.generation !== "all") {
       const depth = depthMap.get(person.id);
       if (!depth || String(depth) !== String(timelineFilters.generation)) return false;
@@ -3359,6 +3557,56 @@ function formatBirthdayCountdown(entry, today = new Date()) {
   return lang === "en" ? `${info.diff} days left · turns ${nextAge}` : `${info.diff} hari lagi · jadi ${nextAge} tahun`;
 }
 
+function personCsvRow(person, extra = {}) {
+  const depth = getPersonDepthMap().get(person.id) || "";
+  const birthDate = parseDateValue(person.birth);
+  const age = birthDate && !person.death ? calcAge(birthDate) : "";
+  return {
+    id: person.id,
+    displayName: getShortDisplayName(person.name),
+    fullName: formatDisplayName(person.name),
+    relation: person.relation || "",
+    generation: depth,
+    gender: getPersonGender(person) || "",
+    birth: formatDateDisplay(person.birth) || "",
+    age,
+    death: formatDateDisplay(person.death) || "",
+    status: getPersonStatus(person),
+    branch: getBranchName(person.branchId),
+    note: person.note || "",
+    ...extra
+  };
+}
+
+function exportDirectoryCsv() {
+  const headers = ["id", "displayName", "fullName", "relation", "generation", "gender", "birth", "age", "death", "status", "branch", "note"];
+  const queryTerms = expandSearchTerms(directoryFilters.query || "");
+  const rows = (treeData?.people || [])
+    .filter((person) => !queryTerms.length || queryTerms.some((term) => getPersonSearchText(person).includes(term)))
+    .map((person) => personCsvRow(person));
+  downloadCsv("kami-tree-directory.csv", headers, rows);
+}
+
+function exportBirthdayCsv() {
+  const headers = ["id", "displayName", "fullName", "birthday", "countdown", "age", "relation", "generation", "gender", "branch"];
+  const rows = getBirthdayEntries().map((entry) => personCsvRow(entry.person, {
+    birthday: formatBirthdayDate(entry),
+    countdown: formatBirthdayCountdown(entry),
+    age: calcAge(entry.date)
+  }));
+  downloadCsv("kami-tree-birthday.csv", headers, rows);
+}
+
+function exportBranchCsv() {
+  const headers = ["id", "displayName", "fullName", "relation", "generation", "gender", "birth", "age", "death", "status", "branch", "note"];
+  let people = treeData?.people || [];
+  if (focusedBranchPersonId) {
+    const ids = getFocusedFamilyIds(focusedBranchPersonId);
+    people = people.filter((person) => ids.has(person.id));
+  }
+  downloadCsv("kami-tree-branch.csv", headers, people.map((person) => personCsvRow(person)));
+}
+
 function scrollToBirthdayDate(key) {
   if (!key) return;
   const target = birthdayCalendarView === "planner"
@@ -3912,8 +4160,73 @@ function renderProfileActions(person) {
       <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}">${escapeHtml(t.profileFindRelation)}</button>
       <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}">${escapeHtml(t.profileFamilyView)}</button>
       <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}">${escapeHtml(t.profileCopyLink)}</button>
+      <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}">${escapeHtml(t.profileShareText)}</button>
+      <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}">${escapeHtml(t.profilePrint)}</button>
     </div>
   `;
+}
+
+function getProfileShareText(person) {
+  const t = i18n[lang] || i18n.ms;
+  const birthDate = parseDateValue(person.birth);
+  const age = birthDate && !person.death ? calcAge(birthDate) : "";
+  return [
+    formatDisplayName(person.name),
+    person.relation ? `${t.modalRelation}: ${person.relation}` : "",
+    person.birth ? `${t.modalBirth}: ${formatDateDisplay(person.birth)}` : "",
+    age !== "" ? `${t.ageLabel}: ${age}` : "",
+    person.death ? `${t.modalDeath}: ${formatDateDisplay(person.death)}` : "",
+    person.note ? `${t.modalNote}: ${person.note}` : ""
+  ].filter(Boolean).join("\n");
+}
+
+async function sharePersonProfile(person) {
+  const text = getProfileShareText(person);
+  if (navigator.share) {
+    await navigator.share({ title: formatDisplayName(person.name), text });
+    return;
+  }
+  await navigator.clipboard.writeText(text);
+  alert(i18n[lang].profileLinkCopied);
+}
+
+function printPersonProfile(person) {
+  const summary = getFamilyCountSummary(person.id);
+  const html = `
+    <!doctype html>
+    <html>
+    <head>
+      <title>${escapeHtml(formatDisplayName(person.name))}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 32px; color: #1f2a24; }
+        h1 { margin-bottom: 4px; }
+        .meta { color: #56635d; margin-bottom: 24px; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .box { border: 1px solid #d8e5dd; border-radius: 14px; padding: 14px; }
+        strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; color: #4f8a6a; }
+      </style>
+    </head>
+    <body>
+      <h1>${escapeHtml(formatDisplayName(person.name))}</h1>
+      <div class="meta">${escapeHtml(person.relation || "")}</div>
+      <div class="grid">
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalBirth)}</strong>${escapeHtml(formatDateDisplay(person.birth) || "-")}</div>
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalDeath)}</strong>${escapeHtml(formatDateDisplay(person.death) || "-")}</div>
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileChildrenCount)}</strong>${summary.children || "-"}</div>
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileGrandchildrenCount)}</strong>${summary.grandchildren || "-"}</div>
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileGreatGrandchildrenCount)}</strong>${summary.greatGrandchildren || "-"}</div>
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileInlawsCount)}</strong>${summary.inlaws || "-"}</div>
+      </div>
+      <p>${escapeHtml(person.note || "")}</p>
+    </body>
+    </html>
+  `;
+  const printWindow = window.open("", "_blank", "width=800,height=900");
+  if (!printWindow) return;
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
 }
 
 function bindProfileActionClicks(container) {
@@ -3963,6 +4276,20 @@ function bindProfileActionClicks(container) {
         } catch {
           alert(t.profileLinkCopyFail);
         }
+      }
+      if (action === "share") {
+        const person = peopleById.get(personId);
+        if (person) {
+          try {
+            await sharePersonProfile(person);
+          } catch (err) {
+            console.warn("Share failed", err);
+          }
+        }
+      }
+      if (action === "print") {
+        const person = peopleById.get(personId);
+        if (person) printPersonProfile(person);
       }
     });
   });
@@ -5208,6 +5535,14 @@ if (quickFamilyFilter) {
   });
 }
 
+if (timelineSearchInput) {
+  timelineSearchInput.addEventListener("input", () => {
+    timelineFilters.query = timelineSearchInput.value || "";
+    renderTimeline();
+    updateTimelineActiveFilters();
+  });
+}
+
 if (timelineGenSelect) {
   timelineGenSelect.addEventListener("change", () => {
     timelineFilters.generation = timelineGenSelect.value || "all";
@@ -5248,7 +5583,8 @@ if (timelineMoreBtn) {
 
 if (timelineClearBtn) {
   timelineClearBtn.addEventListener("click", () => {
-    timelineFilters = { generation: "all", month: "all", gender: "all", sort: "year" };
+    timelineFilters = { query: "", generation: "all", month: "all", gender: "all", sort: "year" };
+    if (timelineSearchInput) timelineSearchInput.value = "";
     if (timelineGenSelect) timelineGenSelect.value = "all";
     if (timelineMonthSelect) timelineMonthSelect.value = "all";
     if (timelineGenderSelect) timelineGenderSelect.value = "all";
@@ -5625,6 +5961,21 @@ function scrollTreeIntoView(behavior = "auto") {
   });
 }
 
+if (exportBranchCsvBtn) {
+  exportBranchCsvBtn.addEventListener("click", () => {
+    exportBranchCsv();
+    closeExportMenu();
+  });
+}
+
+if (directoryExportCsvBtn) {
+  directoryExportCsvBtn.addEventListener("click", exportDirectoryCsv);
+}
+
+if (birthdayExportCsvBtn) {
+  birthdayExportCsvBtn.addEventListener("click", exportBirthdayCsv);
+}
+
 function fitOverview(behavior = "auto") {
   if (!treeWrap || !treeCanvas) return;
   if (!treeCanvas.children.length) return;
@@ -5963,6 +6314,7 @@ function applyLanguage() {
   if (settingsShowAge) settingsShowAge.checked = showAge;
   if (settingsShowTags) settingsShowTags.checked = showTags;
   if (timelineMonthSelect) timelineMonthSelect.value = timelineFilters.month;
+  if (timelineSearchInput) timelineSearchInput.value = timelineFilters.query || "";
   if (timelineGenderSelect) timelineGenderSelect.value = timelineFilters.gender;
   if (timelineSortSelect) timelineSortSelect.value = timelineFilters.sort;
   if (directorySearchInput) directorySearchInput.value = directoryFilters.query || "";
@@ -5982,6 +6334,7 @@ function applyLanguage() {
   updateFocusedBranchBar();
   updateQuickFamilyFilterBar();
   renderQuickPeople();
+  renderDataHealthPanel();
   updateViewSwitch();
 
   const branchOptions = branchFilter?.options || [];
