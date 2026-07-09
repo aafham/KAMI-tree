@@ -1646,12 +1646,12 @@ function initFromData(data) {
   applyZoom();
   if (viewMode === "tree") treeWrap.scrollTo({ left: 0, top: 0 });
   setTreeStatus("");
-  ensureTreeVisible();
+  if (viewMode === "tree") ensureTreeVisible();
   if (viewMode === "tree" && !hasUrlFocus()) {
     requestAnimationFrame(focusInitialTree);
   }
   if (pathMode) applyLineageHighlight();
-  if (treeCanvas && treeCanvas.children.length === 0) {
+  if (viewMode === "tree" && treeCanvas && treeCanvas.children.length === 0) {
     recoverEmptyView();
     recoverEmptyViewAsync();
   }

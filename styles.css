@@ -5497,8 +5497,34 @@ input[type="search"] {
 body[data-view="birthday"] .tree-toolbar,
 body[data-view="birthday"] .tree-scroll-guide,
 body[data-view="birthday"] .brand-minimap-wrap,
-body[data-view="directory"] .brand-minimap-wrap {
+body[data-view="directory"] .tree-toolbar,
+body[data-view="directory"] .tree-scroll-guide,
+body[data-view="directory"] .brand-minimap-wrap,
+body[data-view="timeline"] .tree-toolbar,
+body[data-view="timeline"] .tree-scroll-guide,
+body[data-view="timeline"] .brand-minimap-wrap {
   display: none !important;
+}
+
+body[data-view="birthday"] .bottom-sheet,
+body[data-view="birthday"] .stats,
+body[data-view="birthday"] .quick-people,
+body[data-view="birthday"] .view-switch,
+body[data-view="directory"] .bottom-sheet,
+body[data-view="directory"] .stats,
+body[data-view="directory"] .quick-people,
+body[data-view="directory"] .view-switch,
+body[data-view="timeline"] .bottom-sheet,
+body[data-view="timeline"] .stats,
+body[data-view="timeline"] .quick-people,
+body[data-view="timeline"] .view-switch {
+  display: none !important;
+}
+
+body[data-view="birthday"] .tree-section,
+body[data-view="directory"] .tree-section,
+body[data-view="timeline"] .tree-section {
+  margin-top: clamp(22px, 4vw, 46px);
 }
 
 .story-panel {
@@ -5847,6 +5873,327 @@ body[data-view="directory"] .brand-minimap-wrap {
   }
 }
 
+/* Final website clean-up overrides: keep desktop calm and mobile app-like. */
+@media (min-width: 721px) {
+  .brand-minimap-wrap.is-collapsed {
+    display: none;
+  }
+
+  body[data-view="tree"] .stats {
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .topbar {
+    padding: max(16px, env(safe-area-inset-top)) 16px 12px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand h1 {
+    max-width: 12ch;
+    font-size: clamp(32px, 11vw, 42px);
+    line-height: 0.98;
+  }
+
+  .brand .kicker {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+  }
+
+  .brand .subtitle {
+    font-size: 14px;
+    line-height: 1.45;
+    max-width: 30ch;
+  }
+
+  body[data-view="birthday"] .brand,
+  body[data-view="directory"] .brand,
+  body[data-view="timeline"] .brand {
+    display: none;
+  }
+
+  body[data-view="birthday"] .topbar,
+  body[data-view="directory"] .topbar,
+  body[data-view="timeline"] .topbar {
+    padding-bottom: 8px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 12px 16px 18px;
+  }
+
+  .stat-card {
+    min-height: 96px;
+    border-radius: 20px;
+    padding: 14px 10px;
+  }
+
+  .stat-card--birthday {
+    grid-column: 1 / -1;
+    min-height: 112px;
+  }
+
+  .stat-value {
+    font-size: 30px;
+  }
+
+  .stat-card--birthday .stat-value {
+    font-size: 25px;
+  }
+
+  .bottom-sheet {
+    left: 10px;
+    right: 10px;
+    bottom: calc(62px + env(safe-area-inset-bottom));
+    max-height: min(72vh, 650px);
+    border-radius: 24px 24px 18px 18px;
+    padding: 12px;
+    box-shadow: 0 20px 48px rgba(31, 42, 36, 0.18);
+  }
+
+  body:not(.controls-collapsed) .bottom-sheet {
+    bottom: calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-sheet .controls,
+  .controls {
+    padding: 12px;
+    border-radius: 20px;
+    gap: 12px;
+  }
+
+  .controls-toggle {
+    min-height: 42px;
+    border-radius: 999px;
+  }
+
+  .search-row,
+  .relationship-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .relationship-finder summary {
+    border-radius: 18px;
+    padding: 12px 14px;
+  }
+
+  .action-cluster,
+  .export-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .action-cluster--zoom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .action-cluster--zoom .btn:last-child,
+  .export-actions .btn {
+    width: 100%;
+  }
+
+  .generation-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .generation-controls {
+    gap: 7px;
+  }
+
+  .mobile-panel-btn {
+    left: 14px;
+    right: 14px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    border-radius: 999px;
+    min-height: 44px;
+  }
+
+  .tree-toolbar {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin: 0 0 12px;
+    border-radius: 24px;
+    padding: 10px;
+    box-shadow: 0 18px 42px rgba(31, 42, 36, 0.16);
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  body:not(.controls-collapsed) .tree-toolbar,
+  body.controls-collapsed .tree-toolbar {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .tree-toolbar-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tree-toolbar-actions > [data-tree-action="fit"],
+  .tree-toolbar-actions > [data-tree-action="reset"],
+  .tree-toolbar-actions > [data-tree-action="minimap"] {
+    min-height: 42px;
+    border-radius: 16px;
+  }
+
+  .tree-section {
+    padding: 10px 10px calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .tree-wrap {
+    border-radius: 24px;
+    min-height: 68vh;
+  }
+
+  .tree-scroll-guide {
+    margin: 6px 16px 12px;
+    font-size: 12px;
+  }
+
+  .brand-minimap-wrap {
+    left: 10px;
+    right: 10px;
+    bottom: calc(160px + env(safe-area-inset-bottom));
+  }
+
+  body[data-view="birthday"] .bottom-sheet,
+  body[data-view="directory"] .bottom-sheet,
+  body[data-view="timeline"] .bottom-sheet,
+  body[data-view="birthday"] .mobile-panel-btn,
+  body[data-view="directory"] .mobile-panel-btn,
+  body[data-view="timeline"] .mobile-panel-btn {
+    display: none;
+  }
+
+  .birthday-section,
+  .directory-section,
+  .timeline-section {
+    margin: 8px 10px calc(92px + env(safe-area-inset-bottom));
+    border-radius: 24px;
+    padding: 16px;
+  }
+
+  .birthday-head,
+  .timeline-head,
+  .directory-head {
+    gap: 10px;
+  }
+
+  .birthday-head h2,
+  .timeline-section h2,
+  .directory-head h2 {
+    font-size: clamp(28px, 9vw, 38px);
+    line-height: 1;
+  }
+
+  .birthday-featured {
+    border-radius: 22px;
+  }
+
+  .birthday-featured-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-featured-actions .btn,
+  .birthday-mini-person {
+    width: 100%;
+    max-width: none;
+    justify-content: center;
+  }
+
+  .birthday-tools,
+  .directory-toolbar,
+  .directory-tools,
+  .timeline-filters-card {
+    grid-template-columns: 1fr;
+    border-radius: 20px;
+    padding: 12px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .birthday-tools .input,
+  .birthday-tools .select,
+  .directory-toolbar .input,
+  .directory-toolbar .select,
+  .directory-tools .select,
+  .timeline-filters-card .input,
+  .timeline-filters-card .select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .birthday-toggle-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .birthday-toggle-actions .btn,
+  .directory-toolbar .btn,
+  .directory-tools .btn {
+    width: 100%;
+  }
+
+  .directory-head .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .directory-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .directory-card-main {
+    gap: 8px;
+  }
+
+  .directory-card-actions {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .birthday-view-switch,
+  .settings-tabs {
+    width: 100%;
+  }
+
+  .birthday-month-card,
+  .birthday-planner-card,
+  .planner-panel-card,
+  .directory-card,
+  .timeline-item {
+    border-radius: 22px;
+  }
+
+  .story-panel {
+    inset: auto 10px calc(82px + env(safe-area-inset-bottom)) 10px;
+    width: auto;
+    max-height: 76vh;
+    border-radius: 26px;
+    padding: 16px;
+  }
+}
+
 @keyframes cardIn {
   from {
     opacity: 0;
@@ -5894,5 +6241,72 @@ body[data-view="directory"] .brand-minimap-wrap {
   @page {
     size: A4 landscape;
     margin: 10mm;
+  }
+}
+
+body[data-view="birthday"] .topbar,
+body[data-view="directory"] .topbar,
+body[data-view="timeline"] .topbar {
+  display: none !important;
+}
+
+body[data-view="birthday"] .brand,
+body[data-view="directory"] .brand,
+body[data-view="timeline"] .brand {
+  max-width: 720px;
+}
+
+body[data-view="birthday"] .brand h1,
+body[data-view="directory"] .brand h1,
+body[data-view="timeline"] .brand h1 {
+  font-size: clamp(30px, 4vw, 44px);
+  max-width: 720px;
+  margin-bottom: 8px;
+}
+
+body[data-view="birthday"] .brand .subtitle,
+body[data-view="directory"] .brand .subtitle,
+body[data-view="timeline"] .brand .subtitle {
+  max-width: 620px;
+}
+
+body[data-view="birthday"] .tree-section,
+body[data-view="directory"] .tree-section,
+body[data-view="timeline"] .tree-section {
+  margin-top: clamp(10px, 2vw, 24px);
+}
+
+@media (max-width: 720px) {
+  body[data-view="birthday"] .mobile-topbar,
+  body[data-view="directory"] .mobile-topbar,
+  body[data-view="timeline"] .mobile-topbar {
+    display: none !important;
+  }
+
+  body[data-view="birthday"] .topbar,
+  body[data-view="directory"] .topbar,
+  body[data-view="timeline"] .topbar {
+    padding-top: max(14px, env(safe-area-inset-top));
+    gap: 8px;
+  }
+
+  body[data-view="birthday"] .brand h1,
+  body[data-view="directory"] .brand h1,
+  body[data-view="timeline"] .brand h1 {
+    max-width: 12ch;
+    font-size: clamp(30px, 9vw, 38px);
+  }
+
+  body[data-view="birthday"] .brand,
+  body[data-view="directory"] .brand,
+  body[data-view="timeline"] .brand {
+    gap: 6px;
+  }
+
+  body[data-view="birthday"] .tree-section,
+  body[data-view="directory"] .tree-section,
+  body[data-view="timeline"] .tree-section {
+    margin-top: -86px;
+    padding-top: 12px;
   }
 }
