@@ -111,6 +111,11 @@ const statCicit = document.getElementById("stat-cicit");
 const birthdayCard = document.getElementById("birthday-card");
 const statUpcomingName = document.getElementById("stat-upcoming-name");
 const statUpcomingMeta = document.getElementById("stat-upcoming-meta");
+const quickPeopleSection = document.getElementById("quick-people");
+const favoritePeopleCard = document.getElementById("favorite-people-card");
+const favoritePeopleList = document.getElementById("favorite-people-list");
+const recentPeopleCard = document.getElementById("recent-people-card");
+const recentPeopleList = document.getElementById("recent-people-list");
 const themePresetSelect = document.getElementById("theme-preset");
 const timelineGenSelect = document.getElementById("timeline-gen");
 const timelineMonthSelect = document.getElementById("timeline-month");
@@ -176,6 +181,8 @@ const VIRTUALIZE_THRESHOLD = 1000000;
 const STORAGE_KEY = "familyTreePrefs";
 const DATA_KEY = "familyTreeData";
 const SELF_STORAGE_KEY = "familyTreeSelfId";
+const FAVORITES_STORAGE_KEY = "familyTreeFavoriteIds";
+const RECENT_STORAGE_KEY = "familyTreeRecentIds";
 const FORCE_RESET = false;
 const MOBILE_CONTROLS_KEY = "ft_controls_collapsed";
 
@@ -208,6 +215,8 @@ let lang = "ms";
 let compactMode = false;
 let pathMode = false;
 let controlsCollapsed = false;
+let favoritePersonIds = new Set();
+let recentPersonIds = [];
 let themePreset = "default";
 let showLines = true;
 let cardScale = 1;
@@ -348,9 +357,15 @@ const i18n = {
     directorySummary: "{count} ahli dipaparkan",
     directoryProfile: "Profil",
     mobileSearchTitle: "Cari Ahli Keluarga",
+    homeSavedKicker: "Disimpan",
+    homeSavedMembers: "Ahli Disimpan",
+    homeRecentKicker: "Sejarah",
+    homeRecentMembers: "Baru Dibuka",
     profileFocusTree: "Fokus dalam tree",
     profileFindRelation: "Cari hubungan",
     profileFamilyView: "Lihat keluarga ini",
+    profilePin: "Pin",
+    profilePinned: "Pinned",
     profileCopyLink: "Copy link",
     profileLinkCopied: "Link ahli telah disalin.",
     profileLinkCopyFail: "Tak dapat copy link. URL sudah dikemas kini di address bar.",
@@ -602,9 +617,15 @@ const i18n = {
     directorySummary: "{count} members shown",
     directoryProfile: "Profile",
     mobileSearchTitle: "Search Family Members",
+    homeSavedKicker: "Saved",
+    homeSavedMembers: "Saved Members",
+    homeRecentKicker: "History",
+    homeRecentMembers: "Recently Viewed",
     profileFocusTree: "Focus in tree",
     profileFindRelation: "Find relationship",
     profileFamilyView: "View this family",
+    profilePin: "Pin",
+    profilePinned: "Pinned",
     profileCopyLink: "Copy link",
     profileLinkCopied: "Person link copied.",
     profileLinkCopyFail: "Could not copy the link. The URL was updated in the address bar.",
@@ -1398,6 +1419,7 @@ function applySelectionHighlight(personId) {
 function initFromData(data) {
   treeData = data;
   peopleById = new Map(treeData.people.map((p) => [p.id, p]));
+  loadPersonalLists();
   softPeachPeople = computeBranchPeople(SOFT_PEACH_ROOT_ID);
   babyBluePeople = computeBranchPeople(BABY_BLUE_ROOT_ID);
   mintGreenPeople = computeBranchPeople(MINT_GREEN_ROOT_ID);
@@ -1448,6 +1470,7 @@ function initFromData(data) {
   applyCardScale();
   buildLayout();
   updateStats();
+  renderQuickPeople();
   populateTimelineFilters();
   if (nodesList.length === 0) {
     forceFreshData = true;
@@ -1639,6 +1662,88 @@ function savePrefs() {
     treeDisplayMode
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function readStoredIdList(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    const value = raw ? JSON.parse(raw) : [];
+    return Array.isArray(value) ? value.filter((id) => typeof id === "string") : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function saveStoredIdList(key, ids) {
+  localStorage.setItem(key, JSON.stringify(ids));
+}
+
+function loadPersonalLists() {
+  favoritePersonIds = new Set(readStoredIdList(FAVORITES_STORAGE_KEY));
+  recentPersonIds = readStoredIdList(RECENT_STORAGE_KEY);
+}
+
+function getPeopleFromIds(ids) {
+  return ids.map((id) => peopleById.get(id)).filter(Boolean);
+}
+
+function saveFavoritePeople() {
+  saveStoredIdList(FAVORITES_STORAGE_KEY, Array.from(favoritePersonIds));
+}
+
+function saveRecentPeople() {
+  saveStoredIdList(RECENT_STORAGE_KEY, recentPersonIds);
+}
+
+function addRecentPerson(personId) {
+  if (!personId || !peopleById.has(personId)) return;
+  recentPersonIds = [personId, ...recentPersonIds.filter((id) => id !== personId)].slice(0, 20);
+  saveRecentPeople();
+  renderQuickPeople();
+}
+
+function toggleFavoritePerson(personId) {
+  if (!personId || !peopleById.has(personId)) return;
+  if (favoritePersonIds.has(personId)) {
+    favoritePersonIds.delete(personId);
+  } else {
+    favoritePersonIds.add(personId);
+  }
+  saveFavoritePeople();
+  renderQuickPeople();
+}
+
+function renderQuickPersonChip(person) {
+  const shortName = getShortDisplayName(person.name);
+  const avatarText = initials(shortName || person.name || "");
+  const accent = generationColor(person.generation || 1);
+  const name = getShortDisplayName(person.name);
+  return `
+    <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
+      <span class="quick-person-avatar" style="--chip-accent: ${escapeHtml(accent)}">${escapeHtml(avatarText)}</span>
+      <span>${escapeHtml(name)}</span>
+    </button>
+  `;
+}
+
+function renderQuickPeople() {
+  if (!quickPeopleSection) return;
+  const favoritePeople = getPeopleFromIds(Array.from(favoritePersonIds));
+  const recentPeople = getPeopleFromIds(recentPersonIds).filter((person) => !favoritePersonIds.has(person.id)).slice(0, 8);
+
+  if (favoritePeopleCard && favoritePeopleList) {
+    favoritePeopleCard.hidden = favoritePeople.length === 0;
+    favoritePeopleList.innerHTML = favoritePeople.map(renderQuickPersonChip).join("");
+    bindPersonLinkClicks(favoritePeopleList);
+  }
+
+  if (recentPeopleCard && recentPeopleList) {
+    recentPeopleCard.hidden = recentPeople.length === 0;
+    recentPeopleList.innerHTML = recentPeople.map(renderQuickPersonChip).join("");
+    bindPersonLinkClicks(recentPeopleList);
+  }
+
+  quickPeopleSection.hidden = favoritePeople.length === 0 && recentPeople.length === 0;
 }
 
 function loadStoredData() {
@@ -3799,8 +3904,10 @@ function renderIndividualLineage(person) {
 function renderProfileActions(person) {
   const t = i18n[lang] || i18n.ms;
   const id = escapeHtml(person.id);
+  const isPinned = favoritePersonIds.has(person.id);
   return `
     <div class="profile-actions" data-profile-person="${id}">
+      <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}">${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</button>
       <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}">${escapeHtml(t.profileFocusTree)}</button>
       <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}">${escapeHtml(t.profileFindRelation)}</button>
       <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}">${escapeHtml(t.profileFamilyView)}</button>
@@ -3816,6 +3923,15 @@ function bindProfileActionClicks(container) {
       const personId = btn.dataset.personId;
       const action = btn.dataset.profileAction;
       if (!personId || !action) return;
+      if (action === "pin") {
+        toggleFavoritePerson(personId);
+        const person = peopleById.get(personId);
+        if (person) {
+          updateStoryPanel(person);
+          if (modal?.classList.contains("active")) openModal(person);
+        }
+        return;
+      }
       if (action === "focus") {
         focusPerson(personId, false, true);
         return;
@@ -3902,6 +4018,7 @@ function closeStoryPanel() {
 function openModal(person) {
   const t = i18n[lang] || i18n.ms;
   if (!storyContent) return;
+  addRecentPerson(person.id);
   if (storyPanel) storyPanel.hidden = false;
   setStoryPanelOpen(true);
   const birthDate = parseDateValue(person.birth);
@@ -4862,6 +4979,7 @@ function focusPerson(personId, open = false, updateUrl = true) {
   if (!el) return;
 
   selectedPersonId = personId;
+  addRecentPerson(personId);
   updateStoryPanel(person);
   applySelectionHighlight(personId);
   updateQuickFamilyFilterBar();
@@ -5863,6 +5981,7 @@ function applyLanguage() {
   if (viewMode === "directory") renderDirectoryPage();
   updateFocusedBranchBar();
   updateQuickFamilyFilterBar();
+  renderQuickPeople();
   updateViewSwitch();
 
   const branchOptions = branchFilter?.options || [];

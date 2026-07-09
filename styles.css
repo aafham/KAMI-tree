@@ -1148,6 +1148,97 @@ input[type="file"].input {
   padding: 0 clamp(20px, 4vw, 48px) 18px;
 }
 
+.quick-people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 clamp(20px, 4vw, 48px) 18px;
+}
+
+.quick-people[hidden] {
+  display: none;
+}
+
+.quick-people-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(79, 138, 106, 0.14);
+  border-radius: 18px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, var(--primary) 4%), var(--card));
+  box-shadow: 0 14px 32px rgba(31, 42, 36, 0.06);
+}
+
+.quick-people-card[hidden] {
+  display: none;
+}
+
+.quick-people-card h2 {
+  margin: 3px 0 0;
+  font-size: clamp(18px, 2vw, 24px);
+}
+
+.quick-people-kicker {
+  margin: 0;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.quick-people-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-person-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 10px 6px 7px;
+  border: 1px solid rgba(79, 138, 106, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(31, 42, 36, 0.06);
+}
+
+.quick-person-chip:hover,
+.quick-person-chip:focus-visible {
+  border-color: color-mix(in srgb, var(--primary) 52%, transparent);
+  transform: translateY(-1px);
+}
+
+.quick-person-avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--chip-accent, var(--primary));
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+[data-theme="dark"] .quick-people-card {
+  background: linear-gradient(180deg, rgba(25, 40, 33, 0.98), rgba(18, 30, 25, 0.98));
+  border-color: rgba(220, 235, 226, 0.12);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .quick-person-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(220, 235, 226, 0.16);
+  color: #f4f8f5;
+}
+
 .view-switch {
   display: none;
   gap: 8px;
@@ -3945,6 +4036,19 @@ body.hide-tags .person-tags {
 }
 
 @media (max-width: 720px) {
+  .quick-people {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-people-card {
+    padding: 14px;
+  }
+
+  .quick-person-chip {
+    min-height: 36px;
+    font-size: 13px;
+  }
+
   .stat-card--birthday {
     grid-column: 1 / -1;
   }
