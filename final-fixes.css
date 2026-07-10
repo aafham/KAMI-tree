@@ -64,6 +64,56 @@
 [data-theme="dark"] .birthday-person.is-upcoming-person .birthday-person-main span,
 [data-theme="dark"] .birthday-person.is-upcoming-person .birthday-person-main small { color: #26352d !important; }
 
-[data-theme="dark"] body[data-nav-surface="home"].has-family-photo .home-hero .brand h1,
-[data-theme="dark"] body[data-nav-surface="home"].has-family-photo .home-hero .brand p,
-[data-theme="dark"] body[data-nav-surface="home"].has-family-photo .home-hero .kicker { color: #17251e !important; text-shadow: 0 1px 0 rgba(255, 255, 255, .55); }
+body[data-theme="dark"][data-nav-surface="home"].has-family-photo .home-hero .brand h1,
+body[data-theme="dark"][data-nav-surface="home"].has-family-photo .home-hero .brand p,
+body[data-theme="dark"][data-nav-surface="home"].has-family-photo .home-hero .kicker { color: #17251e !important; text-shadow: 0 1px 0 rgba(255, 255, 255, .55); }
+
+/* Home photo begins at the top of the desktop page so the family photo sits
+   behind the navigation rather than starting below it. */
+@media (min-width: 721px) {
+  body[data-nav-surface="home"] .app::before {
+    top: 0 !important;
+    height: min(1040px, 56vw) !important;
+    background-position: center bottom !important;
+  }
+  body[data-nav-surface="home"].has-family-photo .web-nav {
+    background: color-mix(in srgb, var(--card) 68%, transparent) !important;
+    backdrop-filter: blur(12px) saturate(112%);
+  }
+}
+
+/* Default is soft/translucent to reveal the photo; the display toggle makes
+   controls clearer without hiding the family background. */
+body[data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .stat-card,
+body[data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-birthday-feature,
+body[data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry,
+body[data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .quick-people-card {
+  background: color-mix(in srgb, var(--card) 54%, transparent) !important;
+}
+body[data-nav-surface="home"].has-family-photo.home-controls-clear .stat-card,
+body[data-nav-surface="home"].has-family-photo.home-controls-clear .home-birthday-feature,
+body[data-nav-surface="home"].has-family-photo.home-controls-clear .home-feature-entry,
+body[data-nav-surface="home"].has-family-photo.home-controls-clear .quick-people-card {
+  background: color-mix(in srgb, var(--card) 94%, transparent) !important;
+}
+
+/* The Cucu/Cicit accordion must inherit dark surfaces and readable text. */
+[data-theme="dark"] .profile-family-group--collapsible,
+[data-theme="dark"] .profile-family-group--collapsible summary,
+[data-theme="dark"] .profile-family-group--collapsible > .profile-member-grid {
+  background: #182821 !important;
+  border-color: rgba(220, 235, 226, .18) !important;
+  color: #f4f8f5 !important;
+}
+[data-theme="dark"] .profile-family-group--collapsible summary,
+[data-theme="dark"] .profile-family-group--collapsible summary span,
+[data-theme="dark"] .profile-family-group--collapsible summary small { color: #f4f8f5 !important; }
+[data-theme="dark"] .profile-family-group--collapsible summary > span:last-child { color: #b8cbbf !important; }
+
+/* Fraunces is reserved for page headings; Source Sans 3 remains the reading/UI font. */
+.tree-page-head h2,
+body[data-view="tree"] .tree-page-head h2 {
+  font-family: "Fraunces", Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}

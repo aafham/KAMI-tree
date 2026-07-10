@@ -1,176 +1,306 @@
 # KAMI Tree
 
-KAMI Tree ialah website salasilah keluarga interaktif. Ia membantu ahli keluarga melihat hubungan antara generasi, mencari individu, menyemak birthday, dan membuka profil keluarga dengan lebih mudah pada desktop atau telefon.
+KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat dan memahami hubungan antara ahli keluarga dalam satu tempat.
 
-**Website:** https://kami-tree.vercel.app/
+**Website:** [kami-tree.vercel.app](https://kami-tree.vercel.app/)
 
-## Tujuan
+## Tujuan Website
 
-- Simpan dan paparkan maklumat salasilah keluarga dalam satu tempat.
-- Memudahkan ahli keluarga mengenal ibu bapa, pasangan, adik-beradik, anak, cucu, dan moyang.
-- Menjadi rujukan keluarga yang mudah digunakan oleh pelbagai peringkat umur.
-- Paparkan birthday serta perjalanan generasi secara visual.
+- Memaparkan salasilah keluarga secara visual dari generasi awal hingga generasi terkini.
+- Memudahkan ahli keluarga mencari seseorang, melihat maklumat asas dan memahami pertalian keluarga.
+- Menjadi rujukan bersama untuk nama, tarikh lahir, pasangan, anak, cucu, cicit, catatan dan sejarah keluarga.
+- Memudahkan semakan birthday sepanjang tahun.
 
-## Status Semasa
+## Maklumat Semasa
 
-- 68 ahli keluarga dan 15 hubungan pasangan dibaca daripada `data.json`.
-- Paparan desktop dan mobile dioptimumkan secara berasingan.
+- Data keluarga dibaca daripada `data.json`.
+- Paparan dioptimumkan untuk desktop dan telefon.
 - Bahasa Melayu dan English disokong.
-- Light mode, dark mode, saiz kad, dan saiz tulisan boleh diubah dalam Tetapan.
-- Pilihan peribadi seperti ahli disimpan, baru dibuka, tetapan, dan Diri Saya disimpan pada browser/peranti masing-masing.
+- Light mode dan dark mode tersedia.
+- Pilihan pengguna seperti tema, saiz tulisan, ahli disimpan, baru dibuka dan paparan Home disimpan pada browser/peranti sendiri.
+- Website tidak memerlukan log masuk untuk melihat data yang telah dideploy.
 
 ## Navigasi
 
 ### Desktop
 
-Navigation bar di atas menyediakan:
+Navigation bar di atas menyediakan halaman berikut:
 
-- `Home` - ringkasan dan pintu masuk cepat.
-- `Tree` - paparan salasilah penuh.
+- `Home` - ringkasan keluarga dan pintu masuk cepat.
+- `Tree` - salasilah keluarga interaktif.
 - `Direktori` - senarai semua ahli keluarga.
-- `Birthday` - kalendar dan senarai birthday.
-- `Timeline` - susunan ahli mengikut tahun kelahiran.
-- `Tetapan` - pilihan paparan, navigasi, tema, data, dan maklumat website.
+- `Birthday` - kalendar birthday dan planner bulanan.
+- `Timeline` - ahli keluarga mengikut tahun kelahiran.
+- `Tetapan` - paparan, navigasi, tema, data dan maklumat website.
+
+Ikon gambar selepas `Tetapan` pada desktop menutup atau memaparkan foto keluarga di Home.
 
 ### Mobile
 
-Bottom navigation kekal mudah dicapai di bawah skrin dengan halaman yang sama: Home, Tree, Direktori, Birthday, Timeline, dan Tetapan.
+Navigation berada tetap di bawah skrin:
 
-## Fungsi Utama
+`Home` · `Tree` · `Direktori` · `Birthday` · `Timeline` · `Tetapan`
+
+Setiap item mempunyai kawasan sentuhan yang besar supaya mudah digunakan oleh pelbagai golongan umur. Pada mobile, navigation bawah kekal di tempatnya walaupun gambar keluarga dipaparkan.
+
+## Halaman Dan Fungsi
 
 ### Home
 
-- Ringkasan jumlah ahli, pasangan, jantina, keturunan, dan birthday terdekat.
-- `Lihat Tree Keluarga` terus membuka tree.
-- `Search Global` membuka carian semua ahli keluarga.
-- Bahagian `Ahli Disimpan` memaparkan favourite yang disimpan.
-- Bahagian `Baru Dibuka` memaparkan profil yang terkini dilihat.
-- Kad birthday terdekat boleh ditekan untuk terus ke halaman Birthday.
+Home memberi gambaran keseluruhan keluarga:
+
+- Jumlah ahli keluarga.
+- Jumlah pasangan.
+- Jumlah lelaki dan perempuan.
+- Jumlah cucu dan cicit.
+- Birthday paling hampir.
+- `Lihat Tree Keluarga` untuk terus masuk ke salasilah.
+- `Search Global` untuk carian menyeluruh.
+- `Ahli Disimpan` untuk favourite yang dipin.
+- `Baru Dibuka` untuk profil terkini yang dilihat.
+
+#### Foto keluarga di Home
+
+Foto keluarga dipaparkan sebagai latar Home pada desktop. Kad statistik dan butang Home menggunakan latar lut sinar supaya foto masih dapat dilihat.
+
+Dalam `Tetapan > Paparan` ada slider `Butang Home jelas`:
+
+- **Kiri / tutup:** kad lebih lut sinar, gambar keluarga lebih jelas.
+- **Kanan / hidup:** kad dan butang lebih jelas, sesuai apabila mahu membaca dengan lebih mudah.
+
+Pilihan ini hanya disimpan pada browser/peranti pengguna tersebut.
 
 ### Tree Keluarga
 
-- Drag/pan, zoom masuk, zoom keluar, reset, dan fit screen.
-- Mod Overview, Detail, dan Branch.
-- Minimap boleh dibuka atau dimatikan melalui Tetapan.
-- Carian nama boleh fokus terus ke kad individu.
-- Kad individu memaparkan maklumat asas, umur, jantina, dan hubungan mengikut tetapan.
-- Tekan kad untuk membuka profil individu.
+Tree ialah paparan salasilah utama.
+
+- Drag atau scroll untuk bergerak ke cabang lain.
+- `Zoom +` dan `Zoom -` untuk membesarkan atau mengecilkan tree.
+- `Fit Skrin` untuk memasukkan tree pada ruang paparan.
+- `Reset` mengembalikan zoom asal.
+- `Reset View` mengembalikan kedudukan paparan tree.
+- `Overview`, `Detail` dan `Branch` menukar tahap maklumat tree.
+- `Buka Minimap` menunjukkan peta kecil kedudukan semasa dalam tree.
+- Carian nama boleh fokus terus kepada ahli pada tree.
+- `Cari hubungan keluarga` membandingkan dua individu berdasarkan data semasa.
+- Kawalan generasi G1 hingga G4 boleh melipat atau membuka generasi.
+
+Tekan kad ahli pada Tree untuk membuka panel sisi di desktop atau profil di mobile. Kad memaparkan nama paparan, jantina, umur mengikut tahun dan maklumat yang dipilih dalam Tetapan.
 
 ### Global Search
 
-Carian global menyokong nama, nickname, hubungan, cabang keluarga, jantina, status hidup/meninggal, dan bulan birthday. Hasil carian boleh membuka profil atau fokus terus ke Tree.
+Global Search boleh dicapai daripada Home dan carian berkaitan pada website.
+
+Carian menyokong:
+
+- Nama penuh.
+- Nama paparan atau nickname.
+- Hubungan keluarga.
+- Cabang keluarga.
+- Jantina.
+- Status hidup atau meninggal.
+- Bulan birthday.
+
+Setiap hasil boleh membuka profil atau fokus terus ke Tree.
 
 ### Family Directory
 
-- Search kekal mudah dicapai ketika senarai discroll.
-- Filter boleh dibuka atau ditutup untuk generasi, jantina, status, birthday, dan cabang keluarga.
-- Kad ahli memaparkan avatar berwarna mengikut cabang, nama, dan maklumat penting.
-- Tekan kad untuk membuka profil; butang tambahan boleh fokus Tree atau lihat keluarga.
+Direktori menyediakan senarai semua ahli keluarga dalam format kad.
+
+- Cari menggunakan nama, nickname, cabang atau hubungan.
+- Tapis mengikut generasi, jantina, bulan birthday, cabang, status dan susunan.
+- Tukar paparan grid atau senarai jika tersedia.
+- Export `Directory CSV` untuk rujukan.
+- Tekan kad ahli untuk buka profil.
+- Butang pada kad membolehkan pengguna buka profil, fokus ke Tree atau lihat keluarga individu.
+
+Avatar dan warna kad mengikuti cabang keluarga. Foto Aishah digunakan pada avatar bulat di bahagian yang menyokong gambar.
 
 ### Birthday
 
-- Kad birthday terdekat di bahagian atas.
-- Carian nama birthday dan butang Hari Ini.
-- Dua paparan: `12 Bulan` dan `Planner`.
-- Kalendar menggunakan warna berbeza untuk hari ini, trail ke birthday terdekat, birthday terdekat, dan tarikh yang mempunyai birthday.
-- Tarikh yang ada lebih daripada seorang ahli memaparkan indikator jumlah.
-- Senarai birthday bulan boleh dibuka atau ditutup; hanya bulan yang dipilih dipaparkan dalam Planner.
+Halaman Birthday mempunyai dua jenis paparan:
+
+- `12 Bulan` - semua bulan dengan tarikh yang mempunyai birthday.
+- `Planner Bulan` - satu bulan besar untuk melihat tarikh dan senarai ahli pada bulan tersebut.
+
+Fungsi Birthday:
+
+- Kad birthday paling hampir di atas halaman.
+- Search nama birthday.
+- `Hari Ini` untuk kembali kepada tarikh dan bulan semasa.
+- `Buka Semua` dan `Tutup Semua` untuk senarai birthday bulanan.
+- `Birthday CSV` untuk export senarai birthday.
+- Tekan tarikh untuk buka atau tutup nama ahli pada tarikh tersebut.
+- Tarikh dengan lebih daripada seorang ahli mempunyai indikator jumlah.
+- Planner memaparkan nama pada tarikh dan senarai penuh bulan yang dipilih.
+
+Kod warna kalendar:
+
+- Kuning: hari semasa atau laluan menuju birthday terdekat.
+- Merah: birthday paling dekat.
+- Hijau: tarikh lain yang mempunyai birthday.
+
+Tekan butang `Birthday` dalam profil seseorang untuk terus membuka planner pada bulan kelahirannya.
 
 ### Timeline
 
-- Susunan ahli mengikut tahun kelahiran.
-- Tahun besar di sebelah kiri; avatar, nama, dan maklumat utama di sebelah kanan.
-- Status meninggal dipaparkan dengan warna merah untuk lebih jelas.
-- Filter timeline boleh dibuka atau ditutup.
-- Tekan mana-mana kad untuk membuka profil individu.
+Timeline menyusun ahli keluarga mengikut tahun kelahiran.
+
+- Tahun besar dipaparkan di kiri.
+- Avatar, nama, jantina, hubungan, generasi dan maklumat lahir dipaparkan pada kad.
+- Status meninggal ditanda merah untuk mudah dilihat.
+- Search dan filter mengikut generasi, bulan lahir, jantina serta susunan.
+- `Tapis lagi` membuka pilihan tambahan.
+- Tekan kad untuk buka profil individu.
 
 ### Profil Individu
 
-- Nama penuh, avatar, hubungan, dan maklumat asas.
-- Statistik bilangan anak, cucu, cicit, dan menantu.
-- Grid maklumat individu yang mudah dibaca.
-- Laluan salasilah daripada moyang kepada individu.
-- Kumpulan keluarga: Moyang, Atok/Nenek, Mak/Ayah, Adik-beradik, Pasangan, Anak, Cucu, dan Cicit.
-- Semua nama dalam kumpulan keluarga boleh ditekan untuk membuka profil individu tersebut.
-- Action utama: Home, fokus ke Tree, lihat keluarga, buka Birthday pada bulan kelahiran, dan salin maklumat/link.
-- Desktop menggunakan panel sisi; mobile menggunakan paparan profil penuh.
+Profil penuh memaparkan maklumat seseorang dengan lebih teratur.
+
+- Nama penuh dan nama paparan.
+- Gambar profil, jika disediakan.
+- Hubungan, jantina, status, tarikh lahir, tarikh meninggal, umur dan catatan.
+- Statistik anak, cucu, cicit dan jumlah keturunan.
+- Laluan salasilah.
+- Mak/ayah, pasangan, adik-beradik, anak, cucu dan cicit.
+- Bahagian Cucu dan Cicit boleh dibuka atau ditutup. Apabila tertutup, hanya bilangan dipaparkan.
+- Setiap kad ahli keluarga boleh ditekan untuk membuka profil orang tersebut.
+
+Tindakan profil:
+
+- `Lihat dalam tree` - fokus kepada individu di Tree.
+- `Birthday` - buka bulan birthday individu.
+- `Salin` - salin pautan/maklumat profil.
+- `Pin` - simpan atau buang daripada Ahli Disimpan.
+- `Hubungan` - buka semakan hubungan.
+- `Kongsi` - kongsi maklumat jika browser menyokongnya.
+- `Cetak` - cetak profil.
+
+Pada desktop, Tree masih menggunakan panel sisi apabila kad tree ditekan. Butang `Profil` membuka halaman profil penuh. Pada mobile, profil dibuka sebagai halaman penuh.
+
+#### Gambar Aishah
+
+Gambar Aishah dipaparkan pada semua avatar bulat yang berkaitan. Hanya gambar dalam profil penuh boleh ditekan untuk membuka paparan gambar besar. Tekan ruang gelap atau `X` untuk menutup gambar.
+
+Border avatar bergambar:
+
+- Light mode: hijau.
+- Dark mode: putih.
 
 ### Tetapan
 
-Tetapan dibahagikan kepada lima bahagian:
+Tetapan mempunyai lima bahagian.
 
-- `Paparan` - saiz kad, saiz tulisan, compact mode, paparan umur, tarikh lahir, dan tag.
-- `Navigasi` - minimap, drag untuk pan, serta paparan default Tree.
-- `Tema` - light/dark, preset warna, dan pilihan bahasa Melayu atau English.
-- `Data` - data health, eksport/import JSON, reset data browser, dan clear cache.
-- `Tentang` - tujuan website dan maklumat versi data.
+#### Paparan
+
+- Saiz kad Tree.
+- Saiz tulisan seluruh website.
+- Compact Mode untuk memadatkan kad Tree.
+- Papar atau sorok tarikh lahir.
+- Papar atau sorok umur mengikut tahun.
+- Papar atau sorok tag hubungan dan nota.
+- `Butang Home jelas` untuk memilih kad Home jelas atau lebih lut sinar di atas foto keluarga.
+
+#### Navigasi
+
+- Hidup atau matikan minimap.
+- Hidup atau matikan drag untuk pan Tree.
+- Pilih paparan default Tree.
+
+#### Tema
+
+- Light mode atau dark mode.
+- Preset warna Default, Heritage, Ocean dan Sunset.
+- Bahasa Melayu atau English.
+
+#### Data
+
+- Data Health untuk mencari data yang perlu disemak.
+- Export Data Health CSV.
+- Export atau import JSON sementara dalam browser.
+- Reset data import sementara.
+- Reset tetapan.
+- Reset pilihan `Diri Saya`.
+- Clear Cache browser.
+
+#### Tentang
+
+Menerangkan tujuan KAMI Tree, fungsi utama dan versi data.
 
 ## Manual Pengguna
 
-### 1. Melihat salasilah
+### 1. Lihat salasilah
 
-1. Tekan `Tree` dari navigation.
-2. Drag paparan untuk bergerak di dalam tree.
-3. Gunakan `Zoom +`, `Zoom -`, atau `Fit Screen` untuk melaras paparan.
-4. Tekan kad ahli untuk membuka profilnya.
+1. Tekan `Tree`.
+2. Drag atau scroll dalam kawasan tree.
+3. Gunakan Zoom atau Fit Skrin jika perlu.
+4. Tekan kad ahli untuk melihat ringkasan profil.
+5. Tekan `Profil` untuk membuka halaman profil penuh.
 
-### 2. Mencari ahli keluarga
+### 2. Cari ahli keluarga
 
-1. Dari Home, tekan `Search Global`, atau gunakan carian pada Tree/Direktori.
-2. Tulis sebahagian nama atau kata kunci seperti hubungan, jantina, cabang, atau bulan birthday.
-3. Tekan hasil carian untuk membuka profil atau fokus pada Tree.
+1. Tekan `Search Global` di Home, atau buka `Direktori`.
+2. Tulis beberapa huruf nama atau kata kunci seperti `cucu`, `lelaki`, `menantu` atau nama cabang.
+3. Pilih hasil untuk membuka profil atau fokus ke Tree.
 
-### 3. Menyemak hubungan dua individu
+### 3. Semak hubungan dua orang
 
 1. Pada halaman Tree, buka `Cari hubungan keluarga`.
-2. Pilih dua nama.
-3. Tekan `Cari Hubungan` untuk melihat hubungan yang dikenal pasti oleh data semasa.
+2. Pilih nama pertama dan nama kedua.
+3. Tekan `Cari Hubungan`.
+4. Website akan memaparkan hubungan yang boleh dikenal pasti daripada data semasa.
 
-### 4. Menggunakan profil individu
+### 4. Simpan ahli kegemaran
 
-1. Tekan mana-mana kad ahli dari Tree, Direktori, Timeline, Birthday, atau Search.
-2. Semak statistik, maklumat, dan laluan salasilah.
-3. Tekan mana-mana nama dalam keluarga untuk berpindah terus ke profil orang tersebut.
-4. Gunakan action bar untuk kembali Home, fokus ke Tree, lihat keluarga, buka Birthday, atau salin maklumat.
+1. Buka profil ahli.
+2. Tekan `Pin`.
+3. Ahli tersebut muncul di `Ahli Disimpan` pada Home.
+4. Tekan Pin sekali lagi untuk buang daripada senarai.
 
-### 5. Menyemak birthday
+### 5. Semak profil yang baru dibuka
 
-1. Tekan `Birthday` pada navigation.
-2. Gunakan `12 Bulan` untuk gambaran semua bulan atau `Planner` untuk satu bulan besar.
-3. Tekan tarikh birthday untuk melihat nama ahli pada tarikh itu.
-4. Dalam Planner, tukar bulan melalui anak panah atau pemilih bulan.
+1. Buka Home.
+2. Scroll ke `Baru Dibuka`.
+3. Tekan nama untuk buka semula profil.
 
-### 6. Menukar bahasa atau tema
+### 6. Semak birthday
 
-1. Buka `Tetapan`.
-2. Pada tab `Tema`, pilih Melayu/English, light/dark, atau preset warna.
-3. Pada tab `Paparan`, laraskan saiz tulisan dan pilihan paparan kad.
+1. Tekan `Birthday`.
+2. Gunakan `12 Bulan` untuk ringkasan semua bulan.
+3. Gunakan `Planner Bulan` untuk satu bulan.
+4. Tekan tarikh birthday untuk buka senarai ahli pada tarikh itu.
+5. Gunakan `Hari Ini` untuk kembali ke bulan semasa.
 
-### 7. Menyimpan ahli dan reset pilihan peribadi
+### 7. Tukar tema, bahasa atau saiz tulisan
 
-1. Dalam profil, gunakan butang pin untuk menyimpan ahli sebagai favourite.
-2. Favourite dan profil baru dibuka akan muncul pada Home.
-3. Dalam Tetapan > Data, gunakan `Reset settings`, `Reset diri saya`, atau `Clear Cache` apabila perlu.
+1. Tekan `Tetapan`.
+2. Buka tab `Tema` untuk dark/light mode atau bahasa.
+3. Buka tab `Paparan` untuk saiz kad, saiz tulisan dan pilihan Home.
+4. Pilihan disimpan secara automatik pada browser tersebut.
+
+### 8. Lihat gambar Aishah
+
+1. Buka profil Aishah.
+2. Tekan gambar bulat dalam bahagian profil utama.
+3. Tekan ruang gelap atau `X` untuk menutup gambar besar.
 
 ## Data Dan Privasi Browser
 
-- Data keluarga utama berada dalam `data.json`.
-- Favourite, recent viewed, bahasa, tema, zoom, dan pilihan Diri Saya disimpan dalam browser/peranti, bukan dikongsi kepada pengguna lain.
-- Jika pengguna lain menggunakan browser atau peranti lain, mereka mempunyai pilihan sendiri.
-- `Clear Cache` akan memadam pilihan browser/tempatan; data asal daripada `data.json` kekal tersedia selepas reload.
-- Import JSON hanya digunakan untuk data sementara dalam browser sehingga data asal diganti secara rasmi dalam fail projek.
+- Data asal keluarga berada dalam `data.json`.
+- Favourite, recently viewed, tema, bahasa, zoom, tetapan dan Diri Saya disimpan pada browser/peranti semasa sahaja.
+- Peranti atau browser lain tidak berkongsi pilihan tersebut secara automatik.
+- `Clear Cache` membuang pilihan tempatan, tetapi data asal daripada `data.json` kekal selepas reload.
+- Import JSON ialah perubahan sementara pada browser sehingga data asal projek dikemas kini.
 
-## Untuk Developer
-
-### Jalankan local
+## Jalankan Secara Local
 
 ```powershell
 python -m http.server 5500
 ```
 
-Buka `http://localhost:5500` dalam browser.
+Buka `http://localhost:5500`.
 
-### Semak sintaks dan data
+## Semakan Developer
 
 ```powershell
 node --check app.js
@@ -180,19 +310,18 @@ node scripts\validate-data.js data.json
 ## Struktur Projek
 
 - `index.html` - struktur halaman dan komponen UI.
-- `styles.css` - tema, layout desktop/mobile, responsive design, dan animasi ringan.
-- `app.js` - render data, Tree, profil, carian, birthday, timeline, directory, dan tetapan.
+- `styles.css` - style asas, layout desktop/mobile dan tema.
+- `final-fixes.css` - pembetulan akhir bagi mobile navigation, foto, dark mode dan kontras.
+- `app.js` - Tree, profil, carian, birthday, timeline, direktori dan tetapan.
 - `data.json` - sumber data keluarga.
+- `IMG_7640.JPG` - foto keluarga untuk latar Home.
+- `IMG_7626.jpg` - gambar Aishah pada profil dan avatar berkaitan.
 - `scripts/validate-data.js` - validator data salasilah.
-- `CHECKLIST.md` - status kerja website semasa dan baki penambahbaikan.
-
-## Nota Data
-
-Validator semasa mengesan `p45` belum mempunyai tarikh lahir. Lengkapkan data ini dalam `data.json` apabila maklumat sudah disahkan.
+- `CHECKLIST.md` - status kerja dan penambahbaikan website.
 
 ## Deployment
 
-Website dideploy melalui Vercel. Selepas perubahan dipush/deploy, semak semula desktop dan mobile pada link utama:
+Website dideploy melalui Vercel. Selepas push ke branch `main`, tunggu deployment selesai dan semak versi baharu di:
 
 https://kami-tree.vercel.app/
 

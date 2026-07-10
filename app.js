@@ -111,6 +111,7 @@ const settingsResetSelf = document.getElementById("setting-reset-self");
 const settingsShowBirthdate = document.getElementById("setting-show-birthdate");
 const settingsShowAge = document.getElementById("setting-show-age");
 const settingsShowTags = document.getElementById("setting-show-tags");
+const settingsHomeControlsClear = document.getElementById("setting-home-controls-clear");
 const settingsDataVersion = document.getElementById("settings-data-version");
 const dataHealthPanel = document.getElementById("data-health-panel");
 const dataHealthExportCsvBtn = document.getElementById("data-health-export-csv");
@@ -258,6 +259,7 @@ let defaultView = "tree";
 let showBirthdate = true;
 let showAge = true;
 let showTags = true;
+let homeControlsClear = false;
 let timelineFilters = {
   query: "",
   generation: "all",
@@ -636,6 +638,8 @@ const i18n = {
     settingsShowAgeHint: "Papar umur kiraan tahun.",
     settingsShowTags: "Tag/Nota",
     settingsShowTagsHint: "Papar tag relation dan nota ringkas.",
+    settingsHomeControlsClear: "Butang Home jelas",
+    settingsHomeControlsClearHint: "Jadikan kad dan butang Home lebih jelas berbanding gambar latar.",
     settingsDataVersion: "Versi data",
     settingsClose: "Tutup",
     settingsDangerTitle: "Data sementara",
@@ -991,6 +995,8 @@ const i18n = {
     settingsShowAgeHint: "Show age calculated by year.",
     settingsShowTags: "Show Tags",
     settingsShowTagsHint: "Show relation tags and short notes.",
+    settingsHomeControlsClear: "Clear Home controls",
+    settingsHomeControlsClearHint: "Make Home cards and buttons more visible over the family photo.",
     settingsDataVersion: "Data version",
     settingsClose: "Close",
     settingsDangerTitle: "Temporary data",
@@ -1110,6 +1116,10 @@ function applyDetailsVisibility() {
   document.body.classList.toggle("hide-birthdate", !showBirthdate);
   document.body.classList.toggle("hide-age", !showAge);
   document.body.classList.toggle("hide-tags", !showTags);
+}
+
+function applyHomeControlsVisibility() {
+  document.body.classList.toggle("home-controls-clear", homeControlsClear);
 }
 
 function openSettingsModal() {
@@ -1773,6 +1783,7 @@ function initFromData(data) {
   if (prefs.showBirthdate !== undefined) showBirthdate = Boolean(prefs.showBirthdate);
   if (prefs.showAge !== undefined) showAge = Boolean(prefs.showAge);
   if (prefs.showTags !== undefined) showTags = Boolean(prefs.showTags);
+  if (prefs.homeControlsClear !== undefined) homeControlsClear = Boolean(prefs.homeControlsClear);
   if (prefs.defaultView) defaultView = prefs.defaultView;
   if (prefs.treeDisplayMode) treeDisplayMode = prefs.treeDisplayMode;
   if (!["overview", "detail", "branch"].includes(treeDisplayMode)) treeDisplayMode = "overview";
@@ -1808,6 +1819,7 @@ function initFromData(data) {
   applyDragToPanState();
   applyLinesState();
   applyDetailsVisibility();
+  applyHomeControlsVisibility();
   if (themePresetSelect) themePresetSelect.value = themePreset;
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
   if (settingsFontScale) settingsFontScale.value = String(fontScale);
@@ -1818,6 +1830,7 @@ function initFromData(data) {
   if (settingsShowBirthdate) settingsShowBirthdate.checked = showBirthdate;
   if (settingsShowAge) settingsShowAge.checked = showAge;
   if (settingsShowTags) settingsShowTags.checked = showTags;
+  if (settingsHomeControlsClear) settingsHomeControlsClear.checked = homeControlsClear;
   if (settingsDataVersion) settingsDataVersion.textContent = treeData?.dataVersion || "-";
   document.body.classList.toggle("compact", compactMode);
   document.body.classList.toggle("controls-collapsed", controlsCollapsed);
@@ -1967,6 +1980,7 @@ function savePrefs() {
     showBirthdate,
     showAge,
     showTags,
+    homeControlsClear,
     defaultView,
     treeDisplayMode
   };
@@ -6471,6 +6485,14 @@ if (settingsShowTags) {
   });
 }
 
+if (settingsHomeControlsClear) {
+  settingsHomeControlsClear.addEventListener("change", () => {
+    homeControlsClear = settingsHomeControlsClear.checked;
+    applyHomeControlsVisibility();
+    savePrefs();
+  });
+}
+
 if (settingsReset) {
   settingsReset.addEventListener("click", () => {
     try {
@@ -7126,6 +7148,7 @@ function applyLanguage() {
   if (settingsShowBirthdate) settingsShowBirthdate.checked = showBirthdate;
   if (settingsShowAge) settingsShowAge.checked = showAge;
   if (settingsShowTags) settingsShowTags.checked = showTags;
+  if (settingsHomeControlsClear) settingsHomeControlsClear.checked = homeControlsClear;
   if (timelineMonthSelect) timelineMonthSelect.value = timelineFilters.month;
   if (timelineSearchInput) timelineSearchInput.value = timelineFilters.query || "";
   if (timelineGenderSelect) timelineGenderSelect.value = timelineFilters.gender;
