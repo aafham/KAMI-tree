@@ -273,6 +273,22 @@ function isRestrictedInteraction(target) {
   );
 }
 
+function attemptFamilyAccess() {
+  const pin = familyAccessDigits.map((input) => input.value).join("");
+  if (pin.length !== FAMILY_ACCESS_PIN.length) return;
+  if (pin !== FAMILY_ACCESS_PIN) {
+    familyAccessGate?.classList.add("is-invalid");
+    familyAccessMessage.textContent = "PIN tidak tepat. Cuba sekali lagi.";
+    familyAccessDigits.forEach((input) => { input.value = ""; });
+    familyAccessDigits[0]?.focus();
+    return;
+  }
+  const trigger = pendingAccessTrigger;
+  unlockFamilyAccess();
+  pendingAccessTrigger = null;
+  if (trigger) window.setTimeout(() => trigger.click(), 0);
+}
+
 function initFamilyAccessGate() {
   const hasValidSession = getFamilyAccessExpiry() > Date.now();
   if (hasValidSession) {
@@ -309,7 +325,10 @@ function initFamilyAccessGate() {
   familyAccessDigits.forEach((input, index) => {
     input.addEventListener("input", () => {
       input.value = input.value.replace(/\D/g, "").slice(-1);
+      familyAccessGate?.classList.remove("is-invalid");
+      familyAccessMessage.textContent = "";
       if (input.value && index < familyAccessDigits.length - 1) familyAccessDigits[index + 1].focus();
+      if (familyAccessDigits.every((field) => field.value)) window.setTimeout(attemptFamilyAccess, 0);
     });
     input.addEventListener("keydown", (event) => {
       if (event.key === "Backspace" && !input.value && index > 0) familyAccessDigits[index - 1].focus();
@@ -320,22 +339,15 @@ function initFamilyAccessGate() {
       event.preventDefault();
       familyAccessDigits.forEach((field, digitIndex) => { field.value = digits[digitIndex] || ""; });
       familyAccessDigits[Math.min(digits.length, 4) - 1]?.focus();
+      familyAccessGate?.classList.remove("is-invalid");
+      familyAccessMessage.textContent = "";
+      if (digits.length === 4) window.setTimeout(attemptFamilyAccess, 0);
     });
   });
 
   familyAccessForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    const pin = familyAccessDigits.map((input) => input.value).join("");
-    if (pin !== FAMILY_ACCESS_PIN) {
-      familyAccessMessage.textContent = "PIN tidak tepat. Cuba sekali lagi.";
-      familyAccessDigits.forEach((input) => { input.value = ""; });
-      familyAccessDigits[0]?.focus();
-      return;
-    }
-    const trigger = pendingAccessTrigger;
-    unlockFamilyAccess();
-    pendingAccessTrigger = null;
-    if (trigger) window.setTimeout(() => trigger.click(), 0);
+    attemptFamilyAccess();
   });
 
   familyAccessGate?.querySelectorAll("[data-access-cancel]").forEach((button) => {

@@ -234,6 +234,13 @@ body.is-access-locked .story-panel {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent);
 }
+.family-access-gate.is-invalid .family-access-digit {
+  border-color: #e3342f;
+  background: #fff0ef;
+  color: #a52320;
+  box-shadow: 0 0 0 3px rgba(227, 52, 47, .12);
+  animation: family-access-shake .28s ease-in-out;
+}
 .family-access-message { min-height: 22px; margin: 4px 0 12px; color: #c8322a; font-weight: 700; }
 .family-access-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .family-access-actions .btn { min-height: 48px; }
@@ -241,6 +248,11 @@ body.is-access-locked .story-panel {
 body[data-theme="dark"] .family-access-card { background: #14231c; border-color: rgba(206, 239, 217, .2); }
 body[data-theme="dark"] .family-access-digit { background: #1c3027; color: #f5f9f6; border-color: rgba(206, 239, 217, .24); }
 @keyframes family-access-enter { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes family-access-shake {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-4px); }
+  70% { transform: translateX(4px); }
+}
 
 @media (max-width: 720px) {
   .family-access-gate { align-items: end; padding: 16px 16px calc(18px + env(safe-area-inset-bottom)); }
