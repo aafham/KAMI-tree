@@ -257,6 +257,58 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Final page-header rhythm: desktop keeps one compact Home action; mobile uses bottom nav. */
+.tree-page-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 20px;
+  min-height: 88px;
+  margin: 0 0 18px;
+  padding: 2px 2px 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.tree-page-head h2 {
+  margin: 4px 0 0;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1;
+}
+
+.tree-page-head .page-heading-sub { margin: 10px 0 0; color: var(--muted); }
+
+body[data-view="birthday"] .birthday-head .page-home-btn,
+body[data-view="directory"] .directory-head .page-home-btn,
+body[data-view="timeline"] .timeline-head .page-home-btn,
+body[data-nav-surface="tree"] .tree-page-head .page-home-btn {
+  width: max-content !important;
+  min-width: 96px !important;
+  max-width: 140px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  padding: 10px 14px !important;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px !important;
+}
+
+@media (max-width: 720px) {
+  .tree-page-head {
+    min-height: 0;
+    margin-bottom: 14px;
+    padding: 0 0 14px;
+  }
+
+  .tree-page-head h2 { font-size: clamp(28px, 9vw, 38px); }
+
+  body[data-view="birthday"] .birthday-head .page-home-btn,
+  body[data-view="directory"] .directory-head .page-home-btn,
+  body[data-view="timeline"] .timeline-head .page-home-btn,
+  body[data-nav-surface="tree"] .tree-page-head .page-home-btn {
+    display: none !important;
+  }
+}
+
 /* Family memory photo: reveal it on demand so the Home page remains readable. */
 .home-hero {
   position: relative;
