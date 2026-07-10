@@ -122,6 +122,8 @@ const statFemale = document.getElementById("stat-female");
 const statCucu = document.getElementById("stat-cucu");
 const statCicit = document.getElementById("stat-cicit");
 const birthdayCard = document.getElementById("birthday-card");
+const homeHero = document.querySelector(".home-hero");
+const homeFamilyPhotoToggle = document.getElementById("home-family-photo-toggle");
 const statUpcomingName = document.getElementById("stat-upcoming-name");
 const statUpcomingMeta = document.getElementById("stat-upcoming-meta");
 const quickPeopleSection = document.getElementById("quick-people");
@@ -4754,6 +4756,7 @@ function renderProfilePage() {
   const t = i18n[lang] || i18n.ms;
   const fullName = formatDisplayName(person.name);
   const displayName = getShortDisplayName(fullName);
+  const profilePhoto = person.id === "p1" ? "IMG_7626.jpg" : (person.photo || "");
   const birthDate = parseDateValue(person.birth);
   const deathDate = parseDateValue(person.death);
   const age = birthDate ? calcAge(birthDate, deathDate || new Date()) : null;
@@ -4770,7 +4773,10 @@ function renderProfilePage() {
   if (profilePageSubtitle) profilePageSubtitle.textContent = "";
   profilePageContent.innerHTML = `
     <section class="profile-identity" id="profile-overview">
-      <div class="profile-identity-avatar">${escapeHtml(initials(displayName || fullName))}</div>
+      <div class="profile-identity-avatar">
+        ${profilePhoto ? `<img src="${escapeHtml(profilePhoto)}" alt="${escapeHtml(fullName || displayName)}" loading="lazy" />` : ""}
+        <span>${escapeHtml(initials(displayName || fullName))}</span>
+      </div>
       <div class="profile-identity-copy">
         <p class="kicker">${escapeHtml(t.profilePageKicker)}</p>
         <h1>${escapeHtml(fullName || displayName || t.profileOpen)}</h1>
@@ -5307,6 +5313,14 @@ if (birthdayCard) {
     applyViewMode();
     updateViewSwitch();
     savePrefs();
+  });
+}
+
+if (homeFamilyPhotoToggle && homeHero) {
+  homeFamilyPhotoToggle.addEventListener("click", () => {
+    const visible = homeHero.classList.toggle("has-family-photo");
+    homeFamilyPhotoToggle.setAttribute("aria-pressed", String(visible));
+    homeFamilyPhotoToggle.setAttribute("aria-label", visible ? "Sembunyikan gambar keluarga" : "Lihat gambar keluarga");
   });
 }
 

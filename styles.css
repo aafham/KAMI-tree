@@ -257,6 +257,80 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Family memory photo: reveal it on demand so the Home page remains readable. */
+.home-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.home-hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(250, 249, 244, .94) 0%, rgba(250, 249, 244, .78) 44%, rgba(250, 249, 244, .38) 100%),
+    url("IMG_7640.JPG") center 48% / cover no-repeat;
+  opacity: 0;
+  transform: scale(1.025);
+  transition: opacity .28s ease, transform .45s ease;
+  pointer-events: none;
+}
+
+.home-hero.has-family-photo::before { opacity: 1; transform: scale(1); }
+
+.home-family-photo-toggle {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--line));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--card) 82%, transparent);
+  color: var(--primary-strong, var(--primary));
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 32%, transparent), 0 8px 18px rgba(35, 67, 54, .12);
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .24s ease, background .2s ease;
+}
+
+.home-family-photo-toggle:hover,
+.home-family-photo-toggle:focus-visible,
+.home-hero.has-family-photo .home-family-photo-toggle {
+  transform: scale(1.06);
+  background: color-mix(in srgb, var(--primary) 16%, var(--card));
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--primary) 18%, transparent), 0 10px 24px rgba(35, 67, 54, .18);
+}
+
+.home-family-photo-toggle svg { width: 18px; height: 18px; }
+
+.profile-identity-avatar { position: relative; overflow: hidden; }
+.profile-identity-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+}
+.profile-identity-avatar span { position: relative; z-index: 1; }
+.profile-identity-avatar img + span { display: none; }
+
+@media (max-width: 720px) {
+  .home-family-photo-toggle { top: 12px; right: 12px; width: 40px; height: 40px; }
+  .home-hero::before {
+    background:
+      linear-gradient(180deg, rgba(250, 249, 244, .88) 0%, rgba(250, 249, 244, .78) 58%, rgba(250, 249, 244, .92) 100%),
+      url("IMG_7640.JPG") center / cover no-repeat;
+  }
+}
+
 /* Final surface cleanup: tree should stay focused, and Directory Home stays compact. */
 body[data-nav-surface="tree"] .home-hero,
 body[data-nav-surface="tree"] .home-birthday-feature {
