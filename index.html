@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260710y" />
+  <link rel="stylesheet" href="styles.css?v=20260710z" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -502,6 +502,14 @@
     </div>
   </div>
 
+  <div class="photo-lightbox" id="profile-photo-lightbox" hidden aria-hidden="true">
+    <button class="photo-lightbox-backdrop" type="button" data-close-profile-photo aria-label="Tutup gambar"></button>
+    <figure class="photo-lightbox-figure">
+      <button class="photo-lightbox-close" type="button" data-close-profile-photo aria-label="Tutup gambar"><i data-lucide="x"></i></button>
+      <img id="profile-photo-lightbox-image" src="" alt="" />
+    </figure>
+  </div>
+
   <div class="settings-modal" id="settings-modal" aria-hidden="true">
     <div class="settings-backdrop" data-settings-close="true"></div>
     <div class="settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
@@ -694,6 +702,6 @@
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260710l" defer></script>
+  <script src="app.js?v=20260710m" defer></script>
 </body>
 </html>

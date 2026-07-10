@@ -257,6 +257,106 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Home family photo fills the content surface below the top navigation. */
+body[data-nav-surface="home"] .topbar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+body[data-nav-surface="home"] .topbar::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    linear-gradient(135deg, rgba(235, 246, 239, .88), rgba(250, 249, 244, .72) 52%, rgba(250, 249, 244, .86)),
+    url("IMG_7640.JPG") center / cover no-repeat;
+  opacity: 0;
+  transform: scale(1.015);
+  transition: opacity .35s ease, transform .55s ease;
+  pointer-events: none;
+}
+
+body[data-nav-surface="home"] .topbar.has-family-photo::before { opacity: 1; transform: scale(1); }
+body[data-nav-surface="home"] .home-hero::before { display: none !important; }
+
+.home-family-photo-toggle { opacity: .72; }
+.home-family-photo-toggle:hover,
+.home-family-photo-toggle:focus-visible,
+.home-hero.has-family-photo .home-family-photo-toggle { opacity: 1; }
+
+.profile-identity-avatar.has-profile-photo { cursor: zoom-in; }
+
+.photo-lightbox[hidden] { display: none; }
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.photo-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(18, 28, 23, .72);
+  cursor: zoom-out;
+  animation: photo-lightbox-fade .22s ease both;
+}
+.photo-lightbox-figure {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  max-width: min(900px, 94vw);
+  max-height: 90vh;
+  margin: 0;
+  animation: photo-lightbox-in .28s cubic-bezier(.2, .8, .2, 1) both;
+}
+.photo-lightbox-figure img {
+  display: block;
+  max-width: 100%;
+  max-height: 86vh;
+  border: 3px solid rgba(255, 255, 255, .78);
+  border-radius: 20px;
+  object-fit: contain;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .32);
+}
+.photo-lightbox-close {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 50%;
+  background: var(--card, #fff);
+  color: var(--ink, #213129);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+  cursor: pointer;
+}
+.photo-lightbox-close:hover,
+.photo-lightbox-close:focus-visible { transform: scale(1.06); }
+.photo-lightbox-close svg { width: 19px; height: 19px; }
+
+@keyframes photo-lightbox-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes photo-lightbox-in { from { opacity: 0; transform: scale(.9) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+@media (max-width: 720px) {
+  body[data-nav-surface="home"] .topbar::before {
+    background:
+      linear-gradient(180deg, rgba(235, 246, 239, .86), rgba(250, 249, 244, .78) 52%, rgba(250, 249, 244, .92)),
+      url("IMG_7640.JPG") center / cover no-repeat;
+  }
+  .photo-lightbox { padding: 16px; }
+  .photo-lightbox-close { top: -10px; right: -8px; }
+}
+
 /* Final page-header rhythm: desktop keeps one compact Home action; mobile uses bottom nav. */
 .tree-page-head {
   display: grid;

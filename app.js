@@ -71,6 +71,8 @@ const profilePageContent = document.getElementById("profile-page-content");
 const profilePageTitle = document.getElementById("profile-page-title");
 const profilePageSubtitle = document.getElementById("profile-page-subtitle");
 const profilePageBackBtn = document.getElementById("profile-page-back");
+const profilePhotoLightbox = document.getElementById("profile-photo-lightbox");
+const profilePhotoLightboxImage = document.getElementById("profile-photo-lightbox-image");
 const birthdayViewYearBtn = document.getElementById("birthday-view-year");
 const birthdayViewPlannerBtn = document.getElementById("birthday-view-planner");
 const zoomFitBtn = document.getElementById("zoom-fit");
@@ -123,6 +125,7 @@ const statCucu = document.getElementById("stat-cucu");
 const statCicit = document.getElementById("stat-cicit");
 const birthdayCard = document.getElementById("birthday-card");
 const homeHero = document.querySelector(".home-hero");
+const homeTopbar = document.querySelector(".topbar");
 const homeFamilyPhotoToggle = document.getElementById("home-family-photo-toggle");
 const statUpcomingName = document.getElementById("stat-upcoming-name");
 const statUpcomingMeta = document.getElementById("stat-upcoming-meta");
@@ -4773,7 +4776,7 @@ function renderProfilePage() {
   if (profilePageSubtitle) profilePageSubtitle.textContent = "";
   profilePageContent.innerHTML = `
     <section class="profile-identity" id="profile-overview">
-      <div class="profile-identity-avatar">
+      <div class="profile-identity-avatar${profilePhoto ? " has-profile-photo" : ""}"${profilePhoto ? ` role="button" tabindex="0" aria-label="Lihat gambar ${escapeHtml(displayName || fullName)}"` : ""}>
         ${profilePhoto ? `<img src="${escapeHtml(profilePhoto)}" alt="${escapeHtml(fullName || displayName)}" loading="lazy" />` : ""}
         <span>${escapeHtml(initials(displayName || fullName))}</span>
       </div>
@@ -4856,6 +4859,17 @@ function renderProfilePage() {
   `;
   bindPersonLinkClicks(profilePageContent);
   bindProfileActionClicks(profilePageContent);
+  const profilePhotoButton = profilePageContent.querySelector(".profile-identity-avatar.has-profile-photo");
+  if (profilePhotoButton && profilePhoto) {
+    const showPhoto = () => openProfilePhoto(profilePhoto, fullName || displayName);
+    profilePhotoButton.addEventListener("click", showPhoto);
+    profilePhotoButton.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showPhoto();
+      }
+    });
+  }
   refreshIcons(profilePageContent);
 }
 
@@ -5319,10 +5333,37 @@ if (birthdayCard) {
 if (homeFamilyPhotoToggle && homeHero) {
   homeFamilyPhotoToggle.addEventListener("click", () => {
     const visible = homeHero.classList.toggle("has-family-photo");
+    homeTopbar?.classList.toggle("has-family-photo", visible);
     homeFamilyPhotoToggle.setAttribute("aria-pressed", String(visible));
     homeFamilyPhotoToggle.setAttribute("aria-label", visible ? "Sembunyikan gambar keluarga" : "Lihat gambar keluarga");
   });
 }
+
+function closeProfilePhoto() {
+  if (!profilePhotoLightbox) return;
+  profilePhotoLightbox.hidden = true;
+  profilePhotoLightbox.setAttribute("aria-hidden", "true");
+  if (profilePhotoLightboxImage) profilePhotoLightboxImage.removeAttribute("src");
+  document.body.classList.remove("photo-lightbox-open");
+}
+
+function openProfilePhoto(image, alt) {
+  if (!profilePhotoLightbox || !profilePhotoLightboxImage) return;
+  profilePhotoLightboxImage.src = image;
+  profilePhotoLightboxImage.alt = alt || "";
+  profilePhotoLightbox.hidden = false;
+  profilePhotoLightbox.setAttribute("aria-hidden", "false");
+  document.body.classList.add("photo-lightbox-open");
+  refreshIcons(profilePhotoLightbox);
+}
+
+profilePhotoLightbox?.querySelectorAll("[data-close-profile-photo]").forEach((button) => {
+  button.addEventListener("click", closeProfilePhoto);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && profilePhotoLightbox && !profilePhotoLightbox.hidden) closeProfilePhoto();
+});
 
 if (birthdayBackBtn) {
   birthdayBackBtn.addEventListener("click", () => {
