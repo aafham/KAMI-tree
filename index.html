@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260710z" />
+  <link rel="stylesheet" href="styles.css?v=20260710aa" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -35,6 +35,11 @@
         <button id="mobile-timeline-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="viewTimelineShort">Timeline</button>
         <button id="mobile-settings-btn" class="btn ghost icon" type="button" aria-label="Settings">⚙️</button>
       </div>
+      <section class="tree-page-head" aria-labelledby="tree-page-title">
+        <p class="kicker" data-i18n="appKicker">Salasilah Keluarga</p>
+        <h2 id="tree-page-title" data-i18n="treeToolbarTitle">Tree Keluarga</h2>
+        <p class="page-heading-sub" data-i18n="treeToolbarHint">Drag atau scroll untuk lihat cabang lain.</p>
+      </section>
       <section class="home-hero" aria-labelledby="home-page-title">
       <button id="home-family-photo-toggle" class="home-family-photo-toggle" type="button" aria-label="Lihat gambar keluarga" aria-pressed="false" title="Lihat gambar keluarga">
         <i data-lucide="image"></i>
@@ -206,14 +211,6 @@
     </div>
 
     <main class="tree-section">
-      <header class="tree-page-head page-heading">
-        <div>
-          <p class="kicker" data-i18n="appKicker">Salasilah Keluarga</p>
-          <h2 data-i18n="treeToolbarTitle">Tree Keluarga</h2>
-          <p class="page-heading-sub" data-i18n="treeToolbarHint">Drag atau scroll untuk lihat cabang lain.</p>
-        </div>
-        <button class="btn ghost small page-home-btn" type="button" data-page-home><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
-      </header>
       <div class="tree-toolbar" id="tree-toolbar">
         <div>
           <strong data-i18n="treeToolbarTitle">Tree Keluarga</strong>
@@ -316,7 +313,6 @@
             <h2 data-i18n="timelineTitle">Timeline Keluarga</h2>
             <p class="page-heading-sub" id="timeline-summary" data-i18n="timelineSubtitle">Ahli keluarga disusun mengikut tahun dan pilihan timeline.</p>
           </div>
-          <button class="btn ghost small page-home-btn" type="button" data-page-home><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
         </div>
         <div class="timeline-filters-card">
           <div class="timeline-filters primary">
@@ -368,7 +364,6 @@
             <p class="kicker" data-i18n="birthdayKicker">Kalendar Keluarga</p>
             <h2 data-i18n="birthdayTitle">Semua Birthday</h2>
           </div>
-          <button id="birthday-back" class="btn ghost small page-home-btn" type="button"><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
         </div>
         <div class="birthday-featured" id="birthday-featured"></div>
         <div class="birthday-tools">
@@ -406,7 +401,6 @@
             <h2 data-i18n="directoryTitle">Family Directory</h2>
             <p class="page-heading-sub" data-i18n="directorySubtitle">Cari dan buka maklumat ahli keluarga dengan cepat.</p>
           </div>
-          <button id="directory-back" class="btn ghost small page-home-btn" type="button"><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
         </div>
         <div class="directory-toolbar">
           <label class="directory-search">

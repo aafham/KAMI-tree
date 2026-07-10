@@ -257,6 +257,53 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Tree header belongs only to Tree; page navigation already handles Home everywhere. */
+.tree-page-head { display: none !important; }
+
+body[data-view="tree"][data-nav-surface="tree"] .tree-page-head {
+  display: block !important;
+  width: min(1240px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 16px 0 4px;
+}
+
+body[data-view="tree"][data-nav-surface="tree"] .tree-page-head .kicker {
+  margin: 0 0 6px;
+}
+
+body[data-view="tree"][data-nav-surface="tree"] .tree-page-head h2 {
+  margin: 0;
+  font-size: clamp(34px, 4vw, 46px);
+  line-height: 1.06;
+}
+
+body[data-view="tree"][data-nav-surface="tree"] .tree-page-head .page-heading-sub {
+  margin: 8px 0 0;
+}
+
+@media (max-width: 720px) {
+  body { padding-top: env(safe-area-inset-top) !important; }
+
+  body[data-view="tree"][data-nav-surface="tree"] .topbar {
+    padding: 6px 12px 0 !important;
+    gap: 10px;
+  }
+
+  body[data-view="tree"][data-nav-surface="tree"] .tree-page-head {
+    width: auto;
+    margin: 0;
+    padding: 6px 2px 0;
+  }
+
+  body[data-view="tree"][data-nav-surface="tree"] .tree-page-head h2 {
+    font-size: clamp(30px, 10vw, 38px);
+  }
+
+  body[data-view="tree"][data-nav-surface="tree"] .tree-page-head .page-heading-sub {
+    margin-top: 6px;
+  }
+}
+
 /* Home family photo fills the content surface below the top navigation. */
 body[data-nav-surface="home"] .topbar {
   position: relative;
