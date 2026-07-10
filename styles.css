@@ -8883,6 +8883,28 @@ body[data-nav-surface="home"] .home-feature-entry:hover > svg { transform: trans
 /* Tree view must not inherit Home-only hero content. */
 body[data-nav-surface="tree"] .home-hero { display: none !important; }
 
+body[data-view="directory"] .directory-list.is-list-view {
+  grid-template-columns: 1fr;
+}
+body[data-view="directory"] .directory-list.is-list-view .directory-card {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, .7fr);
+  align-items: center;
+}
+body[data-view="directory"] .directory-list.is-list-view .directory-card-actions {
+  max-width: 430px;
+  justify-self: end;
+  width: 100%;
+}
+@media (max-width: 720px) {
+  body[data-view="directory"] .directory-list.is-list-view .directory-card {
+    grid-template-columns: 1fr;
+  }
+  body[data-view="directory"] .directory-list.is-list-view .directory-card-actions {
+    max-width: none;
+    justify-self: stretch;
+  }
+}
+
 /* Cross-page final pass: polish non-tree archive surfaces consistently. */
 body[data-view="birthday"] .birthday-section,
 body[data-view="directory"] .directory-section,

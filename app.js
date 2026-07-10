@@ -153,6 +153,7 @@ const directoryStatusSelect = document.getElementById("directory-status");
 const directorySortSelect = document.getElementById("directory-sort");
 const directoryClearBtn = document.getElementById("directory-clear");
 const directoryExportCsvBtn = document.getElementById("directory-export-csv");
+const directoryLayoutToggle = document.getElementById("directory-layout-toggle");
 const directorySummary = document.getElementById("directory-summary");
 const directoryList = document.getElementById("directory-list");
 const directoryMoreBtn = document.getElementById("directory-more-btn");
@@ -283,6 +284,7 @@ let directoryFilters = {
   sort: "generation"
 };
 let directoryMoreOpen = false;
+let directoryLayout = "grid";
 let quickFavoritesExpanded = false;
 let quickRecentExpanded = false;
 let selectedDataHealthIssue = "all";
@@ -411,6 +413,8 @@ const i18n = {
     directorySortBirthday: "Ikut Birthday",
     directoryAllGenerations: "Semua generasi",
     directorySummary: "{count} ahli dipaparkan",
+    directoryGridView: "Paparan grid",
+    directoryListView: "Paparan senarai",
     directoryProfile: "Profil",
     mobileSearchTitle: "Cari Ahli Keluarga",
     homeSavedKicker: "Disimpan",
@@ -764,6 +768,8 @@ const i18n = {
     directorySortBirthday: "By Birthday",
     directoryAllGenerations: "All generations",
     directorySummary: "{count} members shown",
+    directoryGridView: "Grid view",
+    directoryListView: "List view",
     directoryProfile: "Profile",
     mobileSearchTitle: "Search Family Members",
     homeSavedKicker: "Saved",
@@ -3722,6 +3728,11 @@ function renderDirectoryPage() {
     });
 
   directorySummary.textContent = formatText(t.directorySummary, { count: people.length });
+  directoryList.classList.toggle("is-list-view", directoryLayout === "list");
+  if (directoryLayoutToggle) {
+    directoryLayoutToggle.textContent = directoryLayout === "grid" ? t.directoryListView : t.directoryGridView;
+    directoryLayoutToggle.setAttribute("aria-pressed", directoryLayout === "list" ? "true" : "false");
+  }
   updateDirectoryActiveFilters();
   if (!people.length) {
     directoryList.innerHTML = `
@@ -6092,6 +6103,13 @@ if (directorySearchInput) {
 if (directoryMoreBtn) {
   directoryMoreBtn.addEventListener("click", () => {
     updateDirectoryMoreState(!directoryMoreOpen);
+  });
+}
+
+if (directoryLayoutToggle) {
+  directoryLayoutToggle.addEventListener("click", () => {
+    directoryLayout = directoryLayout === "grid" ? "list" : "grid";
+    renderDirectoryPage();
   });
 }
 
