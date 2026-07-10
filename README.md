@@ -18,7 +18,17 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 - Bahasa Melayu dan English disokong.
 - Light mode dan dark mode tersedia.
 - Pilihan pengguna seperti tema, saiz tulisan, ahli disimpan dan paparan Home disimpan pada browser/peranti sendiri.
-- Website tidak memerlukan log masuk untuk melihat data yang telah dideploy.
+- Home boleh dilihat tanpa log masuk; halaman dan maklumat keluarga lain dilindungi PIN keluarga.
+
+## Akses Keluarga
+
+Home kekal terbuka sebagai paparan ringkas. Untuk membuka `Tree`, `Direktori`, `Birthday`, `Timeline`, `Tetapan`, carian penuh atau profil ahli, pengguna perlu masukkan PIN keluarga empat digit.
+
+- Paparan PIN menggunakan empat kotak nombor.
+- Pada telefon, medan PIN membuka keyboard nombor sahaja.
+- Selepas PIN betul dimasukkan, akses kekal aktif selama satu jam selagi pengguna masih berinteraksi dengan website.
+- Selepas satu jam tanpa klik, sentuhan, scroll atau keypress, website terkunci semula dan kembali ke Home.
+- PIN ialah kunci akses antaramuka untuk kegunaan keluarga. Website statik tidak menyediakan perlindungan server-side; jangan guna PIN ini sebagai pengganti sistem login jika data perlu dilindungi daripada pengguna teknikal.
 
 ## Navigasi
 

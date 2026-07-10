@@ -147,3 +147,105 @@ body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-con
     padding-top: 0 !important;
   }
 }
+
+/* Family access gate: Home stays available, while family details require the
+   shared four-digit PIN. */
+body.is-access-locked .tree-section,
+body.is-access-locked .tree-page-head,
+body.is-access-locked #bottom-sheet,
+body.is-access-locked #timeline-section,
+body.is-access-locked #birthday-section,
+body.is-access-locked #directory-section,
+body.is-access-locked #profile-page,
+body.is-access-locked .mini-toolbar,
+body.is-access-locked .story-panel {
+  display: none !important;
+}
+
+.family-access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.family-access-gate[hidden] { display: none; }
+.family-access-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 28, 20, .58);
+  backdrop-filter: blur(9px);
+}
+.family-access-card {
+  position: relative;
+  width: min(100%, 430px);
+  padding: 34px;
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--line));
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--card) 96%, transparent);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .28);
+  text-align: center;
+  animation: family-access-enter .22s ease-out;
+}
+.family-access-mark {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 18px;
+  background: var(--primary);
+  color: #fff;
+}
+.family-access-mark svg { width: 27px; height: 27px; }
+.family-access-card h2 {
+  margin: 7px 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 34px;
+  color: var(--ink);
+}
+.family-access-card > p:not(.kicker):not(.family-access-message) {
+  margin: 0 auto;
+  max-width: 310px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.family-access-digits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 300px;
+  margin: 28px auto 10px;
+}
+.family-access-digit {
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 62px;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+  color: var(--ink);
+  font: 700 28px/1 "Source Sans 3", sans-serif;
+  text-align: center;
+  outline: none;
+}
+.family-access-digit:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+.family-access-message { min-height: 22px; margin: 4px 0 12px; color: #c8322a; font-weight: 700; }
+.family-access-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.family-access-actions .btn { min-height: 48px; }
+.family-access-card > small { display: block; margin-top: 18px; color: var(--muted); }
+body[data-theme="dark"] .family-access-card { background: #14231c; border-color: rgba(206, 239, 217, .2); }
+body[data-theme="dark"] .family-access-digit { background: #1c3027; color: #f5f9f6; border-color: rgba(206, 239, 217, .24); }
+@keyframes family-access-enter { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 720px) {
+  .family-access-gate { align-items: end; padding: 16px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .family-access-card { width: 100%; padding: 27px 20px 22px; border-radius: 26px; }
+  .family-access-card h2 { font-size: 29px; }
+  .family-access-digits { max-width: 292px; gap: 10px; margin-top: 22px; }
+  .family-access-digit { min-height: 60px; font-size: 27px; }
+}

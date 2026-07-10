@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles.css?v=20260710ae" />
   <link rel="stylesheet" href="final-fixes.css?v=20260711a" />
 </head>
-<body>
+<body class="is-access-locked">
   <div class="app" id="app" data-theme="light">
     <nav class="web-nav" id="web-nav" aria-label="Navigasi utama">
       <button class="web-nav-brand" type="button" data-web-nav="home" aria-label="KAMI Tree home">
@@ -693,9 +693,31 @@
     </div>
   </div>
 
+  <section id="family-access-gate" class="family-access-gate" hidden aria-labelledby="family-access-title" aria-modal="true" role="dialog">
+    <div class="family-access-backdrop" data-access-cancel="true"></div>
+    <form id="family-access-form" class="family-access-card" novalidate>
+      <span class="family-access-mark" aria-hidden="true"><i data-lucide="shield-keyhole"></i></span>
+      <p class="kicker">AKSES KELUARGA</p>
+      <h2 id="family-access-title">Masukkan PIN</h2>
+      <p>Masukkan PIN keluarga untuk melihat salasilah, profil dan maklumat ahli.</p>
+      <div id="family-access-digits" class="family-access-digits" aria-label="PIN empat digit">
+        <input class="family-access-digit" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" aria-label="Digit PIN 1" />
+        <input class="family-access-digit" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit PIN 2" />
+        <input class="family-access-digit" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit PIN 3" />
+        <input class="family-access-digit" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit PIN 4" />
+      </div>
+      <p id="family-access-message" class="family-access-message" role="status" aria-live="polite"></p>
+      <div class="family-access-actions">
+        <button class="btn ghost" type="button" data-access-cancel="true"><i data-lucide="arrow-left"></i><span>Kembali ke Home</span></button>
+        <button class="btn" type="submit"><i data-lucide="unlock-keyhole"></i><span>Buka akses</span></button>
+      </div>
+      <small>Akses akan terkunci semula selepas 1 jam tanpa aktiviti.</small>
+    </form>
+  </section>
+
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260710r" defer></script>
+  <script src="app.js?v=20260711a" defer></script>
 </body>
 </html>

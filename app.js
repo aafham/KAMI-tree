@@ -175,6 +175,10 @@ const webNavButtons = document.querySelectorAll("[data-web-nav]");
 const webNavItems = document.querySelector(".web-nav-items");
 const homeOpenTreeBtn = document.getElementById("home-open-tree");
 const homeGlobalSearchBtn = document.getElementById("home-global-search");
+const familyAccessGate = document.getElementById("family-access-gate");
+const familyAccessForm = document.getElementById("family-access-form");
+const familyAccessDigits = [...document.querySelectorAll(".family-access-digit")];
+const familyAccessMessage = document.getElementById("family-access-message");
 
 
 function on(el, event, handler, options) {
@@ -185,6 +189,162 @@ function on(el, event, handler, options) {
 function refreshIcons(root = document) {
   if (!window.lucide?.createIcons) return;
   window.lucide.createIcons({ root });
+}
+
+function getFamilyAccessExpiry() {
+  try {
+    return Number(localStorage.getItem(FAMILY_ACCESS_STORAGE_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function setFamilyAccessExpiry(value) {
+  try {
+    if (value) localStorage.setItem(FAMILY_ACCESS_STORAGE_KEY, String(value));
+    else localStorage.removeItem(FAMILY_ACCESS_STORAGE_KEY);
+  } catch {
+    // Storage can be unavailable in a private browser session.
+  }
+}
+
+function setFamilyAccessGateOpen(isOpen) {
+  if (!familyAccessGate) return;
+  familyAccessGate.hidden = !isOpen;
+  document.body.classList.toggle("access-gate-open", isOpen);
+  if (!isOpen) return;
+  familyAccessMessage.textContent = "";
+  familyAccessDigits.forEach((input) => { input.value = ""; });
+  requestAnimationFrame(() => familyAccessDigits[0]?.focus());
+  refreshIcons(familyAccessGate);
+}
+
+function resetFamilyAccessTimer() {
+  if (!familyAccessUnlocked) return;
+  const expiry = Date.now() + FAMILY_ACCESS_DURATION;
+  setFamilyAccessExpiry(expiry);
+  if (familyAccessTimer) clearTimeout(familyAccessTimer);
+  familyAccessTimer = window.setTimeout(lockFamilyAccess, FAMILY_ACCESS_DURATION);
+}
+
+function unlockFamilyAccess() {
+  familyAccessUnlocked = true;
+  document.body.classList.remove("is-access-locked");
+  setFamilyAccessGateOpen(false);
+  resetFamilyAccessTimer();
+}
+
+function lockFamilyAccess() {
+  familyAccessUnlocked = false;
+  pendingAccessTrigger = null;
+  if (familyAccessTimer) clearTimeout(familyAccessTimer);
+  familyAccessTimer = null;
+  setFamilyAccessExpiry(0);
+  document.body.classList.add("is-access-locked");
+  closeSettingsModal?.();
+  closeStoryPanel?.();
+  if (viewMode !== "tree" || navSurface !== "home") {
+    navSurface = "home";
+    viewMode = "tree";
+    applyViewMode?.();
+    updateViewSwitch?.();
+    updateUrlState?.();
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function requestFamilyAccess(trigger) {
+  if (familyAccessUnlocked) return false;
+  pendingAccessTrigger = trigger || null;
+  setFamilyAccessGateOpen(true);
+  return true;
+}
+
+function isRestrictedInteraction(target) {
+  const button = target?.closest?.("button, [role=button], a");
+  if (!button) return false;
+  if (button.closest("#family-access-gate")) return false;
+  if (button.id === "home-family-photo-toggle") return false;
+  if (button.dataset.webNav) return button.dataset.webNav !== "home";
+  if (button.matches("[data-page-home]")) return false;
+  return Boolean(
+    button.closest(".tree-section, #bottom-sheet, #birthday-section, #timeline-section, #directory-section, #profile-page") ||
+    button.matches("#home-open-tree, #home-global-search, #birthday-card, .home-feature-entry, .quick-person-chip, [data-person-link], [data-directory-action]")
+  );
+}
+
+function initFamilyAccessGate() {
+  const hasValidSession = getFamilyAccessExpiry() > Date.now();
+  if (hasValidSession) {
+    familyAccessUnlocked = true;
+    document.body.classList.remove("is-access-locked");
+    resetFamilyAccessTimer();
+  } else {
+    document.body.classList.add("is-access-locked");
+  }
+
+  document.addEventListener("click", (event) => {
+    if (familyAccessUnlocked || !isRestrictedInteraction(event.target)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    requestFamilyAccess(event.target.closest("button, [role=button], a"));
+  }, true);
+
+  const registerActivity = () => {
+    if (!familyAccessUnlocked) return;
+    resetFamilyAccessTimer();
+  };
+  const registerScrollActivity = () => {
+    if (!familyAccessUnlocked) return;
+    const now = Date.now();
+    if (now - familyAccessLastActivity < 15000) return;
+    familyAccessLastActivity = now;
+    resetFamilyAccessTimer();
+  };
+  ["pointerdown", "keydown", "touchstart"].forEach((eventName) => {
+    window.addEventListener(eventName, registerActivity, { passive: eventName !== "keydown" });
+  });
+  window.addEventListener("scroll", registerScrollActivity, { passive: true });
+
+  familyAccessDigits.forEach((input, index) => {
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/\D/g, "").slice(-1);
+      if (input.value && index < familyAccessDigits.length - 1) familyAccessDigits[index + 1].focus();
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Backspace" && !input.value && index > 0) familyAccessDigits[index - 1].focus();
+    });
+    input.addEventListener("paste", (event) => {
+      const digits = (event.clipboardData?.getData("text") || "").replace(/\D/g, "").slice(0, 4);
+      if (!digits) return;
+      event.preventDefault();
+      familyAccessDigits.forEach((field, digitIndex) => { field.value = digits[digitIndex] || ""; });
+      familyAccessDigits[Math.min(digits.length, 4) - 1]?.focus();
+    });
+  });
+
+  familyAccessForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const pin = familyAccessDigits.map((input) => input.value).join("");
+    if (pin !== FAMILY_ACCESS_PIN) {
+      familyAccessMessage.textContent = "PIN tidak tepat. Cuba sekali lagi.";
+      familyAccessDigits.forEach((input) => { input.value = ""; });
+      familyAccessDigits[0]?.focus();
+      return;
+    }
+    const trigger = pendingAccessTrigger;
+    unlockFamilyAccess();
+    pendingAccessTrigger = null;
+    if (trigger) window.setTimeout(() => trigger.click(), 0);
+  });
+
+  familyAccessGate?.querySelectorAll("[data-access-cancel]").forEach((button) => {
+    button.addEventListener("click", () => {
+      pendingAccessTrigger = null;
+      setFamilyAccessGateOpen(false);
+      lockFamilyAccess();
+    });
+  });
 }
 
 const layoutConfig = {
@@ -299,6 +459,13 @@ let selectedDataHealthIssue = "all";
 let navSurface = "home";
 let profilePagePersonId = "";
 let profilePageReturnView = "tree";
+const FAMILY_ACCESS_PIN = "1907";
+const FAMILY_ACCESS_DURATION = 60 * 60 * 1000;
+const FAMILY_ACCESS_STORAGE_KEY = "kami-tree-family-access-until";
+let familyAccessUnlocked = false;
+let familyAccessTimer = null;
+let familyAccessLastActivity = 0;
+let pendingAccessTrigger = null;
 
 const prefs = loadPrefs();
 const i18n = {
@@ -1837,6 +2004,10 @@ function initFromData(data) {
   updateSheetHandleState();
   if (!timelineSection) viewMode = "tree";
   restoreFromUrl();
+  if (!familyAccessUnlocked) {
+    navSurface = "home";
+    viewMode = "tree";
+  }
   applyViewMode();
   renderScene();
   applyZoom();
@@ -1904,6 +2075,8 @@ if (FORCE_RESET) {
   hiddenGenerations.clear();
   branchFilterValue = "all";
 }
+
+initFamilyAccessGate();
 
 if (!treeCanvas || !treeCanvas.children.length) {
   setTreeStatus("");
