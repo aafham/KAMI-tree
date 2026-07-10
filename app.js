@@ -166,6 +166,7 @@ const quickFamilyFilter = document.getElementById("quick-family-filter");
 const quickFamilyLabel = document.getElementById("quick-family-label");
 const treeViewModeBtns = document.querySelectorAll("[data-tree-view-mode]");
 const webNavButtons = document.querySelectorAll("[data-web-nav]");
+const webNavItems = document.querySelector(".web-nav-items");
 const homeOpenTreeBtn = document.getElementById("home-open-tree");
 const homeGlobalSearchBtn = document.getElementById("home-global-search");
 
@@ -5229,6 +5230,26 @@ webNavButtons.forEach((button) => {
     if (target === "settings") openSettingsModal();
   });
 });
+
+// Swipe only the bottom navigation. Tree canvas gestures remain untouched.
+if (webNavItems) {
+  let navTouchStartX = null;
+  webNavItems.addEventListener("touchstart", (event) => {
+    if (window.matchMedia("(min-width: 721px)").matches) return;
+    navTouchStartX = event.touches[0]?.clientX ?? null;
+  }, { passive: true });
+  webNavItems.addEventListener("touchend", (event) => {
+    if (window.matchMedia("(min-width: 721px)").matches || navTouchStartX === null) return;
+    const endX = event.changedTouches[0]?.clientX ?? navTouchStartX;
+    const delta = endX - navTouchStartX;
+    navTouchStartX = null;
+    if (Math.abs(delta) < 48) return;
+    const buttons = [...webNavButtons];
+    const current = Math.max(0, buttons.findIndex((button) => button.classList.contains("is-active")));
+    const next = buttons[Math.min(buttons.length - 1, Math.max(0, current + (delta < 0 ? 1 : -1)))];
+    if (next && next !== buttons[current]) next.click();
+  }, { passive: true });
+}
 
 on(homeOpenTreeBtn, "click", openTreeSurface);
 on(homeGlobalSearchBtn, "click", openMobileSearch);

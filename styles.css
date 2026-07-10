@@ -9115,6 +9115,26 @@ body[data-nav-surface="home"] .home-feature-entry { box-shadow: 0 12px 28px rgba
   .settings-tabs { position: sticky; top: 0; z-index: 4; padding-block: 6px; background: var(--bg-soft); }
   .settings-section { border-radius: 18px; padding: 16px; }
   .global-search-overlay .mobile-search-panel { padding: max(16px, env(safe-area-inset-top)) 14px calc(92px + env(safe-area-inset-bottom)); }
+
+  /* Directory uses the same visible Home action as the other page headers. */
+  body[data-view="directory"] .directory-head .page-home-btn {
+    width: auto !important;
+    min-width: 84px;
+    min-height: 44px;
+    padding: 10px 14px !important;
+    border-radius: 14px !important;
+    gap: 8px;
+  }
+  body[data-view="directory"] .directory-head .page-home-btn span {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+  }
 }
 
 /* Final desktop profile layout. Keep this after legacy profile rules. */
