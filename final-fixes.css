@@ -118,14 +118,17 @@ body[data-view="tree"] .tree-page-head h2 {
   letter-spacing: 0 !important;
 }
 
-/* Light Home keeps the photo visible without sacrificing readable controls. */
-body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) {
+/* Light Home keeps the photo visible without sacrificing readable controls.
+   Theme is present on #app during the first render, while body is updated a
+   moment later, so support both states instead of letting the initial card
+   inherit white text. */
+body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible),
+#app[data-theme="light"] .home-feature-entry:first-child:not(:hover):not(:focus-visible) {
   color: #17251e !important;
   background: color-mix(in srgb, var(--card) 58%, transparent) !important;
 }
-body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) strong,
-body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) span,
-body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) svg {
+body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) *,
+#app[data-theme="light"] .home-feature-entry:first-child:not(:hover):not(:focus-visible) * {
   color: #17251e !important;
   opacity: 1 !important;
 }
