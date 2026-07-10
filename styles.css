@@ -8880,6 +8880,24 @@ body[data-nav-surface="home"] .home-feature-entry:hover > svg { transform: trans
   body[data-nav-surface="home"] .home-feature-entry > svg { transition: none; }
 }
 
+/* Final Home grid correction: keep desktop statistics compact and horizontal. */
+@media (min-width: 901px) {
+  body[data-nav-surface="home"] .stats {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: stretch;
+  }
+  body[data-nav-surface="home"] .stats > .stat-card {
+    grid-column: auto !important;
+    min-width: 0;
+    min-height: 132px;
+  }
+}
+
+body[data-nav-surface="home"] .home-hero { margin-top: 28px; }
+body[data-nav-surface="home"] .stats .stat-card { border-radius: 20px; box-shadow: 0 12px 28px rgba(31,42,36,.07); }
+body[data-nav-surface="home"] .home-feature-entry { box-shadow: 0 12px 28px rgba(31,42,36,.07); }
+
 /* Final desktop profile layout. Keep this after legacy profile rules. */
 .profile-page {
   width: min(1260px, calc(100% - 40px));
