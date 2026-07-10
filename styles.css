@@ -3327,7 +3327,13 @@ body[data-view="timeline"].story-open .timeline-section {
   gap: 20px;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.timeline-item:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 3px;
 }
 
 .timeline-item.timeline-branch {
@@ -7273,18 +7279,29 @@ body[data-view="timeline"] .tree-section {
   }
 
   .settings-modal {
+    inset: 0 0 calc(78px + env(safe-area-inset-bottom)) 0;
     align-items: stretch;
     padding: 0;
+    z-index: 1850;
+  }
+
+  .settings-modal .settings-backdrop {
+    display: none;
   }
 
   .settings-card {
     width: 100%;
     max-width: none;
-    min-height: 100dvh;
-    max-height: 100dvh;
-    padding: max(20px, env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom));
+    min-height: 100%;
+    max-height: 100%;
+    padding: max(20px, env(safe-area-inset-top)) 16px 28px;
     border: 0;
     border-radius: 0;
+    box-shadow: none;
+  }
+
+  .settings-close {
+    display: none;
   }
 
   .settings-tabs {
@@ -7408,19 +7425,19 @@ body[data-view="timeline"] .tree-section {
 
 /* Profile actions stay readable inside the narrow Tree side panel. */
 .profile-primary-actions {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .profile-secondary-actions {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .story-panel .profile-primary-actions {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .story-panel .profile-secondary-actions {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .story-panel .profile-actions {
@@ -7430,12 +7447,12 @@ body[data-view="timeline"] .tree-section {
 
 .story-panel .profile-actions .btn {
   min-width: 0;
-  min-height: 46px;
+  min-height: 48px;
   padding: 7px 8px;
   font-size: 12px;
-  line-height: 1.2;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .story-panel .profile-primary-actions .btn span,
@@ -7475,12 +7492,12 @@ body[data-view="profile"] .content-grid {
 }
 
 .profile-page {
-  width: min(1180px, calc(100% - 32px));
-  margin: 22px auto 90px;
+  width: min(1120px, calc(100% - 32px));
+  margin: 28px auto 90px;
 }
 
 .profile-page-shell {
-  padding: clamp(24px, 3vw, 38px);
+  padding: clamp(24px, 3.2vw, 42px);
   border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
   border-radius: 28px;
   background: color-mix(in srgb, var(--bg-soft) 93%, transparent);
@@ -7503,7 +7520,7 @@ body[data-view="profile"] .content-grid {
 .profile-page-head h2 {
   margin: 2px 0 0;
   font-family: "Fraunces", serif;
-  font-size: clamp(32px, 4vw, 50px);
+  font-size: clamp(32px, 4vw, 46px);
   line-height: 1.04;
 }
 
@@ -7515,10 +7532,10 @@ body[data-view="profile"] .content-grid {
 
 .profile-page-hero {
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
+  grid-template-columns: 78px minmax(0, 1fr);
   align-items: center;
   gap: 18px;
-  padding: 22px;
+  padding: 20px 22px;
   border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   border-radius: 24px;
   background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 16%, var(--card)), color-mix(in srgb, var(--card) 88%, var(--bg-soft)));
@@ -7527,13 +7544,13 @@ body[data-view="profile"] .content-grid {
 .profile-page-avatar {
   display: grid;
   place-items: center;
-  width: 92px;
-  height: 92px;
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
   color: #fff;
   background: var(--primary);
   box-shadow: 0 12px 28px color-mix(in srgb, var(--primary) 24%, transparent);
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
 }
 
@@ -7546,7 +7563,7 @@ body[data-view="profile"] .content-grid {
 .profile-page-hero h3 {
   margin: 4px 0;
   font-family: "Fraunces", serif;
-  font-size: clamp(30px, 3vw, 42px);
+  font-size: clamp(28px, 3vw, 38px);
   line-height: 1.05;
 }
 
@@ -7568,6 +7585,8 @@ body[data-view="profile"] .content-grid {
 
 .profile-actions--page .profile-primary-actions {
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 .profile-actions--page .profile-secondary-actions {
@@ -7575,8 +7594,39 @@ body[data-view="profile"] .content-grid {
 }
 
 .profile-actions--page .btn {
-  min-height: 46px;
-  white-space: normal;
+  min-height: 48px;
+  min-width: 0;
+  padding: 9px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.profile-actions--page .btn span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-actions--page {
+  gap: 12px;
+  padding: 14px;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+}
+
+.profile-page .profile-family-stats {
+  padding: 16px;
+  border-radius: 22px;
+}
+
+.profile-page .profile-family-stats div {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.profile-page .profile-info-tile {
+  min-height: 92px;
+  padding: 15px;
+  border-radius: 16px;
 }
 
 .settings-about-grid {

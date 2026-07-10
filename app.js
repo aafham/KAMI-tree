@@ -426,6 +426,10 @@ const i18n = {
     profileFamilyView: "Lihat keluarga ini",
     profileFamilyShort: "Keluarga",
     profilePin: "Pin",
+    profileRelationShort: "Hubungan",
+    profileShareShort: "Kongsi",
+    profilePrintShort: "Cetak",
+    profileCopyShort: "Salin",
     profilePinned: "Pinned",
     profileCopyLink: "Copy link",
     profileShareText: "Share text",
@@ -752,6 +756,10 @@ const i18n = {
     profileFamilyView: "View this family",
     profileFamilyShort: "Family",
     profilePin: "Pin",
+    profileRelationShort: "Relation",
+    profileShareShort: "Share",
+    profilePrintShort: "Print",
+    profileCopyShort: "Copy",
     profilePinned: "Pinned",
     profileCopyLink: "Copy link",
     profileShareText: "Share text",
@@ -3068,6 +3076,8 @@ function renderTimeline() {
   filtered.forEach(({ person }) => {
     const item = document.createElement("div");
     item.className = "timeline-item";
+    item.tabIndex = 0;
+    item.setAttribute("role", "button");
     if (person.death) item.classList.add("deceased");
     const depth = depthMap.get(person.id);
     item.classList.add("timeline-branch");
@@ -3078,6 +3088,7 @@ function renderTimeline() {
     const hasDeath = Boolean(person.death);
     const displayName = formatDisplayName(person.name);
     const shortName = getShortDisplayName(displayName);
+    item.setAttribute("aria-label", `${t.profileOpen}: ${shortName || displayName}`);
     const birthYear = parseYear(person.birth);
     const yearLabel = birthYear || "----";
     const genderLabel = getGenderLabel(person);
@@ -3102,18 +3113,13 @@ function renderTimeline() {
       </div>
       <div class="timeline-arrow" aria-hidden="true">›</div>
     `;
-    item.addEventListener("click", () => {
-      if (isMobileView()) {
-        openTimelineInlineDetail(person, item);
-        selectedPersonId = person.id;
-        updateUrlState();
-        return;
+    const openTimelineProfile = () => openProfilePage(person.id, "timeline");
+    item.addEventListener("click", openTimelineProfile);
+    item.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openTimelineProfile();
       }
-      openModal(person);
-      updateStoryPanel(person);
-      selectedPersonId = person.id;
-      applySelectionHighlight(person.id);
-      updateUrlState();
     });
     timelineList.appendChild(item);
   });
@@ -4429,7 +4435,7 @@ function renderProfileActions(person, { fullPage = false } = {}) {
         <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}" title="${escapeHtml(t.profileFocusTree)}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTreeShort)}</span></button>
         <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}" title="${escapeHtml(t.profileFamilyView)}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyShort)}</span></button>
         <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
-        <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyLink)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}" title="${escapeHtml(t.profileCopyLink)}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyShort)}</span></button>
       `
     : `
         <button class="btn ghost small" type="button" data-profile-action="profile" data-person-id="${id}"><i data-lucide="contact-round"></i><span>${escapeHtml(t.profileOpen)}</span></button>
@@ -4442,10 +4448,10 @@ function renderProfileActions(person, { fullPage = false } = {}) {
         ${primaryActions}
       </div>
       <div class="profile-secondary-actions">
-        <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</span></button>
-        <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileFindRelation)}</span></button>
-        <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareText)}</span></button>
-        <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrint)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}" title="${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}"><i data-lucide="pin"></i><span>${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}" title="${escapeHtml(t.profileFindRelation)}"><i data-lucide="route"></i><span>${escapeHtml(t.profileRelationShort)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}" title="${escapeHtml(t.profileShareText)}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareShort)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}" title="${escapeHtml(t.profilePrint)}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrintShort)}</span></button>
       </div>
     </div>
   `;
@@ -5016,6 +5022,7 @@ function openTreeSurface() {
 webNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const target = button.dataset.webNav;
+    if (target !== "settings" && settingsModal?.classList.contains("is-open")) closeSettingsModal();
     if (target === "home") return openHomeSurface();
     if (target === "tree") return openTreeSurface();
     if (target === "directory") return openDirectoryView();
