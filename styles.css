@@ -9052,6 +9052,71 @@ body[data-nav-surface="home"] .home-hero { margin-top: 28px; }
 body[data-nav-surface="home"] .stats .stat-card { border-radius: 20px; box-shadow: 0 12px 28px rgba(31,42,36,.07); }
 body[data-nav-surface="home"] .home-feature-entry { box-shadow: 0 12px 28px rgba(31,42,36,.07); }
 
+/* Mobile archive pass: keep every non-tree surface readable on small screens. */
+@media (max-width: 720px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { padding-bottom: calc(82px + env(safe-area-inset-bottom)); }
+  button, input, select, textarea { font-size: 16px; }
+  .web-nav { min-height: 66px; bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .web-nav-items button { min-height: 56px; min-width: 44px; gap: 4px; }
+  .web-nav-items button span { font-size: 10px; }
+
+  body[data-nav-surface="home"] .home-hero { margin-top: 20px; }
+  body[data-nav-surface="home"] .home-hero .brand h1 { max-width: 100%; }
+  body[data-nav-surface="home"] .home-birthday-feature { min-height: 128px; }
+  body[data-nav-surface="home"] .stats .stat-card { min-height: 112px; padding: 16px 12px; }
+  body[data-nav-surface="home"] .home-feature-entry { min-height: 78px; }
+
+  body[data-nav-surface="tree"] .tree-section { padding-bottom: calc(116px + env(safe-area-inset-bottom)); }
+  body[data-nav-surface="tree"] .tree-toolbar { margin-inline: 8px; padding: 8px; }
+  body[data-nav-surface="tree"] .tree-toolbar-actions { flex-wrap: wrap; gap: 6px; }
+  body[data-nav-surface="tree"] .tree-toolbar-actions .btn { min-height: 42px; }
+  body[data-nav-surface="tree"] .mini-toolbar { bottom: calc(76px + env(safe-area-inset-bottom)); max-width: calc(100% - 20px); }
+  body[data-nav-surface="tree"] .bottom-sheet { bottom: calc(82px + env(safe-area-inset-bottom)); }
+
+  body[data-view="profile"] .profile-page { margin-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  body[data-view="profile"] .profile-page-content { gap: 14px; }
+  body[data-view="profile"] .profile-identity { padding: 18px; }
+  body[data-view="profile"] .profile-summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-view="profile"] .profile-page-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-view="profile"] .profile-page-actions .profile-page-tree-action { grid-column: 1 / -1; }
+
+  body[data-view="directory"] .directory-toolbar { display: grid; grid-template-columns: 1fr; gap: 9px; }
+  body[data-view="directory"] .directory-toolbar .btn { width: 100%; }
+  body[data-view="directory"] .directory-list { grid-template-columns: 1fr; gap: 10px; }
+  body[data-view="directory"] .directory-card { padding: 12px; border-radius: 16px; }
+  body[data-view="directory"] .directory-card-actions { gap: 7px; }
+  body[data-view="directory"] .directory-card-actions .btn { min-height: 44px; padding-inline: 5px; }
+
+  body[data-view="birthday"] .birthday-featured { margin-top: 12px; }
+  body[data-view="birthday"] .birthday-tools { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  body[data-view="birthday"] .birthday-search .input { min-height: 48px; }
+  body[data-view="birthday"] .birthday-toggle-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-view="birthday"] .birthday-toggle-actions .btn { width: 100%; }
+  body[data-view="birthday"] .birthday-view-switch { width: 100%; max-width: none; }
+  body[data-view="birthday"] .birthday-planner { grid-template-columns: 1fr; gap: 12px; }
+  body[data-view="birthday"] .birthday-planner-panel { order: 2; }
+  body[data-view="birthday"] .birthday-planner-card { padding: 14px; }
+  body[data-view="birthday"] .planner-grid { gap: 5px; }
+  body[data-view="birthday"] .planner-day { min-height: 48px; padding: 5px; }
+  body[data-view="birthday"] .birthday-month-card { padding: 16px; }
+
+  body[data-view="timeline"] .timeline-filters.primary { grid-template-columns: 1fr; }
+  body[data-view="timeline"] .timeline-filter--wide { grid-column: auto; }
+  body[data-view="timeline"] .timeline-reset { width: 100%; }
+  body[data-view="timeline"] .timeline-list { gap: 10px; }
+  body[data-view="timeline"] .timeline-item { grid-template-columns: 58px 42px minmax(0, 1fr) 16px; gap: 8px; padding: 12px 8px; border-radius: 17px; }
+  body[data-view="timeline"] .timeline-year-rail strong { font-size: 25px; }
+  body[data-view="timeline"] .timeline-avatar { width: 40px; height: 40px; }
+  body[data-view="timeline"] .timeline-meta { line-height: 1.35; }
+
+  .settings-modal { inset: 0 0 calc(78px + env(safe-area-inset-bottom)) 0; }
+  .settings-card { padding: max(16px, env(safe-area-inset-top)) 14px 24px; }
+  .settings-tabs { position: sticky; top: 0; z-index: 4; padding-block: 6px; background: var(--bg-soft); }
+  .settings-section { border-radius: 18px; padding: 16px; }
+  .global-search-overlay .mobile-search-panel { padding: max(16px, env(safe-area-inset-top)) 14px calc(92px + env(safe-area-inset-bottom)); }
+}
+
 /* Final desktop profile layout. Keep this after legacy profile rules. */
 .profile-page {
   width: min(1260px, calc(100% - 40px));
