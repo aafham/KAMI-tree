@@ -117,3 +117,15 @@ body[data-view="tree"] .tree-page-head h2 {
   font-weight: 700 !important;
   letter-spacing: 0 !important;
 }
+
+/* Light Home keeps the photo visible without sacrificing readable controls. */
+body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) {
+  color: #17251e !important;
+  background: color-mix(in srgb, var(--card) 58%, transparent) !important;
+}
+body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) strong,
+body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) span,
+body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-controls-clear) .home-feature-entry:first-child:not(:hover):not(:focus-visible) svg {
+  color: #17251e !important;
+  opacity: 1 !important;
+}

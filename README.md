@@ -17,7 +17,7 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 - Paparan dioptimumkan untuk desktop dan telefon.
 - Bahasa Melayu dan English disokong.
 - Light mode dan dark mode tersedia.
-- Pilihan pengguna seperti tema, saiz tulisan, ahli disimpan, baru dibuka dan paparan Home disimpan pada browser/peranti sendiri.
+- Pilihan pengguna seperti tema, saiz tulisan, ahli disimpan dan paparan Home disimpan pada browser/peranti sendiri.
 - Website tidak memerlukan log masuk untuk melihat data yang telah dideploy.
 
 ## Navigasi
@@ -57,7 +57,6 @@ Home memberi gambaran keseluruhan keluarga:
 - `Lihat Tree Keluarga` untuk terus masuk ke salasilah.
 - `Search Global` untuk carian menyeluruh.
 - `Ahli Disimpan` untuk favourite yang dipin.
-- `Baru Dibuka` untuk profil terkini yang dilihat.
 
 #### Foto keluarga di Home
 
@@ -257,13 +256,7 @@ Menerangkan tujuan KAMI Tree, fungsi utama dan versi data.
 3. Ahli tersebut muncul di `Ahli Disimpan` pada Home.
 4. Tekan Pin sekali lagi untuk buang daripada senarai.
 
-### 5. Semak profil yang baru dibuka
-
-1. Buka Home.
-2. Scroll ke `Baru Dibuka`.
-3. Tekan nama untuk buka semula profil.
-
-### 6. Semak birthday
+### 5. Semak birthday
 
 1. Tekan `Birthday`.
 2. Gunakan `12 Bulan` untuk ringkasan semua bulan.
@@ -271,14 +264,14 @@ Menerangkan tujuan KAMI Tree, fungsi utama dan versi data.
 4. Tekan tarikh birthday untuk buka senarai ahli pada tarikh itu.
 5. Gunakan `Hari Ini` untuk kembali ke bulan semasa.
 
-### 7. Tukar tema, bahasa atau saiz tulisan
+### 6. Tukar tema, bahasa atau saiz tulisan
 
 1. Tekan `Tetapan`.
 2. Buka tab `Tema` untuk dark/light mode atau bahasa.
 3. Buka tab `Paparan` untuk saiz kad, saiz tulisan dan pilihan Home.
 4. Pilihan disimpan secara automatik pada browser tersebut.
 
-### 8. Lihat gambar Aishah
+### 7. Lihat gambar Aishah
 
 1. Buka profil Aishah.
 2. Tekan gambar bulat dalam bahagian profil utama.
@@ -287,7 +280,7 @@ Menerangkan tujuan KAMI Tree, fungsi utama dan versi data.
 ## Data Dan Privasi Browser
 
 - Data asal keluarga berada dalam `data.json`.
-- Favourite, recently viewed, tema, bahasa, zoom, tetapan dan Diri Saya disimpan pada browser/peranti semasa sahaja.
+- Favourite, tema, bahasa, zoom, tetapan dan Diri Saya disimpan pada browser/peranti semasa sahaja.
 - Peranti atau browser lain tidak berkongsi pilihan tersebut secara automatik.
 - `Clear Cache` membuang pilihan tempatan, tetapi data asal daripada `data.json` kekal selepas reload.
 - Import JSON ialah perubahan sementara pada browser sehingga data asal projek dikemas kini.

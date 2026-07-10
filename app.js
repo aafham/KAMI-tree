@@ -2105,7 +2105,7 @@ function renderQuickPeople() {
     });
   });
 
-  quickPeopleSection.hidden = favoritePeople.length === 0 && recentAll.length === 0;
+  quickPeopleSection.hidden = favoritePeople.length === 0;
 }
 
 function getDataHealthIssues() {
