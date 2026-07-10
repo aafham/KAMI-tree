@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260710o" />
+  <link rel="stylesheet" href="styles.css?v=20260710p" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -35,9 +35,10 @@
         <button id="mobile-timeline-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="viewTimelineShort">Timeline</button>
         <button id="mobile-settings-btn" class="btn ghost icon" type="button" aria-label="Settings">⚙️</button>
       </div>
+      <section class="home-hero" aria-labelledby="home-page-title">
       <div class="brand">
         <p class="kicker" data-i18n="appKicker">Salasilah Keluarga</p>
-        <h1 data-i18n="appTitle">Paparan Generasi Keluarga</h1>
+        <h1 id="home-page-title" data-i18n="appTitle">Paparan Generasi Keluarga</h1>
         <p class="subtitle" data-i18n="appSubtitle">Semua ahli keluarga dalam satu pandangan yang jelas, mudah, dan mesra.</p>
         <div class="brand-minimap-wrap">
           <div class="minimap-label" data-i18n="minimapTitle">Minimap</div>
@@ -49,6 +50,13 @@
           <button class="minimap-handle" id="minimap-handle" type="button" data-i18n="minimapShow">Buka Minimap</button>
         </div>
       </div>
+      <button class="home-birthday-feature stat-card stat-card--birthday" id="birthday-card" type="button">
+        <span class="home-birthday-icon" aria-hidden="true"><i data-lucide="cake-slice"></i></span>
+        <span class="stat-label" data-i18n="statsUpcoming">Ulang Tahun Terdekat</span>
+        <span class="stat-value" id="stat-upcoming-name">-</span>
+        <span class="home-birthday-meta"><span id="stat-upcoming-meta">-</span><i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+      </button>
+      </section>
       <div id="bottom-sheet" class="bottom-sheet">
         <div id="sheet-handle" class="sheet-handle" role="button" aria-label="Toggle panel"></div>
         <div class="controls">
@@ -158,11 +166,6 @@
             <span class="stat-value" id="stat-cicit">0</span>
           </div>
         </div>
-      </div>
-      <div class="stat-card stat-card--birthday" id="birthday-card" role="button" tabindex="0">
-        <div class="stat-label" data-i18n="statsUpcoming">Ulang Tahun Terdekat</div>
-        <div class="stat-value" id="stat-upcoming-name">-</div>
-        <div class="stat-sub" id="stat-upcoming-meta">-</div>
       </div>
     </section>
     <section class="home-feature-grid" id="home-feature-grid" aria-label="Akses pantas">
