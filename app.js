@@ -5330,6 +5330,12 @@ if (birthdayCard) {
   });
 }
 
+if (homeHero) {
+  homeHero.classList.add("has-family-photo");
+  homeTopbar?.classList.add("has-family-photo");
+  document.body.classList.add("has-family-photo");
+}
+
 if (homeFamilyPhotoToggle && homeHero) {
   homeFamilyPhotoToggle.addEventListener("click", () => {
     const visible = homeHero.classList.toggle("has-family-photo");

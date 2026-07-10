@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260710ac" />
+  <link rel="stylesheet" href="styles.css?v=20260710ad" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -25,6 +25,7 @@
         <button type="button" data-web-nav="birthday"><i data-lucide="cake-slice"></i><span data-i18n="navBirthday">Birthday</span></button>
         <button type="button" data-web-nav="timeline"><i data-lucide="chart-no-axes-combined"></i><span data-i18n="navTimeline">Timeline</span></button>
         <button type="button" data-web-nav="settings"><i data-lucide="settings"></i><span data-i18n="navSettings">Tetapan</span></button>
+        <button id="home-family-photo-toggle" class="web-nav-photo-toggle" type="button" aria-label="Sembunyikan gambar keluarga" aria-pressed="true" title="Sembunyikan gambar keluarga"><i data-lucide="image"></i></button>
       </div>
     </nav>
     <header class="topbar">
@@ -41,9 +42,6 @@
         <p class="page-heading-sub" data-i18n="treeToolbarHint">Drag atau scroll untuk lihat cabang lain.</p>
       </section>
       <section class="home-hero" aria-labelledby="home-page-title">
-      <button id="home-family-photo-toggle" class="home-family-photo-toggle" type="button" aria-label="Lihat gambar keluarga" aria-pressed="false" title="Lihat gambar keluarga">
-        <i data-lucide="image"></i>
-      </button>
       <div class="brand">
         <p class="kicker" data-i18n="appKicker">Salasilah Keluarga</p>
         <h1 id="home-page-title" data-i18n="appTitle">Paparan Generasi Keluarga</h1>
@@ -696,6 +694,6 @@
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260710n" defer></script>
+  <script src="app.js?v=20260710o" defer></script>
 </body>
 </html>
