@@ -8880,6 +8880,9 @@ body[data-nav-surface="home"] .home-feature-entry:hover > svg { transform: trans
   body[data-nav-surface="home"] .home-feature-entry > svg { transition: none; }
 }
 
+/* Tree view must not inherit Home-only hero content. */
+body[data-nav-surface="tree"] .home-hero { display: none !important; }
+
 /* Cross-page final pass: polish non-tree archive surfaces consistently. */
 body[data-view="birthday"] .birthday-section,
 body[data-view="directory"] .directory-section,
