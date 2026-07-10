@@ -7441,6 +7441,7 @@ body[data-view="timeline"] .tree-section {
 }
 
 .story-panel .profile-actions {
+  grid-template-columns: minmax(0, 1fr);
   padding: 8px;
   border-radius: 18px;
 }
@@ -7474,6 +7475,11 @@ body[data-view="timeline"] .tree-section {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* The action groups are already grids; keep their parent as one full-width column. */
+.profile-actions {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 /* Full desktop profile page: Tree clicks still use the side panel, while the Profile button opens this view. */
