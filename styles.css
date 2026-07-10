@@ -8786,6 +8786,19 @@ body[data-view="profile"] .content-grid {
   }
 }
 
+/* Shared content buttons: keep icon and label spacing consistent. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn > svg,
+.btn > i {
+  flex: 0 0 auto;
+}
+.btn > span { min-width: 0; }
+
 /* Final Home precedence: keep the editorial layout after legacy Home rules. */
 body[data-nav-surface="home"] .home-hero,
 body[data-nav-surface="home"] .stats,
