@@ -4748,6 +4748,103 @@ body.hide-tags .person-tags {
   }
 }
 
+/* Shared desktop header rhythm for Directory, Birthday and Timeline. */
+body[data-view="birthday"] .tree-section,
+body[data-view="directory"] .tree-section,
+body[data-view="timeline"] .tree-section {
+  margin-top: 20px;
+}
+
+body[data-view="birthday"] .birthday-section,
+body[data-view="directory"] .directory-section,
+body[data-view="timeline"] .timeline-section {
+  padding: clamp(24px, 2.25vw, 32px);
+  border-radius: 26px;
+}
+
+body[data-view="birthday"] .page-heading,
+body[data-view="directory"] .page-heading,
+body[data-view="timeline"] .page-heading {
+  align-items: flex-start;
+  gap: 20px;
+  min-height: 144px;
+  margin: 0;
+  padding: 2px 2px 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+body[data-view="birthday"] .page-heading > div,
+body[data-view="directory"] .page-heading > div,
+body[data-view="timeline"] .page-heading > div {
+  display: block;
+}
+
+body[data-view="birthday"] .page-heading .kicker,
+body[data-view="directory"] .page-heading .kicker,
+body[data-view="timeline"] .page-heading .kicker {
+  margin: 0 0 9px;
+}
+
+body[data-view="birthday"] .page-heading h2,
+body[data-view="directory"] .page-heading h2,
+body[data-view="timeline"] .page-heading h2 {
+  margin: 0;
+  font-size: clamp(36px, 3.15vw, 46px);
+  line-height: 1.08;
+}
+
+body[data-view="birthday"] .page-heading-sub,
+body[data-view="birthday"] .birthday-head-sub,
+body[data-view="directory"] .page-heading-sub,
+body[data-view="timeline"] .page-heading-sub {
+  margin: 10px 0 0;
+  min-height: 28px;
+  color: var(--muted);
+}
+
+body[data-view="birthday"] .page-home-btn,
+body[data-view="directory"] .page-home-btn,
+body[data-view="timeline"] .page-home-btn {
+  min-width: 96px;
+  min-height: 46px;
+  margin-top: 0;
+  justify-content: center;
+}
+
+body[data-view="birthday"] .birthday-featured,
+body[data-view="birthday"] .birthday-tools,
+body[data-view="directory"] .directory-toolbar,
+body[data-view="timeline"] .timeline-filters-card {
+  margin-top: 18px;
+}
+
+@media (max-width: 720px) {
+  body[data-view="birthday"] .tree-section,
+  body[data-view="directory"] .tree-section,
+  body[data-view="timeline"] .tree-section {
+    margin-top: -86px;
+  }
+
+  body[data-view="birthday"] .birthday-section,
+  body[data-view="directory"] .directory-section,
+  body[data-view="timeline"] .timeline-section {
+    padding: 18px 16px;
+  }
+
+  body[data-view="birthday"] .page-heading,
+  body[data-view="directory"] .page-heading,
+  body[data-view="timeline"] .page-heading {
+    min-height: 0;
+    padding-bottom: 16px;
+  }
+
+  body[data-view="birthday"] .page-heading h2,
+  body[data-view="directory"] .page-heading h2,
+  body[data-view="timeline"] .page-heading h2 {
+    font-size: clamp(28px, 9vw, 38px);
+  }
+}
+
 @media (min-width: 721px) {
   .mobile-topbar {
     display: none !important;
