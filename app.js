@@ -4785,6 +4785,8 @@ function renderProfilePage() {
             ${renderProfileFamilyGroup(t.profileParents, family.parents)}
             ${renderProfileFamilyGroup(t.profileSiblings, family.siblings)}
             ${renderProfileFamilyGroup(t.profileChildren, family.children)}
+            ${renderProfileFamilyGroup(t.profileGrandchildrenCount, family.grandchildren)}
+            ${renderProfileFamilyGroup(t.profileGreatGrandchildrenCount, family.greatGrandchildren)}
           </div>
           ${!family.spouses.length && !family.parents.length && !family.siblings.length && !family.children.length ? `<p class="profile-empty-state">${escapeHtml(t.profileNoFamily)}</p>` : ""}
         </section>
