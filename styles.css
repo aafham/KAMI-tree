@@ -257,6 +257,17 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Non-tree pages no longer need the old negative offset from the removed mobile top bar. */
+@media (max-width: 720px) {
+  body[data-view="birthday"] .tree-section,
+  body[data-view="directory"] .tree-section,
+  body[data-view="timeline"] .tree-section {
+    width: auto !important;
+    margin: max(14px, env(safe-area-inset-top)) 8px calc(90px + env(safe-area-inset-bottom)) !important;
+    padding-top: 0 !important;
+  }
+}
+
 /* Keep the complete family photo visible across the Home content without cropping it. */
 body[data-nav-surface="home"].has-family-photo .topbar::before {
   display: none;
