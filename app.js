@@ -5334,6 +5334,7 @@ if (homeFamilyPhotoToggle && homeHero) {
   homeFamilyPhotoToggle.addEventListener("click", () => {
     const visible = homeHero.classList.toggle("has-family-photo");
     homeTopbar?.classList.toggle("has-family-photo", visible);
+    document.body.classList.toggle("has-family-photo", visible);
     homeFamilyPhotoToggle.setAttribute("aria-pressed", String(visible));
     homeFamilyPhotoToggle.setAttribute("aria-label", visible ? "Sembunyikan gambar keluarga" : "Lihat gambar keluarga");
   });

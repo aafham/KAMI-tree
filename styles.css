@@ -257,6 +257,54 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Keep the complete family photo visible across the Home content without cropping it. */
+body[data-nav-surface="home"].has-family-photo .topbar::before {
+  display: none;
+}
+
+body[data-nav-surface="home"] .app {
+  position: relative;
+  isolation: isolate;
+}
+
+body[data-nav-surface="home"] .app::before {
+  position: absolute;
+  top: 92px;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: min(1250px, 66.7vw);
+  content: "";
+  background:
+    linear-gradient(180deg, rgba(239, 248, 242, .52) 0%, rgba(250, 249, 244, .62) 55%, rgba(250, 249, 244, .86) 100%),
+    url("IMG_7640.JPG") center top / 100% auto no-repeat;
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+
+body[data-nav-surface="home"].has-family-photo .app::before { opacity: 1; }
+
+body[data-nav-surface="home"].has-family-photo .web-nav,
+body[data-nav-surface="home"].has-family-photo .topbar,
+body[data-nav-surface="home"].has-family-photo .stats,
+body[data-nav-surface="home"].has-family-photo .home-feature-grid,
+body[data-nav-surface="home"].has-family-photo .quick-people {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 720px) {
+  body[data-nav-surface="home"] .app::before {
+    top: env(safe-area-inset-top);
+    height: 66.7vw;
+    min-height: 250px;
+    background:
+      linear-gradient(180deg, rgba(239, 248, 242, .56) 0%, rgba(250, 249, 244, .76) 100%),
+      url("IMG_7640.JPG") center top / 100% auto no-repeat;
+  }
+}
+
 /* Tree header belongs only to Tree; page navigation already handles Home everywhere. */
 .tree-page-head { display: none !important; }
 
