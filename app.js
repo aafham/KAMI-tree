@@ -418,11 +418,13 @@ const i18n = {
     homeRecentKicker: "Sejarah",
     homeRecentMembers: "Baru Dibuka",
     profileFocusTree: "Fokus dalam tree",
+    profileFocusTreeShort: "Tree",
     profileOpen: "Profil",
     profileBack: "Kembali",
     profilePageKicker: "Profil Ahli",
     profileFindRelation: "Cari hubungan",
     profileFamilyView: "Lihat keluarga ini",
+    profileFamilyShort: "Keluarga",
     profilePin: "Pin",
     profilePinned: "Pinned",
     profileCopyLink: "Copy link",
@@ -742,11 +744,13 @@ const i18n = {
     homeRecentKicker: "History",
     homeRecentMembers: "Recently Viewed",
     profileFocusTree: "Focus in tree",
+    profileFocusTreeShort: "Tree",
     profileOpen: "Profile",
     profileBack: "Back",
     profilePageKicker: "Member Profile",
     profileFindRelation: "Find relationship",
     profileFamilyView: "View this family",
+    profileFamilyShort: "Family",
     profilePin: "Pin",
     profilePinned: "Pinned",
     profileCopyLink: "Copy link",
@@ -3065,17 +3069,9 @@ function renderTimeline() {
     const item = document.createElement("div");
     item.className = "timeline-item";
     if (person.death) item.classList.add("deceased");
-    const node = nodeByPersonId.get(person.id);
     const depth = depthMap.get(person.id);
-    if (node && Number.isFinite(node.branchId)) {
-      item.classList.add("timeline-branch");
-      item.style.setProperty("--branch-color", branchPalette[node.branchId] || "var(--primary)");
-    } else {
-      if (softPeachPeople.has(person.id)) item.classList.add("branch-soft-peach");
-      if (babyBluePeople.has(person.id)) item.classList.add("branch-baby-blue");
-      if (mintGreenPeople.has(person.id)) item.classList.add("branch-mint-green");
-      if (lavenderPeople.has(person.id)) item.classList.add("branch-lavender");
-    }
+    item.classList.add("timeline-branch");
+    item.style.setProperty("--branch-color", getFamilyBranchColor(person, depth));
     const birthDate = parseDateValue(person.birth);
     const age = !person.death ? calcAge(birthDate) : null;
     const hasBirth = Boolean(person.birth);
@@ -3605,6 +3601,16 @@ function getPersonDepth(personId) {
   return node?.depth || "";
 }
 
+function getFamilyBranchColor(person, depth = "") {
+  const branchKey = person?.branchId || "root";
+  if (branchKey === "root") return branchPalette[0] || generationColor(Number(depth) || 1);
+  const branchKeys = [...new Set((treeData?.people || [])
+    .map((member) => member.branchId || "root")
+    .filter((key) => key !== "root"))].sort();
+  const branchIndex = Math.max(0, branchKeys.indexOf(branchKey));
+  return branchPalette[(branchIndex + 1) % branchPalette.length] || generationColor(Number(depth) || 1);
+}
+
 function renderDirectoryPage() {
   if (!directoryList || !directorySummary || !treeData?.people) return;
   const t = i18n[lang] || i18n.ms;
@@ -3678,6 +3684,7 @@ function renderDirectoryPage() {
   directoryList.innerHTML = people.map(({ person, depth, gender }) => {
     const shortName = getShortDisplayName(person.name);
     const fullName = formatDisplayName(person.name);
+    const branchColor = getFamilyBranchColor(person, depth);
     const birthDate = parseDateValue(person.birth);
     const age = birthDate && !person.death ? calcAge(birthDate) : null;
     const badges = [
@@ -3690,7 +3697,7 @@ function renderDirectoryPage() {
       getPersonStatus(person) === "deceased" ? t.directoryDeceased : t.directoryLiving
     ].filter(Boolean);
     return `
-      <article class="directory-card">
+      <article class="directory-card" style="--branch-color: ${escapeHtml(branchColor)}">
         <button class="directory-person" type="button" data-person-link="${escapeHtml(person.id)}">
           <span class="directory-avatar">${escapeHtml(initials(shortName))}</span>
           <span class="directory-main">
@@ -3703,15 +3710,16 @@ function renderDirectoryPage() {
           </span>
         </button>
         <div class="directory-card-actions">
-          <button class="btn ghost small" type="button" data-directory-action="profile" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.directoryProfile)}</button>
-          <button class="btn ghost small" type="button" data-directory-action="focus" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.profileFocusTree)}</button>
-          <button class="btn small" type="button" data-directory-action="family" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.profileFamilyView)}</button>
+          <button class="btn ghost small" type="button" data-directory-action="profile" data-person-id="${escapeHtml(person.id)}" title="${escapeHtml(t.directoryProfile)}"><i data-lucide="contact-round"></i><span>${escapeHtml(t.directoryProfile)}</span></button>
+          <button class="btn ghost small" type="button" data-directory-action="focus" data-person-id="${escapeHtml(person.id)}" title="${escapeHtml(t.profileFocusTree)}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTreeShort)}</span></button>
+          <button class="btn small" type="button" data-directory-action="family" data-person-id="${escapeHtml(person.id)}" title="${escapeHtml(t.profileFamilyView)}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyShort)}</span></button>
         </div>
       </article>
     `;
   }).join("");
   bindPersonLinkClicks(directoryList);
   bindDirectoryActions(directoryList);
+  refreshIcons(directoryList);
 }
 
 function parseYear(value) {
@@ -4418,15 +4426,15 @@ function renderProfileActions(person, { fullPage = false } = {}) {
   const primaryActions = fullPage
     ? `
         <button class="btn ghost small" type="button" data-profile-action="home" data-person-id="${id}"><i data-lucide="home"></i><span>${escapeHtml(t.profileHome)}</span></button>
-        <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
-        <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}" title="${escapeHtml(t.profileFocusTree)}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTreeShort)}</span></button>
+        <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}" title="${escapeHtml(t.profileFamilyView)}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyShort)}</span></button>
         <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
         <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyLink)}</span></button>
       `
     : `
         <button class="btn ghost small" type="button" data-profile-action="profile" data-person-id="${id}"><i data-lucide="contact-round"></i><span>${escapeHtml(t.profileOpen)}</span></button>
-        <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
-        <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}" title="${escapeHtml(t.profileFocusTree)}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTreeShort)}</span></button>
+        <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}" title="${escapeHtml(t.profileFamilyView)}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyShort)}</span></button>
       `;
   return `
     <div class="profile-actions${fullPage ? " profile-actions--page" : ""}" data-profile-person="${id}">
