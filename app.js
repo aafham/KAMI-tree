@@ -1011,12 +1011,15 @@ function openSettingsModal() {
   if (!settingsModal) return;
   settingsModal.classList.add("is-open");
   settingsModal.setAttribute("aria-hidden", "false");
+  webNavButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.webNav === "settings"));
+  refreshIcons(settingsModal);
 }
 
 function closeSettingsModal() {
   if (!settingsModal) return;
   settingsModal.classList.remove("is-open");
   settingsModal.setAttribute("aria-hidden", "true");
+  updateViewSwitch();
 }
 
 function toggleControlsCollapsed(nextState) {
@@ -1291,6 +1294,7 @@ function updateViewSwitch() {
   if (mobileDirectoryBtn) mobileDirectoryBtn.classList.toggle("is-active", viewMode === "directory");
   if (mobileTimelineBtn) mobileTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
   const activeView = viewMode === "tree" ? navSurface : viewMode;
+  document.body.dataset.navSurface = activeView;
   webNavButtons.forEach((button) => {
     const isActive = button.dataset.webNav === activeView;
     button.classList.toggle("is-active", isActive);
@@ -4357,15 +4361,19 @@ function renderProfileActions(person) {
   const isPinned = favoritePersonIds.has(person.id);
   return `
     <div class="profile-actions" data-profile-person="${id}">
-      <button class="btn ghost small" type="button" data-profile-action="home" data-person-id="${id}"><i data-lucide="home"></i><span>${escapeHtml(t.profileHome)}</span></button>
-      <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
-      <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
-      <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
-      <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyLink)}</span></button>
-      <button class="btn ghost small profile-more-action" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</span></button>
-      <button class="btn ghost small profile-more-action" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileFindRelation)}</span></button>
-      <button class="btn ghost small profile-more-action" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareText)}</span></button>
-      <button class="btn ghost small profile-more-action" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrint)}</span></button>
+      <div class="profile-primary-actions">
+        <button class="btn ghost small" type="button" data-profile-action="home" data-person-id="${id}"><i data-lucide="home"></i><span>${escapeHtml(t.profileHome)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
+        <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyLink)}</span></button>
+      </div>
+      <div class="profile-secondary-actions">
+        <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileFindRelation)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareText)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrint)}</span></button>
+      </div>
     </div>
   `;
 }
@@ -5584,6 +5592,8 @@ function focusPerson(personId, open = false, updateUrl = true) {
   const person = peopleById.get(personId);
   if (!person) return;
   if (!treeWrap) return;
+  navSurface = "tree";
+  updateViewSwitch();
   if (selectedPersonId && selectedPersonId !== personId && quickFamilyPeople.size > 0) {
     clearQuickFamilyFilter(false);
   }
