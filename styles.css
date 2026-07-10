@@ -7649,6 +7649,16 @@ body[data-view="profile"] .content-grid {
 }
 
 @media (max-width: 720px) {
+  body[data-nav-surface="home"] .topbar {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  body[data-nav-surface="home"] .brand {
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: 14px;
+  }
+
   .profile-page {
     width: auto;
     margin: 0 0 calc(84px + env(safe-area-inset-bottom));
