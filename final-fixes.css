@@ -132,3 +132,18 @@ body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-con
   color: #17251e !important;
   opacity: 1 !important;
 }
+
+/* Safari can apply a zero safe-area inset in a regular browser tab.  A legacy
+   negative margin then pulled the Home title into the browser chrome. Keep a
+   small, fixed breathing space instead of shifting the title upward. */
+@media (max-width: 720px) {
+  body[data-nav-surface="home"] .home-hero {
+    margin-top: 0 !important;
+    padding-top: 16px !important;
+  }
+
+  body[data-nav-surface="home"] .home-hero .brand {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
