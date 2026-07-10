@@ -257,6 +257,52 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Final surface cleanup: tree should stay focused, and Directory Home stays compact. */
+body[data-nav-surface="tree"] .home-hero,
+body[data-nav-surface="tree"] .home-birthday-feature {
+  display: none !important;
+}
+
+body[data-view="directory"] .directory-head > .page-home-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  justify-self: end;
+  width: max-content !important;
+  min-width: 84px !important;
+  max-width: 140px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+body[data-view="directory"] .directory-head > .page-home-btn span {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+  font-size: 13px;
+  line-height: 1;
+}
+
+@media (max-width: 720px) {
+  body[data-view="directory"] .directory-head {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start;
+  }
+
+  body[data-view="directory"] .directory-head > .page-home-btn {
+    width: max-content !important;
+    max-width: 120px !important;
+    justify-self: end;
+  }
+}
+
 /* Final Home precedence: this block intentionally comes after legacy page rules. */
 body[data-nav-surface="home"] .home-hero,
 body[data-nav-surface="home"] .stats,
