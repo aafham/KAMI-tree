@@ -3143,34 +3143,6 @@ function renderBirthdayPage() {
     `;
     birthdayCalendar.appendChild(monthCard);
     renderBirthdayMonthDetail(monthIndex, byDate);
-
-    const listCard = document.createElement("details");
-    listCard.className = "birthday-list-card";
-    if (shouldOpenBirthdayMonth(monthIndex, today, nextBirthdayKey, byMonth[monthIndex])) {
-      listCard.open = true;
-    }
-    const monthEntries = byMonth[monthIndex];
-    listCard.innerHTML = `
-      <summary>
-        <span>
-          <strong>${escapeHtml(monthName)}</strong>
-          <em>${monthEntries.length} ${lang === "en" ? "birthday" : "birthday"}</em>
-        </span>
-        <span class="birthday-month-count">${monthEntries.length}</span>
-      </summary>
-      <div class="birthday-list">
-        ${monthEntries.length ? monthEntries.map((entry, index) => `
-          <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-            <span class="birthday-number">${index + 1}</span>
-            <span class="birthday-person-main">
-              <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
-              <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
-            </span>
-          </button>
-        `).join("") : `<div class="birthday-empty">${escapeHtml(t.birthdayNoDate)}</div>`}
-      </div>
-    `;
-    birthdayMonthLists.appendChild(listCard);
   });
 
   birthdayCalendar.querySelectorAll("[data-birthday-date]").forEach((btn) => {
@@ -3189,7 +3161,6 @@ function renderBirthdayPage() {
   });
 
   renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey, today);
-  bindPersonLinkClicks(birthdayMonthLists);
   renderBirthdaySearchResults();
 }
 
@@ -3271,16 +3242,8 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
   const firstDay = new Date(year, monthIndex, 1).getDay();
   const weekLabels = lang === "en" ? ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] : ["Ahad", "Isn", "Sel", "Rab", "Kha", "Jum", "Sab"];
   const monthEntries = byMonth[monthIndex] || [];
-  const openedKeys = [...openBirthdayDates].filter((key) => key.startsWith(`${monthIndex}-`));
-  const selectedKey = openedKeys[openedKeys.length - 1] || (nextBirthdayKey?.startsWith(`${monthIndex}-`) ? nextBirthdayKey : "");
-  const selectedEntries = selectedKey ? byDate.get(selectedKey) || [] : [];
-  const selectedDay = selectedKey ? Number(selectedKey.split("-")[1]) : null;
-  const panelTitle = selectedEntries.length
-    ? `${selectedDay} ${monthName}`
-    : `${lang === "en" ? "Birthdays in" : "Birthday bulan"} ${monthName}`;
-  const panelSubtitle = selectedEntries.length
-    ? `${selectedEntries.length} ${lang === "en" ? "birthday on this date" : "birthday pada tarikh ini"}`
-    : `${monthEntries.length} ${lang === "en" ? "birthday this month" : "birthday bulan ini"}`;
+  const panelTitle = `${monthName} ${year}`;
+  const panelSubtitle = `${monthEntries.length} ${lang === "en" ? "birthday this month" : "birthday bulan ini"}`;
   const emptyCells = Array.from({ length: firstDay }, () => `<span class="planner-day planner-day--empty"></span>`).join("");
   const dayCells = Array.from({ length: daysInMonth }, (_, index) => {
     const day = index + 1;
@@ -3336,15 +3299,18 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
         <h3>${escapeHtml(panelTitle)}</h3>
         <p>${escapeHtml(panelSubtitle)}</p>
         <div class="birthday-list">
-          ${(selectedEntries.length ? selectedEntries : monthEntries).length ? (selectedEntries.length ? selectedEntries : monthEntries).map((entry, index) => `
-            <button class="birthday-person birthday-person--numbered" type="button" data-person-link="${escapeHtml(entry.person.id)}">
+          ${monthEntries.length ? monthEntries.map((entry, index) => {
+            const isUpcoming = `${entry.month}-${entry.day}` === nextBirthdayKey;
+            return `
+            <button class="birthday-person birthday-person--numbered${isUpcoming ? " is-upcoming-person" : ""}" type="button" data-person-link="${escapeHtml(entry.person.id)}">
               <span class="birthday-number">${index + 1}</span>
               <span class="birthday-person-main">
                 <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
                 <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
               </span>
             </button>
-          `).join("") : `<div class="birthday-empty">${escapeHtml((i18n[lang] || i18n.ms).birthdayNoDate)}</div>`}
+          `;
+          }).join("") : `<div class="birthday-empty">${escapeHtml((i18n[lang] || i18n.ms).birthdayNoDate)}</div>`}
         </div>
       </div>
     </aside>

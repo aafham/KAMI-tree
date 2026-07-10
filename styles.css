@@ -4748,6 +4748,87 @@ body.hide-tags .person-tags {
   }
 }
 
+/* Birthday planner: keep the yearly view visual-only and show the selected month's people beside the planner. */
+#birthday-month-lists {
+  display: none !important;
+}
+
+.birthday-planner {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  gap: 20px;
+}
+
+.birthday-planner-panel .planner-panel-card {
+  padding: 22px;
+}
+
+.birthday-planner-panel .birthday-list {
+  display: grid;
+  gap: 9px;
+  max-height: min(620px, calc(100vh - 220px));
+  overflow-y: auto;
+  padding-right: 3px;
+}
+
+.birthday-person.is-upcoming-person {
+  border-color: #e52b24;
+  background: linear-gradient(135deg, #fff0ed, #ffe1dc);
+  box-shadow: 0 0 0 2px color-mix(in srgb, #f02b23 22%, transparent), 0 10px 22px rgba(224, 48, 38, 0.12);
+}
+
+.birthday-person.is-upcoming-person .birthday-number {
+  background: #ef2f27;
+  color: #fff;
+}
+
+.legend-today {
+  background: #ffbf32;
+  border-color: #e99d08;
+}
+
+.legend-range {
+  background: #ff9d95;
+  border-color: #ed655c;
+}
+
+.legend-next {
+  background: #f02b23;
+  border-color: #c91b16;
+}
+
+.birthday-day.is-upcoming-range,
+.planner-day.is-upcoming-range {
+  background: color-mix(in srgb, #ff8f86 32%, var(--card));
+  border-color: #ef756d;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #ef756d 25%, transparent);
+}
+
+.birthday-day.is-today,
+.planner-day.is-today {
+  background: color-mix(in srgb, #ffbf32 56%, var(--card));
+  border-color: #eaa008;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #ffbf32 38%, transparent);
+}
+
+.birthday-day.is-next-birthday,
+.planner-day.is-next-birthday {
+  background: #f02b23;
+  border-color: #bf1d17;
+  color: #fff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #f02b23 30%, transparent), 0 8px 18px rgba(218, 40, 32, 0.18);
+}
+
+@media (max-width: 720px) {
+  .birthday-planner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .birthday-planner-panel .birthday-list {
+    max-height: none;
+  }
+}
+
 /* Shared desktop header rhythm for Directory, Birthday and Timeline. */
 body[data-view="birthday"] .tree-section,
 body[data-view="directory"] .tree-section,
