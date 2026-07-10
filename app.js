@@ -4691,8 +4691,18 @@ function renderProfileMemberCard(person, relationship = "") {
   `;
 }
 
-function renderProfileFamilyGroup(title, people, relationship = "") {
+function renderProfileFamilyGroup(title, people, relationship = "", collapsible = false) {
   if (!people.length) return "";
+  if (collapsible) {
+    return `
+      <details class="profile-family-group profile-family-group--collapsible">
+        <summary><span>${escapeHtml(title)}</span><span class="profile-family-group-count">${people.length}<i data-lucide="chevron-down"></i></span></summary>
+        <div class="profile-member-grid">
+          ${people.map((person) => renderProfileMemberCard(person, relationship)).join("")}
+        </div>
+      </details>
+    `;
+  }
   return `
     <section class="profile-family-group">
       <h4>${escapeHtml(title)} <span>${people.length}</span></h4>
@@ -4780,8 +4790,8 @@ function renderProfilePage() {
             ${renderProfileFamilyGroup(t.profileParents, family.parents)}
             ${renderProfileFamilyGroup(t.profileSiblings, family.siblings)}
             ${renderProfileFamilyGroup(t.profileChildren, family.children)}
-            ${renderProfileFamilyGroup(t.profileGrandchildrenCount, family.grandchildren)}
-            ${renderProfileFamilyGroup(t.profileGreatGrandchildrenCount, family.greatGrandchildren)}
+            ${renderProfileFamilyGroup(t.profileGrandchildrenCount, family.grandchildren, t.profileChildren, true)}
+            ${renderProfileFamilyGroup(t.profileGreatGrandchildrenCount, family.greatGrandchildren, t.profileGrandchildrenCount, true)}
           </div>
           ${!family.spouses.length && !family.parents.length && !family.siblings.length && !family.children.length ? `<p class="profile-empty-state">${escapeHtml(t.profileNoFamily)}</p>` : ""}
         </section>

@@ -279,6 +279,40 @@
   .profile-page-actions .profile-page-tree-action { grid-column: 1 / -1; }
 }
 
+.profile-page-actions .btn { gap: 9px; }
+.profile-page-actions .btn svg { flex: 0 0 auto; }
+.profile-family-group--collapsible {
+  border: 1px solid var(--line, #d6e3dd);
+  border-radius: 14px;
+  background: var(--surface, #fbfaf7);
+  overflow: hidden;
+}
+.profile-family-group--collapsible summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 16px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 750;
+}
+.profile-family-group--collapsible summary::-webkit-details-marker { display: none; }
+.profile-family-group--collapsible summary > span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted, #64736d);
+  font-size: 13px;
+}
+.profile-family-group--collapsible summary svg {
+  width: 17px;
+  height: 17px;
+  transition: transform .16s ease;
+}
+.profile-family-group--collapsible[open] summary svg { transform: rotate(180deg); }
+.profile-family-group--collapsible > .profile-member-grid { padding: 0 12px 12px; }
+
 [data-theme="dark"] {
   --bg: #0d1512;
   --bg-soft: #121c18;
