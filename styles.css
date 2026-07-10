@@ -6419,13 +6419,13 @@ body[data-nav-surface="home"] .quick-people {
 }
 
 body[data-nav-surface="home"] .brand {
-  padding-top: clamp(58px, 7vw, 92px);
-  padding-bottom: 28px;
+  padding-top: clamp(30px, 4vw, 52px);
+  padding-bottom: 20px;
 }
 
 body[data-nav-surface="home"] .brand h1 {
-  max-width: 950px;
-  font-size: clamp(46px, 5vw, 68px);
+  max-width: 1120px;
+  font-size: clamp(46px, 4.3vw, 62px);
   line-height: 1.02;
 }
 
@@ -6473,6 +6473,69 @@ body[data-nav-surface="home"] .home-feature-entry {
 
 body[data-nav-surface="home"] .quick-people {
   padding-bottom: 44px;
+}
+
+@media (min-width: 1181px) {
+  /* Desktop tree controls: search and relationship stay left; navigation and zoom stay together on the right. */
+  body[data-nav-surface="tree"] .controls {
+    grid-template-columns: minmax(340px, 0.9fr) minmax(640px, 1.1fr);
+    grid-template-areas:
+      "search search"
+      "relationship actions"
+      "generation actions";
+    gap: 14px 20px;
+    padding: 20px;
+  }
+
+  body[data-nav-surface="tree"] .control-group--search {
+    grid-area: search;
+  }
+
+  body[data-nav-surface="tree"] .relationship-finder {
+    grid-area: relationship;
+    align-self: stretch;
+  }
+
+  body[data-nav-surface="tree"] .generation-row {
+    grid-area: generation;
+    align-self: end;
+    padding: 0 2px 2px;
+  }
+
+  body[data-nav-surface="tree"] .actions-zoom {
+    grid-area: actions;
+    grid-column: auto;
+    grid-row: span 2;
+    grid-template-columns: max-content max-content;
+    grid-template-areas:
+      "primary views"
+      "zoom export";
+    align-content: start;
+    gap: 12px;
+  }
+
+  body[data-nav-surface="tree"] .action-cluster--primary {
+    grid-area: primary;
+  }
+
+  body[data-nav-surface="tree"] .action-cluster--views {
+    grid-area: views;
+  }
+
+  body[data-nav-surface="tree"] .action-cluster--zoom {
+    grid-area: zoom;
+    grid-template-columns: repeat(3, max-content);
+    align-content: start;
+  }
+
+  body[data-nav-surface="tree"] .export-actions {
+    grid-area: export;
+    align-self: start;
+  }
+
+  body[data-nav-surface="tree"] .tree-section {
+    padding-top: 4px;
+  }
 }
 
 body[data-view="birthday"] .home-feature-grid,
@@ -6738,7 +6801,7 @@ body[data-view="timeline"] .tree-section {
   }
 
   body[data-nav-surface="home"] .brand {
-    padding-top: max(34px, env(safe-area-inset-top));
+    padding-top: max(24px, env(safe-area-inset-top));
     padding-bottom: 20px;
   }
 
