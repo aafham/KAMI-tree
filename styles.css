@@ -7649,6 +7649,10 @@ body[data-view="profile"] .content-grid {
 }
 
 @media (max-width: 720px) {
+  body[data-nav-surface="home"] {
+    padding-top: 0 !important;
+  }
+
   body[data-nav-surface="home"] .topbar {
     padding-top: 0;
     padding-bottom: 0;
