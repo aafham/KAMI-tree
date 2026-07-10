@@ -9,10 +9,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260224" />
+  <link rel="stylesheet" href="styles.css?v=20260710" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
+    <nav class="web-nav" id="web-nav" aria-label="Navigasi utama">
+      <button class="web-nav-brand" type="button" data-web-nav="home" aria-label="KAMI Tree home">
+        <span class="web-nav-mark" aria-hidden="true"><i data-lucide="git-fork"></i></span>
+        <span>KAMI Tree</span>
+      </button>
+      <div class="web-nav-items">
+        <button type="button" data-web-nav="home" class="is-active"><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
+        <button type="button" data-web-nav="tree"><i data-lucide="network"></i><span data-i18n="navTree">Tree</span></button>
+        <button type="button" data-web-nav="directory"><i data-lucide="users"></i><span data-i18n="navDirectory">Direktori</span></button>
+        <button type="button" data-web-nav="birthday"><i data-lucide="cake-slice"></i><span data-i18n="navBirthday">Birthday</span></button>
+        <button type="button" data-web-nav="timeline"><i data-lucide="chart-no-axes-combined"></i><span data-i18n="navTimeline">Timeline</span></button>
+        <button type="button" data-web-nav="settings"><i data-lucide="settings"></i><span data-i18n="navSettings">Tetapan</span></button>
+      </div>
+    </nav>
     <header class="topbar">
       <div id="mobile-topbar" class="mobile-topbar" aria-label="Mobile top bar">
         <button id="mobile-self-btn" class="btn ghost mobile-topbar-action" type="button" data-i18n="focusSelfShort">Saya</button>
@@ -151,6 +165,18 @@
         <div class="stat-sub" id="stat-upcoming-meta">-</div>
       </div>
     </section>
+    <section class="home-feature-grid" id="home-feature-grid" aria-label="Akses pantas">
+      <button class="home-feature-entry" id="home-open-tree" type="button">
+        <span class="home-feature-icon" aria-hidden="true"><i data-lucide="network"></i></span>
+        <span><strong data-i18n="homeViewTreeTitle">Lihat Tree Keluarga</strong><small data-i18n="homeViewTreeHint">Buka salasilah penuh dengan zoom dan profile.</small></span>
+        <i data-lucide="chevron-right" aria-hidden="true"></i>
+      </button>
+      <button class="home-feature-entry" id="home-global-search" type="button">
+        <span class="home-feature-icon" aria-hidden="true"><i data-lucide="search"></i></span>
+        <span><strong data-i18n="homeGlobalSearchTitle">Search Global</strong><small data-i18n="homeGlobalSearchHint">Cari nama, relation, cabang dan birthday.</small></span>
+        <i data-lucide="chevron-right" aria-hidden="true"></i>
+      </button>
+    </section>
     <section class="quick-people" id="quick-people" hidden>
       <article class="quick-people-card" id="favorite-people-card" hidden>
         <div>
@@ -270,8 +296,13 @@
         </aside>
       </div>
       <section class="timeline-section" id="timeline-section" hidden>
-        <div class="timeline-head">
-          <h2 data-i18n="timelineTitle">Timeline Keluarga</h2>
+        <div class="timeline-head page-heading">
+          <div>
+            <p class="kicker" data-i18n="timelineKicker">Sejarah Keluarga</p>
+            <h2 data-i18n="timelineTitle">Timeline Keluarga</h2>
+            <p class="page-heading-sub" id="timeline-summary" data-i18n="timelineSubtitle">Ahli keluarga disusun mengikut tahun dan pilihan timeline.</p>
+          </div>
+          <button class="btn ghost small page-home-btn" type="button" data-page-home><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
         </div>
         <div class="timeline-filters-card">
           <div class="timeline-filters primary">
@@ -318,13 +349,13 @@
         <div class="timeline-list" id="timeline-list"></div>
       </section>
       <section class="birthday-section" id="birthday-section" hidden>
-        <div class="birthday-head">
-          <button id="birthday-back" class="btn ghost small" type="button" data-i18n="birthdayBack">Back ke Home</button>
+        <div class="birthday-head page-heading">
           <div>
             <p class="kicker" data-i18n="birthdayKicker">Kalendar Keluarga</p>
             <h2 data-i18n="birthdayTitle">Semua Birthday</h2>
             <p class="birthday-head-sub" id="birthday-summary">-</p>
           </div>
+          <button id="birthday-back" class="btn ghost small page-home-btn" type="button"><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
         </div>
         <div class="birthday-featured" id="birthday-featured"></div>
         <div class="birthday-tools">
@@ -356,12 +387,13 @@
         <div id="birthday-month-lists" class="birthday-month-lists"></div>
       </section>
       <section class="directory-section" id="directory-section" hidden>
-        <div class="directory-head">
+        <div class="directory-head page-heading">
           <div>
             <p class="kicker" data-i18n="directoryKicker">Senarai Keluarga</p>
             <h2 data-i18n="directoryTitle">Family Directory</h2>
+            <p class="page-heading-sub" data-i18n="directorySubtitle">Cari dan buka maklumat ahli keluarga dengan cepat.</p>
           </div>
-          <button id="directory-back" class="btn ghost small" type="button" data-i18n="directoryBack">Back ke Home</button>
+          <button id="directory-back" class="btn ghost small page-home-btn" type="button"><i data-lucide="home"></i><span data-i18n="navHome">Home</span></button>
         </div>
         <div class="directory-toolbar">
           <label class="directory-search">
@@ -427,11 +459,15 @@
     </div>
   </div>
 
-  <div class="mobile-search-overlay" id="mobile-search-overlay" hidden>
+  <div class="mobile-search-overlay global-search-overlay" id="mobile-search-overlay" hidden>
     <div class="mobile-search-backdrop" id="mobile-search-backdrop"></div>
     <div class="mobile-search-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-search-title">
       <div class="mobile-search-head">
-        <h2 id="mobile-search-title" data-i18n="mobileSearchTitle">Cari Ahli Keluarga</h2>
+        <div>
+          <p class="kicker" data-i18n="globalSearchKicker">Carian Keluarga</p>
+          <h2 id="mobile-search-title" data-i18n="globalSearchTitle">Cari Apa Saja</h2>
+          <p data-i18n="globalSearchSubtitle">Cari nama, nickname, relation, cabang, jantina, status atau birthday.</p>
+        </div>
         <button id="mobile-search-close" class="btn ghost small" type="button" data-i18n="modalClose">Tutup</button>
       </div>
       <input id="mobile-search-input" class="input" type="search" placeholder="Cari nama ahli keluarga..." data-i18n-placeholder="searchPlaceholder" />
@@ -445,10 +481,11 @@
       <button class="settings-close" type="button" aria-label="Tutup" data-settings-close="true">×</button>
       <h2 id="settings-title" data-i18n="settingsTitle">Settings</h2>
       <div class="settings-tabs" role="tablist" aria-label="Settings sections">
-        <button class="settings-tab is-active" type="button" role="tab" aria-selected="true" data-settings-tab="display">Paparan</button>
-        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="navigation">Navigasi</button>
-        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="tools">Alat</button>
-        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="about">Info</button>
+        <button class="settings-tab is-active" type="button" role="tab" aria-selected="true" data-settings-tab="display" data-i18n="settingsDisplay">Paparan</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="navigation" data-i18n="settingsNav">Navigasi</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="theme" data-i18n="themePreset">Tema</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="tools" data-i18n="settingsDataTab">Data</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="about" data-i18n="settingsAbout">Tentang</button>
       </div>
 
       <div class="settings-section" data-settings-panel="display">
@@ -464,34 +501,7 @@
             </div>
           </div>
         </div>
-        <div class="settings-row">
-          <label class="settings-select">
-            <span class="label" data-i18n="themePreset">Tema</span>
-            <select id="theme-preset" class="select">
-              <option value="default" data-i18n="themeDefault">Default</option>
-              <option value="heritage" data-i18n="themeHeritage">Heritage</option>
-              <option value="ocean" data-i18n="themeOcean">Ocean</option>
-              <option value="sunset" data-i18n="themeSunset">Sunset</option>
-            </select>
-          </label>
-          <label class="toggle">
-            <input id="toggle-theme" type="checkbox" />
-            <span class="toggle-track"></span>
-            <span class="toggle-copy">
-              <span class="toggle-label" data-i18n="themeToggle">Light / Dark</span>
-              <small data-i18n="themeToggleHint">Tukar tema cerah atau gelap.</small>
-            </span>
-          </label>
-        </div>
         <div class="settings-grid settings-grid--toggles">
-          <label class="toggle">
-            <input id="lang-toggle" type="checkbox" />
-            <span class="toggle-track"></span>
-            <span class="toggle-copy">
-              <span class="toggle-label" data-i18n="langToggle">BM / EN</span>
-              <small data-i18n="langToggleHint">Tukar bahasa paparan.</small>
-            </span>
-          </label>
           <label class="toggle">
             <input id="settings-compact" type="checkbox" />
             <span class="toggle-track"></span>
@@ -522,6 +532,37 @@
             <span class="toggle-copy">
               <span class="toggle-label" data-i18n="settingsShowTags">Show Tags</span>
               <small data-i18n="settingsShowTagsHint">Papar tag relation dan nota ringkas.</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section" data-settings-panel="theme" hidden>
+        <h3 data-i18n="themePreset">Tema</h3>
+        <div class="settings-row">
+          <label class="settings-select">
+            <span class="label" data-i18n="themePreset">Tema</span>
+            <select id="theme-preset" class="select">
+              <option value="default" data-i18n="themeDefault">Default</option>
+              <option value="heritage" data-i18n="themeHeritage">Heritage</option>
+              <option value="ocean" data-i18n="themeOcean">Ocean</option>
+              <option value="sunset" data-i18n="themeSunset">Sunset</option>
+            </select>
+          </label>
+          <label class="toggle">
+            <input id="toggle-theme" type="checkbox" />
+            <span class="toggle-track"></span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="themeToggle">Light / Dark</span>
+              <small data-i18n="themeToggleHint">Tukar tema cerah atau gelap.</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input id="lang-toggle" type="checkbox" />
+            <span class="toggle-track"></span>
+            <span class="toggle-copy">
+              <span class="toggle-label" data-i18n="langToggle">BM / EN</span>
+              <small data-i18n="langToggleHint">Tukar bahasa paparan.</small>
             </span>
           </label>
         </div>
@@ -582,16 +623,27 @@
 
       <div class="settings-section" data-settings-panel="about" hidden>
         <h3 data-i18n="settingsAbout">About</h3>
-        <div class="settings-about">
-          <span data-i18n="settingsDataVersion">Data version</span>
-          <strong id="settings-data-version">-</strong>
+        <div class="settings-about-grid">
+          <article class="settings-about-card">
+            <i data-lucide="info"></i>
+            <div><strong data-i18n="aboutFamilyTreeTitle">Salasilah Keluarga</strong><p data-i18n="aboutFamilyTreeBody">Simpan nama, hubungan dan generasi keluarga sebagai rujukan bersama.</p></div>
+          </article>
+          <article class="settings-about-card">
+            <i data-lucide="users"></i>
+            <div><strong data-i18n="aboutPurposeTitle">Untuk semua ahli keluarga</strong><p data-i18n="aboutPurposeBody">Direka supaya pelbagai golongan umur boleh mencari dan memahami hubungan keluarga.</p></div>
+          </article>
+          <article class="settings-about-card">
+            <i data-lucide="database"></i>
+            <div><strong data-i18n="settingsDataVersion">Data version</strong><p id="settings-data-version">-</p></div>
+          </article>
         </div>
       </div>
     </div>
   </div>
 
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260222" defer></script>
+  <script src="app.js?v=20260710" defer></script>
 </body>
 </html>

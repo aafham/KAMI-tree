@@ -158,11 +158,19 @@ const focusedBranchClearBtn = document.getElementById("focused-branch-clear");
 const quickFamilyFilter = document.getElementById("quick-family-filter");
 const quickFamilyLabel = document.getElementById("quick-family-label");
 const treeViewModeBtns = document.querySelectorAll("[data-tree-view-mode]");
+const webNavButtons = document.querySelectorAll("[data-web-nav]");
+const homeOpenTreeBtn = document.getElementById("home-open-tree");
+const homeGlobalSearchBtn = document.getElementById("home-global-search");
 
 
 function on(el, event, handler, options) {
   if (!el) return;
   el.addEventListener(event, handler, options);
+}
+
+function refreshIcons(root = document) {
+  if (!window.lucide?.createIcons) return;
+  window.lucide.createIcons({ root });
 }
 
 const layoutConfig = {
@@ -271,6 +279,7 @@ let directoryMoreOpen = false;
 let quickFavoritesExpanded = false;
 let quickRecentExpanded = false;
 let selectedDataHealthIssue = "all";
+let navSurface = "home";
 
 const prefs = loadPrefs();
 const i18n = {
@@ -278,6 +287,22 @@ const i18n = {
     appKicker: "Salasilah Keluarga",
     appTitle: "Paparan Generasi Keluarga",
     appSubtitle: "Semua ahli keluarga dalam satu pandangan yang jelas, mudah, dan mesra.",
+    navHome: "Home",
+    navTree: "Tree",
+    navDirectory: "Direktori",
+    navBirthday: "Birthday",
+    navTimeline: "Timeline",
+    navSettings: "Tetapan",
+    homeViewTreeTitle: "Lihat Tree Keluarga",
+    homeViewTreeHint: "Buka salasilah penuh dengan zoom dan profile.",
+    homeGlobalSearchTitle: "Search Global",
+    homeGlobalSearchHint: "Cari nama, relation, cabang dan birthday.",
+    globalSearchKicker: "Carian Keluarga",
+    globalSearchTitle: "Cari Apa Saja",
+    globalSearchSubtitle: "Cari nama, nickname, relation, cabang, jantina, status atau birthday.",
+    directorySubtitle: "Cari dan buka maklumat ahli keluarga dengan cepat.",
+    timelineKicker: "Sejarah Keluarga",
+    timelineSubtitle: "Ahli keluarga disusun mengikut tahun dan pilihan timeline.",
     searchLabel: "Carian nama",
     searchGo: "Cari & Fokus",
     searchShort: "Cari",
@@ -391,6 +416,8 @@ const i18n = {
     profileCopyLink: "Copy link",
     profileShareText: "Share text",
     profilePrint: "Print",
+    profileHome: "Home",
+    profileBirthday: "Birthday",
     profileLinkCopied: "Link ahli telah disalin.",
     profileLinkCopyFail: "Tak dapat copy link. URL sudah dikemas kini di address bar.",
     profileFamilyStats: "Ringkasan keluarga",
@@ -523,7 +550,12 @@ const i18n = {
     settingsDisplay: "Paparan",
     settingsNav: "Navigasi",
     settingsTools: "Alat",
+    settingsDataTab: "Data",
     settingsAbout: "Tentang",
+    aboutFamilyTreeTitle: "Salasilah Keluarga",
+    aboutFamilyTreeBody: "Simpan nama, hubungan dan generasi keluarga sebagai rujukan bersama.",
+    aboutPurposeTitle: "Untuk semua ahli keluarga",
+    aboutPurposeBody: "Direka supaya pelbagai golongan umur boleh mencari dan memahami hubungan keluarga.",
     settingsCompact: "Compact Mode",
     settingsCompactHint: "Padatkan kad tree untuk lihat lebih banyak ahli.",
     settingsCardSize: "Saiz Kad",
@@ -564,6 +596,22 @@ const i18n = {
     appKicker: "Family Lineage",
     appTitle: "Family Generation View",
     appSubtitle: "All family members in one clear, simple, friendly view.",
+    navHome: "Home",
+    navTree: "Tree",
+    navDirectory: "Directory",
+    navBirthday: "Birthday",
+    navTimeline: "Timeline",
+    navSettings: "Settings",
+    homeViewTreeTitle: "View Family Tree",
+    homeViewTreeHint: "Open the full family tree with zoom and profiles.",
+    homeGlobalSearchTitle: "Global Search",
+    homeGlobalSearchHint: "Search names, relations, branches and birthdays.",
+    globalSearchKicker: "Family Search",
+    globalSearchTitle: "Search Everything",
+    globalSearchSubtitle: "Search names, nicknames, relations, branches, gender, status or birthdays.",
+    directorySubtitle: "Find and open family member details quickly.",
+    timelineKicker: "Family History",
+    timelineSubtitle: "Family members arranged by year and timeline filters.",
     searchLabel: "Name search",
     searchGo: "Search & Focus",
     searchShort: "Search",
@@ -679,6 +727,8 @@ const i18n = {
     profileCopyLink: "Copy link",
     profileShareText: "Share text",
     profilePrint: "Print",
+    profileHome: "Home",
+    profileBirthday: "Birthday",
     profileLinkCopied: "Person link copied.",
     profileLinkCopyFail: "Could not copy the link. The URL was updated in the address bar.",
     profileFamilyStats: "Family summary",
@@ -811,7 +861,12 @@ const i18n = {
     settingsDisplay: "Display",
     settingsNav: "Navigation",
     settingsTools: "Tools",
+    settingsDataTab: "Data",
     settingsAbout: "About",
+    aboutFamilyTreeTitle: "Family Tree",
+    aboutFamilyTreeBody: "Keep family names, relationships and generations together as a shared reference.",
+    aboutPurposeTitle: "For every family member",
+    aboutPurposeBody: "Designed so people of different ages can find and understand family relationships.",
     settingsCompact: "Compact Mode",
     settingsCompactHint: "Tighten tree cards to show more family members.",
     settingsCardSize: "Card Size",
@@ -1235,6 +1290,13 @@ function updateViewSwitch() {
   if (directoryToggle) directoryToggle.classList.toggle("is-active", viewMode === "directory");
   if (mobileDirectoryBtn) mobileDirectoryBtn.classList.toggle("is-active", viewMode === "directory");
   if (mobileTimelineBtn) mobileTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
+  const activeView = viewMode === "tree" ? navSurface : viewMode;
+  webNavButtons.forEach((button) => {
+    const isActive = button.dataset.webNav === activeView;
+    button.classList.toggle("is-active", isActive);
+    if (isActive) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
 }
 
 function populateRelationshipFinder() {
@@ -4094,9 +4156,7 @@ function renderFamilyCountSummary(person) {
     ["grandchildren", t.profileGrandchildrenCount],
     ["greatGrandchildren", t.profileGreatGrandchildrenCount],
     ["inlaws", t.profileInlawsCount]
-  ].filter(([key]) => stats[key] > 0);
-
-  if (!items.length) return "";
+  ];
 
   return `
     <section class="profile-family-stats" aria-label="${escapeHtml(t.profileFamilyStats)}">
@@ -4104,7 +4164,7 @@ function renderFamilyCountSummary(person) {
       <div>
         ${items.map(([key, label]) => `
           <span>
-            <b>${stats[key]}</b>
+            <b>${stats[key] || "-"}</b>
             ${escapeHtml(label)}
           </span>
         `).join("")}
@@ -4297,13 +4357,15 @@ function renderProfileActions(person) {
   const isPinned = favoritePersonIds.has(person.id);
   return `
     <div class="profile-actions" data-profile-person="${id}">
-      <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}">${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</button>
-      <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}">${escapeHtml(t.profileFocusTree)}</button>
-      <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}">${escapeHtml(t.profileFindRelation)}</button>
-      <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}">${escapeHtml(t.profileFamilyView)}</button>
-      <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}">${escapeHtml(t.profileCopyLink)}</button>
-      <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}">${escapeHtml(t.profileShareText)}</button>
-      <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}">${escapeHtml(t.profilePrint)}</button>
+      <button class="btn ghost small" type="button" data-profile-action="home" data-person-id="${id}"><i data-lucide="home"></i><span>${escapeHtml(t.profileHome)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
+      <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyLink)}</span></button>
+      <button class="btn ghost small profile-more-action" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</span></button>
+      <button class="btn ghost small profile-more-action" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileFindRelation)}</span></button>
+      <button class="btn ghost small profile-more-action" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareText)}</span></button>
+      <button class="btn ghost small profile-more-action" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrint)}</span></button>
     </div>
   `;
 }
@@ -4378,6 +4440,10 @@ function bindProfileActionClicks(container) {
       const personId = btn.dataset.personId;
       const action = btn.dataset.profileAction;
       if (!personId || !action) return;
+      if (action === "home") {
+        openHomeSurface();
+        return;
+      }
       if (action === "pin") {
         toggleFavoritePerson(personId);
         const person = peopleById.get(personId);
@@ -4405,6 +4471,22 @@ function bindProfileActionClicks(container) {
       }
       if (action === "family") {
         setFocusedBranch(personId);
+        return;
+      }
+      if (action === "birthday") {
+        const person = peopleById.get(personId);
+        const birth = parseDateValue(person?.birth);
+        if (!birth) return;
+        closeStoryPanel();
+        navSurface = "birthday";
+        birthdayCalendarView = "planner";
+        birthdayPlannerMonth = birth.getMonth();
+        viewMode = "birthday";
+        applyViewMode();
+        updateViewSwitch();
+        savePrefs();
+        updateUrlState();
+        requestAnimationFrame(() => birthdayPlanner?.scrollIntoView({ behavior: "smooth", block: "start" }));
         return;
       }
       if (action === "copy") {
@@ -4524,6 +4606,7 @@ function openModal(person) {
   `;
   bindPersonLinkClicks(storyContent);
   bindProfileActionClicks(storyContent);
+  refreshIcons(storyContent);
 
   if (panelEditForm) panelEditForm.hidden = true;
   if (panelEditBtn) panelEditBtn.hidden = false;
@@ -4710,6 +4793,7 @@ function runAction(actionId) {
 
 function openDirectoryView() {
   if (viewMode === "directory") return;
+  navSurface = "directory";
   viewMode = "directory";
   applyViewMode();
   applyLanguage();
@@ -4717,6 +4801,69 @@ function openDirectoryView() {
   savePrefs();
   updateUrlState();
 }
+
+function openHomeSurface() {
+  navSurface = "home";
+  if (viewMode !== "tree") {
+    viewMode = "tree";
+    applyViewMode();
+    renderScene();
+    applyZoom();
+  }
+  closeStoryPanel();
+  updateViewSwitch();
+  savePrefs();
+  updateUrlState();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openTreeSurface() {
+  navSurface = "tree";
+  if (viewMode !== "tree") {
+    viewMode = "tree";
+    applyViewMode();
+    renderScene();
+    applyZoom();
+  }
+  updateViewSwitch();
+  savePrefs();
+  updateUrlState();
+  requestAnimationFrame(() => {
+    document.querySelector(".tree-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+webNavButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const target = button.dataset.webNav;
+    if (target === "home") return openHomeSurface();
+    if (target === "tree") return openTreeSurface();
+    if (target === "directory") return openDirectoryView();
+    if (target === "birthday") {
+      navSurface = "birthday";
+      viewMode = "birthday";
+      applyViewMode();
+      updateViewSwitch();
+      savePrefs();
+      updateUrlState();
+      return;
+    }
+    if (target === "timeline") {
+      navSurface = "timeline";
+      viewMode = "timeline";
+      applyViewMode();
+      updateViewSwitch();
+      savePrefs();
+      updateUrlState();
+      return;
+    }
+    if (target === "settings") openSettingsModal();
+  });
+});
+
+on(homeOpenTreeBtn, "click", openTreeSurface);
+on(homeGlobalSearchBtn, "click", openMobileSearch);
+document.querySelectorAll("[data-page-home]").forEach((button) => button.addEventListener("click", openHomeSurface));
 
 document.querySelectorAll(".mobile-actions [data-action]").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -4756,6 +4903,7 @@ if (relationshipFindBtn) {
 
 if (birthdayCard) {
   birthdayCard.addEventListener("click", () => {
+    navSurface = "birthday";
     viewMode = "birthday";
     applyViewMode();
     updateViewSwitch();
@@ -4764,6 +4912,7 @@ if (birthdayCard) {
   birthdayCard.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
+    navSurface = "birthday";
     viewMode = "birthday";
     applyViewMode();
     updateViewSwitch();
@@ -4773,6 +4922,7 @@ if (birthdayCard) {
 
 if (birthdayBackBtn) {
   birthdayBackBtn.addEventListener("click", () => {
+    navSurface = "home";
     viewMode = "tree";
     applyViewMode();
     updateViewSwitch();
@@ -4907,6 +5057,7 @@ if (mobileDirectoryBtn) {
 
 if (mobileTimelineBtn) {
   const openTimelineView = () => {
+    navSurface = "timeline";
     viewMode = "timeline";
     clearQuickFamilyFilter(false);
     applyViewMode();
@@ -5503,6 +5654,7 @@ if (viewToggle) {
 }
 
 function openTreeView(behavior = "smooth") {
+  navSurface = "tree";
   viewMode = "tree";
   applyViewMode();
   applyLanguage();
@@ -5524,6 +5676,7 @@ if (viewTreeBtn) {
 if (viewTimelineBtn) {
   viewTimelineBtn.addEventListener("click", () => {
     if (viewMode === "timeline") return;
+    navSurface = "timeline";
     viewMode = "timeline";
     applyViewMode();
     applyLanguage();
@@ -5533,6 +5686,7 @@ if (viewTimelineBtn) {
   });
   viewTimelineBtn.addEventListener("touchstart", () => {
     if (viewMode === "timeline") return;
+    navSurface = "timeline";
     viewMode = "timeline";
     applyViewMode();
     applyLanguage();
@@ -5558,6 +5712,7 @@ if (directoryToggle) {
 
 if (directoryBackBtn) {
   directoryBackBtn.addEventListener("click", () => {
+    navSurface = "home";
     viewMode = "tree";
     applyViewMode();
     applyLanguage();
@@ -6535,6 +6690,7 @@ function applyLanguage() {
 
   syncMobileLabels();
   if (minimapHandle) minimapHandle.textContent = t.minimapShow;
+  refreshIcons();
 }
 
 function minimapScrollTo(clientX, clientY) {
