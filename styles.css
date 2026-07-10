@@ -7655,6 +7655,7 @@ body[data-view="profile"] .content-grid {
   }
 
   body[data-nav-surface="home"] .brand {
+    margin-top: -40px !important;
     padding-top: min(28px, max(16px, env(safe-area-inset-top)));
     padding-bottom: 14px;
   }
