@@ -4712,17 +4712,12 @@ function renderProfilePageActions(person) {
       <button class="btn profile-page-tree-action" type="button" data-profile-action="focus" data-person-id="${id}">
         <i data-lucide="scan-search"></i><span>${escapeHtml(t.profileViewTree)}</span>
       </button>
-      <details class="profile-page-more">
-        <summary><i data-lucide="ellipsis"></i><span>${escapeHtml(t.profileMore)}</span></summary>
-        <div class="profile-page-more-menu">
-          <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
-          <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyShort)}</span></button>
-          <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(pinned ? t.profilePinned : t.profilePin)}</span></button>
-          <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileRelationShort)}</span></button>
-          <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareShort)}</span></button>
-          <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrintShort)}</span></button>
-        </div>
-      </details>
+      <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyShort)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(pinned ? t.profilePinned : t.profilePin)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileRelationShort)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareShort)}</span></button>
+      <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrintShort)}</span></button>
     </div>
   `;
 }

@@ -253,6 +253,32 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Profile actions stay visible; there is no hidden secondary menu. */
+.profile-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.profile-page-actions > .btn {
+  min-height: 44px;
+  justify-content: center;
+  white-space: nowrap;
+}
+.profile-page-actions .profile-page-tree-action {
+  background: var(--primary, #5a9677);
+  color: #fff;
+  border-color: transparent;
+}
+.profile-page-actions .profile-page-tree-action:hover { background: var(--primary-strong, #397558); }
+.profile-page-actions .btn svg { width: 17px; height: 17px; }
+
+@media (max-width: 720px) {
+  .profile-page-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile-page-actions > .btn { width: 100%; }
+  .profile-page-actions .profile-page-tree-action { grid-column: 1 / -1; }
+}
+
 [data-theme="dark"] {
   --bg: #0d1512;
   --bg-soft: #121c18;
