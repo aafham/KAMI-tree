@@ -8880,6 +8880,135 @@ body[data-nav-surface="home"] .home-feature-entry:hover > svg { transform: trans
   body[data-nav-surface="home"] .home-feature-entry > svg { transition: none; }
 }
 
+/* Cross-page final pass: polish non-tree archive surfaces consistently. */
+body[data-view="birthday"] .birthday-section,
+body[data-view="directory"] .directory-section,
+body[data-view="timeline"] .timeline-section {
+  width: min(1320px, calc(100% - 40px));
+  margin: 28px auto 96px;
+  padding: clamp(20px, 3vw, 34px);
+  border-radius: 24px;
+}
+body[data-view="birthday"] .birthday-head,
+body[data-view="directory"] .directory-head,
+body[data-view="timeline"] .timeline-head {
+  min-height: 88px;
+}
+body[data-view="birthday"] .birthday-head h2,
+body[data-view="directory"] .directory-head h2,
+body[data-view="timeline"] .timeline-head h2 {
+  margin: 4px 0 0;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1;
+}
+body[data-view="birthday"] .birthday-tools,
+body[data-view="directory"] .directory-toolbar {
+  position: sticky;
+  top: 92px;
+  z-index: 30;
+  box-shadow: 0 8px 22px rgba(31,42,36,.06);
+}
+body[data-view="directory"] .directory-tools {
+  border-radius: 16px;
+}
+body[data-view="directory"] .directory-card-actions,
+body[data-view="birthday"] .birthday-toggle-actions {
+  gap: 10px;
+}
+body[data-view="directory"] .directory-card-actions .btn,
+body[data-view="birthday"] .birthday-toggle-actions .btn,
+body[data-view="timeline"] .timeline-filters .btn {
+  min-height: 44px;
+  gap: 8px;
+}
+body[data-view="directory"] .directory-card:focus-within,
+body[data-view="timeline"] .timeline-item:focus-visible,
+body[data-view="birthday"] .birthday-person:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 34%, transparent);
+  outline-offset: 3px;
+}
+body[data-view="timeline"] .timeline-filters-card {
+  position: sticky;
+  top: 92px;
+  z-index: 25;
+  box-shadow: 0 8px 22px rgba(31,42,36,.06);
+}
+body[data-view="timeline"] .timeline-item {
+  cursor: pointer;
+}
+body[data-view="timeline"] .timeline-item:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--branch-color, var(--primary)) 38%, transparent);
+}
+.directory-empty,
+.birthday-empty,
+.profile-empty-state,
+.timeline-empty {
+  min-height: 120px;
+  display: grid;
+  place-items: center start;
+  gap: 8px;
+  padding: 22px;
+  border: 1px dashed color-mix(in srgb, var(--primary) 30%, var(--line));
+  border-radius: 16px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--card) 82%, var(--primary) 4%);
+}
+.quick-people-card {
+  border-radius: 20px;
+  box-shadow: 0 10px 26px rgba(31,42,36,.06);
+}
+.quick-person-chip {
+  gap: 9px;
+  min-height: 42px;
+  padding-inline: 10px 13px;
+}
+.settings-card {
+  border-radius: 24px;
+}
+.settings-tabs,
+.settings-tab { gap: 8px; }
+
+@media (max-width: 900px) {
+  body[data-view="birthday"] .birthday-section,
+  body[data-view="directory"] .directory-section,
+  body[data-view="timeline"] .timeline-section {
+    width: calc(100% - 24px);
+    margin-top: 18px;
+    padding: 18px;
+  }
+  body[data-view="birthday"] .birthday-tools,
+  body[data-view="directory"] .directory-toolbar,
+  body[data-view="timeline"] .timeline-filters-card {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  body[data-view="birthday"] .birthday-section,
+  body[data-view="directory"] .directory-section,
+  body[data-view="timeline"] .timeline-section {
+    width: 100%;
+    margin: 0 0 calc(84px + env(safe-area-inset-bottom));
+    padding: 16px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  body[data-view="birthday"] .birthday-head,
+  body[data-view="directory"] .directory-head,
+  body[data-view="timeline"] .timeline-head {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+  body[data-view="birthday"] .birthday-head h2,
+  body[data-view="directory"] .directory-head h2,
+  body[data-view="timeline"] .timeline-head h2 { font-size: 34px; }
+  body[data-view="directory"] .directory-card-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body[data-view="directory"] .directory-card-actions .btn { padding-inline: 7px; font-size: 12px; }
+  body[data-view="timeline"] .timeline-item { min-height: 112px; }
+}
+
 /* Final Home grid correction: keep desktop statistics compact and horizontal. */
 @media (min-width: 901px) {
   body[data-nav-surface="home"] .stats {
