@@ -66,6 +66,11 @@ const birthdaySearchResults = document.getElementById("birthday-search-results")
 const birthdayCalendar = document.getElementById("birthday-calendar");
 const birthdayPlanner = document.getElementById("birthday-planner");
 const birthdayMonthLists = document.getElementById("birthday-month-lists");
+const profilePage = document.getElementById("profile-page");
+const profilePageContent = document.getElementById("profile-page-content");
+const profilePageTitle = document.getElementById("profile-page-title");
+const profilePageSubtitle = document.getElementById("profile-page-subtitle");
+const profilePageBackBtn = document.getElementById("profile-page-back");
 const birthdayViewYearBtn = document.getElementById("birthday-view-year");
 const birthdayViewPlannerBtn = document.getElementById("birthday-view-planner");
 const zoomFitBtn = document.getElementById("zoom-fit");
@@ -282,6 +287,8 @@ let quickFavoritesExpanded = false;
 let quickRecentExpanded = false;
 let selectedDataHealthIssue = "all";
 let navSurface = "home";
+let profilePagePersonId = "";
+let profilePageReturnView = "tree";
 
 const prefs = loadPrefs();
 const i18n = {
@@ -411,6 +418,9 @@ const i18n = {
     homeRecentKicker: "Sejarah",
     homeRecentMembers: "Baru Dibuka",
     profileFocusTree: "Fokus dalam tree",
+    profileOpen: "Profil",
+    profileBack: "Kembali",
+    profilePageKicker: "Profil Ahli",
     profileFindRelation: "Cari hubungan",
     profileFamilyView: "Lihat keluarga ini",
     profilePin: "Pin",
@@ -563,6 +573,10 @@ const i18n = {
     aboutFamilyTreeBody: "Simpan nama, hubungan dan generasi keluarga sebagai rujukan bersama.",
     aboutPurposeTitle: "Untuk semua ahli keluarga",
     aboutPurposeBody: "Direka supaya pelbagai golongan umur boleh mencari dan memahami hubungan keluarga.",
+    aboutFeaturesTitle: "Apa yang boleh dibuat",
+    aboutFeaturesBody: "Lihat tree, buka profil, cari ahli, semak hubungan, birthday, direktori dan timeline.",
+    aboutDataTitle: "Data keluarga",
+    aboutDataBody: "Maklumat digunakan sebagai rujukan keluarga. Semak dan kemas kini data apabila ada pembetulan.",
     settingsCompact: "Compact Mode",
     settingsCompactHint: "Padatkan kad tree untuk lihat lebih banyak ahli.",
     settingsCardSize: "Saiz Kad",
@@ -728,6 +742,9 @@ const i18n = {
     homeRecentKicker: "History",
     homeRecentMembers: "Recently Viewed",
     profileFocusTree: "Focus in tree",
+    profileOpen: "Profile",
+    profileBack: "Back",
+    profilePageKicker: "Member Profile",
     profileFindRelation: "Find relationship",
     profileFamilyView: "View this family",
     profilePin: "Pin",
@@ -880,6 +897,10 @@ const i18n = {
     aboutFamilyTreeBody: "Keep family names, relationships and generations together as a shared reference.",
     aboutPurposeTitle: "For every family member",
     aboutPurposeBody: "Designed so people of different ages can find and understand family relationships.",
+    aboutFeaturesTitle: "What you can do",
+    aboutFeaturesBody: "View the tree, open profiles, search members, check relationships, birthdays, directory and timeline.",
+    aboutDataTitle: "Family data",
+    aboutDataBody: "Information is used as a family reference. Review and update data whenever corrections are needed.",
     settingsCompact: "Compact Mode",
     settingsCompactHint: "Tighten tree cards to show more family members.",
     settingsCardSize: "Card Size",
@@ -1314,7 +1335,7 @@ function updateViewSwitch() {
   if (directoryToggle) directoryToggle.classList.toggle("is-active", viewMode === "directory");
   if (mobileDirectoryBtn) mobileDirectoryBtn.classList.toggle("is-active", viewMode === "directory");
   if (mobileTimelineBtn) mobileTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
-  const activeView = viewMode === "tree" ? navSurface : viewMode;
+  const activeView = viewMode === "tree" || viewMode === "profile" ? navSurface : viewMode;
   document.body.dataset.navSurface = activeView;
   webNavButtons.forEach((button) => {
     const isActive = button.dataset.webNav === activeView;
@@ -2465,6 +2486,7 @@ function applyViewMode() {
     if (timelineSection) timelineSection.hidden = true;
     if (birthdaySection) birthdaySection.hidden = false;
     if (directorySection) directorySection.hidden = true;
+    if (profilePage) profilePage.hidden = true;
     if (treeWrap) treeWrap.hidden = true;
     if (storyPanel) storyPanel.hidden = true;
     setStoryPanelOpen(false);
@@ -2473,6 +2495,7 @@ function applyViewMode() {
     document.body.dataset.view = "directory";
     if (timelineSection) timelineSection.hidden = true;
     if (birthdaySection) birthdaySection.hidden = true;
+    if (profilePage) profilePage.hidden = true;
     if (directorySection) directorySection.hidden = false;
     if (treeWrap) treeWrap.hidden = true;
     if (storyPanel) storyPanel.hidden = true;
@@ -2483,13 +2506,25 @@ function applyViewMode() {
     if (timelineSection) timelineSection.hidden = false;
     if (birthdaySection) birthdaySection.hidden = true;
     if (directorySection) directorySection.hidden = true;
+    if (profilePage) profilePage.hidden = true;
     if (treeWrap) treeWrap.hidden = true;
     renderTimeline();
+  } else if (viewMode === "profile") {
+    document.body.dataset.view = "profile";
+    if (timelineSection) timelineSection.hidden = true;
+    if (birthdaySection) birthdaySection.hidden = true;
+    if (directorySection) directorySection.hidden = true;
+    if (treeWrap) treeWrap.hidden = true;
+    if (storyPanel) storyPanel.hidden = true;
+    setStoryPanelOpen(false);
+    if (profilePage) profilePage.hidden = false;
+    renderProfilePage();
   } else {
     document.body.dataset.view = "tree";
     if (timelineSection) timelineSection.hidden = true;
     if (birthdaySection) birthdaySection.hidden = true;
     if (directorySection) directorySection.hidden = true;
+    if (profilePage) profilePage.hidden = true;
     if (treeWrap) treeWrap.hidden = false;
   }
   applyLanguage();
@@ -2520,6 +2555,10 @@ function renderScene() {
       renderTimeline();
       return;
     }
+  }
+  if (viewMode === "profile") {
+    renderProfilePage();
+    return;
   }
 
   treeCanvas.innerHTML = "";
@@ -3655,16 +3694,16 @@ function renderDirectoryPage() {
         <button class="directory-person" type="button" data-person-link="${escapeHtml(person.id)}">
           <span class="directory-avatar">${escapeHtml(initials(shortName))}</span>
           <span class="directory-main">
-            <strong>${escapeHtml(shortName)}</strong>
-            ${fullName && fullName !== shortName ? `<small>${escapeHtml(fullName)}</small>` : ""}
-            ${person.nickname ? `<small>${escapeHtml(person.nickname)}</small>` : ""}
+            <strong>${escapeHtml(fullName || shortName)}</strong>
+            ${shortName && fullName !== shortName ? `<small>${escapeHtml(shortName)}</small>` : ""}
+            ${person.nickname && person.nickname !== shortName ? `<small>${escapeHtml(person.nickname)}</small>` : ""}
             <span class="directory-badges">
               ${badges.map((badge) => `<span class="directory-badge">${escapeHtml(badge)}</span>`).join("")}
             </span>
           </span>
         </button>
         <div class="directory-card-actions">
-          <button class="btn ghost small" type="button" data-person-link="${escapeHtml(person.id)}">${escapeHtml(t.directoryProfile)}</button>
+          <button class="btn ghost small" type="button" data-directory-action="profile" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.directoryProfile)}</button>
           <button class="btn ghost small" type="button" data-directory-action="focus" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.profileFocusTree)}</button>
           <button class="btn small" type="button" data-directory-action="family" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t.profileFamilyView)}</button>
         </div>
@@ -4372,18 +4411,27 @@ function renderIndividualLineage(person) {
   `;
 }
 
-function renderProfileActions(person) {
+function renderProfileActions(person, { fullPage = false } = {}) {
   const t = i18n[lang] || i18n.ms;
   const id = escapeHtml(person.id);
   const isPinned = favoritePersonIds.has(person.id);
-  return `
-    <div class="profile-actions" data-profile-person="${id}">
-      <div class="profile-primary-actions">
+  const primaryActions = fullPage
+    ? `
         <button class="btn ghost small" type="button" data-profile-action="home" data-person-id="${id}"><i data-lucide="home"></i><span>${escapeHtml(t.profileHome)}</span></button>
         <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
         <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
         <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
         <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyLink)}</span></button>
+      `
+    : `
+        <button class="btn ghost small" type="button" data-profile-action="profile" data-person-id="${id}"><i data-lucide="contact-round"></i><span>${escapeHtml(t.profileOpen)}</span></button>
+        <button class="btn ghost small" type="button" data-profile-action="focus" data-person-id="${id}"><i data-lucide="scan-search"></i><span>${escapeHtml(t.profileFocusTree)}</span></button>
+        <button class="btn small" type="button" data-profile-action="family" data-person-id="${id}"><i data-lucide="network"></i><span>${escapeHtml(t.profileFamilyView)}</span></button>
+      `;
+  return `
+    <div class="profile-actions${fullPage ? " profile-actions--page" : ""}" data-profile-person="${id}">
+      <div class="profile-primary-actions">
+        ${primaryActions}
       </div>
       <div class="profile-secondary-actions">
         <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(isPinned ? t.profilePinned : t.profilePin)}</span></button>
@@ -4465,6 +4513,10 @@ function bindProfileActionClicks(container) {
       const personId = btn.dataset.personId;
       const action = btn.dataset.profileAction;
       if (!personId || !action) return;
+      if (action === "profile") {
+        openProfilePage(personId, viewMode);
+        return;
+      }
       if (action === "home") {
         openHomeSurface();
         return;
@@ -4479,6 +4531,12 @@ function bindProfileActionClicks(container) {
         return;
       }
       if (action === "focus") {
+        if (viewMode === "profile") {
+          navSurface = "tree";
+          viewMode = "tree";
+          applyViewMode();
+          updateViewSwitch();
+        }
         focusPerson(personId, false, true);
         return;
       }
@@ -4495,6 +4553,12 @@ function bindProfileActionClicks(container) {
         return;
       }
       if (action === "family") {
+        if (viewMode === "profile") {
+          navSurface = "tree";
+          viewMode = "tree";
+          applyViewMode();
+          updateViewSwitch();
+        }
         setFocusedBranch(personId);
         return;
       }
@@ -4544,6 +4608,85 @@ function bindProfileActionClicks(container) {
   });
 }
 
+function renderProfilePage() {
+  if (!profilePageContent) return;
+  const person = peopleById.get(profilePagePersonId);
+  if (!person) {
+    profilePageContent.innerHTML = "";
+    return;
+  }
+  const t = i18n[lang] || i18n.ms;
+  const fullName = formatDisplayName(person.name);
+  const displayName = getShortDisplayName(fullName);
+  const birthDate = parseDateValue(person.birth);
+  const age = !person.death ? calcAge(birthDate) : null;
+  const statusText = person.death ? (lang === "en" ? "Deceased" : "Meninggal") : (lang === "en" ? "Living" : "Masih hidup");
+  if (profilePageTitle) profilePageTitle.textContent = fullName || t.profileOpen;
+  if (profilePageSubtitle) profilePageSubtitle.textContent = person.relation || "";
+  profilePageContent.innerHTML = `
+    <section class="profile-page-hero">
+      <span class="profile-page-avatar">${escapeHtml(initials(displayName || fullName))}</span>
+      <div>
+        <h3>${escapeHtml(displayName || fullName)}</h3>
+        <span>${escapeHtml(person.relation || "-")}</span>
+      </div>
+    </section>
+    ${renderFamilyCountSummary(person)}
+    ${renderProfileActions(person, { fullPage: true })}
+    <div class="profile-page-details">
+      <section class="profile-info-grid">
+        <div class="profile-info-tile"><strong>${escapeHtml(t.modalFullName)}</strong><span>${escapeHtml(fullName || "-")}</span></div>
+        <div class="profile-info-tile"><strong>${escapeHtml(t.firstNameLabel)}</strong><span>${escapeHtml(displayName || "-")}</span></div>
+        <div class="profile-info-tile"><strong>${escapeHtml(t.genderLabel)}</strong><span>${escapeHtml(getGenderLabel(person))}</span></div>
+        <div class="profile-info-tile"><strong>Status</strong><span>${escapeHtml(statusText)}</span></div>
+        <div class="profile-info-tile"><strong>${escapeHtml(t.modalRelation)}</strong><span>${escapeHtml(person.relation || "-")}</span></div>
+        <div class="profile-info-tile"><strong>${escapeHtml(t.modalBirth)}</strong><span>${escapeHtml(formatDateDisplay(person.birth) || "-")}${age !== null ? ` (${escapeHtml(t.ageLabel)}: ${age})` : ""}</span></div>
+        <div class="profile-info-tile"><strong>${escapeHtml(t.modalDeath)}</strong><span>${escapeHtml(formatDateDisplay(person.death) || "-")}</span></div>
+        <div class="profile-info-tile"><strong>${escapeHtml(t.modalNote)}</strong><span>${escapeHtml(person.note || "-")}</span></div>
+      </section>
+      <div>
+        ${renderLineageBreadcrumb(person)}
+        ${person.story ? `<section class="profile-story-card"><strong>${escapeHtml(t.modalStory)}</strong><p>${escapeHtml(person.story)}</p></section>` : ""}
+      </div>
+    </div>
+    ${renderIndividualLineage(person)}
+  `;
+  bindPersonLinkClicks(profilePageContent);
+  bindProfileActionClicks(profilePageContent);
+  refreshIcons(profilePageContent);
+}
+
+function openProfilePage(personId, returnView = viewMode) {
+  const person = peopleById.get(personId);
+  if (!person) return;
+  profilePagePersonId = personId;
+  profilePageReturnView = returnView === "profile" ? "tree" : returnView;
+  navSurface = profilePageReturnView === "tree" ? "tree" : profilePageReturnView;
+  viewMode = "profile";
+  applyViewMode();
+  updateViewSwitch();
+  updateUrlState();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function closeProfilePage() {
+  const returnView = profilePageReturnView || "tree";
+  const personId = profilePagePersonId;
+  profilePagePersonId = "";
+  navSurface = returnView === "tree" ? "tree" : returnView;
+  viewMode = returnView;
+  applyViewMode();
+  updateViewSwitch();
+  updateUrlState();
+  if (returnView === "tree" && personId) {
+    requestAnimationFrame(() => focusPerson(personId, true, true));
+  }
+}
+
+if (profilePageBackBtn) {
+  profilePageBackBtn.addEventListener("click", closeProfilePage);
+}
+
 function bindPersonLinkClicks(container) {
   if (!container) return;
   container.querySelectorAll("[data-person-link]").forEach((btn) => {
@@ -4565,6 +4708,10 @@ function bindDirectoryActions(container) {
         return;
       }
       if (!personId) return;
+      if (action === "profile") {
+        openProfilePage(personId, "directory");
+        return;
+      }
       if (action === "focus") {
         focusPerson(personId, false);
       }
@@ -4611,8 +4758,8 @@ function openModal(person) {
       <span class="profile-hero-avatar">${escapeHtml(initials(shortName || displayName))}</span>
       <div>
         <p>${escapeHtml(t.lineageTitle)}</p>
-        <h3>${escapeHtml(displayName)}</h3>
-        <span>${escapeHtml(shortName || displayName)} · ${escapeHtml(person.relation || "-")}</span>
+        <h3>${escapeHtml(shortName || displayName)}</h3>
+        <span>${escapeHtml(person.relation || "-")}</span>
       </div>
     </section>
     <section class="profile-info-grid">
@@ -5250,8 +5397,8 @@ function renderMobileSearchResults() {
   }
   mobileSearchResults.innerHTML = results.map((person) => `
     <button class="mobile-search-result" type="button" data-person-link="${escapeHtml(person.id)}">
-      <strong>${escapeHtml(getShortDisplayName(person.name))}</strong>
-      ${formatDisplayName(person.name) !== getShortDisplayName(person.name) ? `<small>${escapeHtml(formatDisplayName(person.name))}</small>` : ""}
+      <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
+      ${formatDisplayName(person.name) !== getShortDisplayName(person.name) ? `<small>${escapeHtml(getShortDisplayName(person.name))}</small>` : ""}
       <span>${escapeHtml(person.relation || formatDates(person.birth, person.death))}</span>
     </button>
   `).join("");
@@ -6696,6 +6843,7 @@ function applyLanguage() {
   updateTreeModeButtons();
   if (viewMode === "birthday") renderBirthdayPage();
   if (viewMode === "directory") renderDirectoryPage();
+  if (viewMode === "profile") renderProfilePage();
   updateFocusedBranchBar();
   updateQuickFamilyFilterBar();
   renderQuickPeople();

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260710f" />
+  <link rel="stylesheet" href="styles.css?v=20260710g" />
 </head>
 <body>
   <div class="app" id="app" data-theme="light">
@@ -448,6 +448,19 @@
         <div id="directory-summary" class="directory-summary"></div>
         <div id="directory-list" class="directory-list"></div>
       </section>
+      <section class="profile-page" id="profile-page" hidden>
+        <div class="profile-page-shell">
+          <header class="profile-page-head">
+            <button id="profile-page-back" class="btn ghost small" type="button"><i data-lucide="arrow-left"></i><span data-i18n="profileBack">Kembali</span></button>
+            <div>
+              <p class="kicker" data-i18n="profilePageKicker">Profil Ahli</p>
+              <h2 id="profile-page-title">Profil</h2>
+              <p id="profile-page-subtitle" class="page-heading-sub"></p>
+            </div>
+          </header>
+          <div id="profile-page-content" class="profile-page-content"></div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -648,6 +661,14 @@
             <div><strong data-i18n="aboutPurposeTitle">Untuk semua ahli keluarga</strong><p data-i18n="aboutPurposeBody">Direka supaya pelbagai golongan umur boleh mencari dan memahami hubungan keluarga.</p></div>
           </article>
           <article class="settings-about-card">
+            <i data-lucide="sparkles"></i>
+            <div><strong data-i18n="aboutFeaturesTitle">Apa yang boleh dibuat</strong><p data-i18n="aboutFeaturesBody">Lihat tree, buka profil, cari ahli, semak hubungan, birthday, direktori, dan timeline.</p></div>
+          </article>
+          <article class="settings-about-card">
+            <i data-lucide="shield-check"></i>
+            <div><strong data-i18n="aboutDataTitle">Data keluarga</strong><p data-i18n="aboutDataBody">Maklumat digunakan sebagai rujukan keluarga. Semak dan kemas kini data apabila ada pembetulan.</p></div>
+          </article>
+          <article class="settings-about-card">
             <i data-lucide="database"></i>
             <div><strong data-i18n="settingsDataVersion">Data version</strong><p id="settings-data-version">-</p></div>
           </article>
@@ -659,6 +680,6 @@
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260710b" defer></script>
+  <script src="app.js?v=20260710c" defer></script>
 </body>
 </html>
