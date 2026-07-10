@@ -436,6 +436,29 @@ const i18n = {
     profilePrint: "Print",
     profileHome: "Home",
     profileBirthday: "Birthday",
+    profileMore: "Tindakan lain",
+    profileViewTree: "Lihat dalam tree",
+    profileOverview: "Ringkasan",
+    profileFamilySection: "Keluarga terdekat",
+    profileAncestorsSection: "Moyang dan ibu bapa",
+    profileDescendantsSection: "Keturunan",
+    profileInformationSection: "Maklumat ahli",
+    profileSpouses: "Pasangan",
+    profileParents: "Mak / Ayah",
+    profileSiblings: "Adik-beradik",
+    profileChildren: "Anak",
+    profileGrandparents: "Atok / Nenek",
+    profileGreatGrandparents: "Moyang",
+    profileBranchDescendants: "keturunan",
+    profileFurtherDescendants: "keturunan seterusnya",
+    profileNoAncestors: "Maklumat moyang belum direkodkan.",
+    profileNoDescendants: "Tiada keturunan direkodkan.",
+    profileNoFamily: "Maklumat keluarga belum direkodkan.",
+    profileBornDied: "Lahir {birth} — Meninggal {death}",
+    profileBorn: "Lahir {birth}",
+    profileDied: "Meninggal {death}",
+    profileLifespan: "Jangka hayat: {age} tahun",
+    profileTotalDescendants: "Jumlah keturunan",
     profileLinkCopied: "Link ahli telah disalin.",
     profileLinkCopyFail: "Tak dapat copy link. URL sudah dikemas kini di address bar.",
     profileFamilyStats: "Ringkasan keluarga",
@@ -766,6 +789,29 @@ const i18n = {
     profilePrint: "Print",
     profileHome: "Home",
     profileBirthday: "Birthday",
+    profileMore: "More actions",
+    profileViewTree: "View in family tree",
+    profileOverview: "Overview",
+    profileFamilySection: "Immediate family",
+    profileAncestorsSection: "Ancestors",
+    profileDescendantsSection: "Descendants",
+    profileInformationSection: "Member information",
+    profileSpouses: "Spouse",
+    profileParents: "Parents",
+    profileSiblings: "Siblings",
+    profileChildren: "Children",
+    profileGrandparents: "Grandparents",
+    profileGreatGrandparents: "Great-grandparents",
+    profileBranchDescendants: "descendants",
+    profileFurtherDescendants: "further descendants",
+    profileNoAncestors: "Ancestor information has not been recorded.",
+    profileNoDescendants: "No descendants have been recorded.",
+    profileNoFamily: "Family information has not been recorded.",
+    profileBornDied: "Born {birth} — Died {death}",
+    profileBorn: "Born {birth}",
+    profileDied: "Died {death}",
+    profileLifespan: "Lifespan: {age} years",
+    profileTotalDescendants: "Total descendants",
     profileLinkCopied: "Person link copied.",
     profileLinkCopyFail: "Could not copy the link. The URL was updated in the address bar.",
     profileFamilyStats: "Family summary",
@@ -4622,6 +4668,65 @@ function bindProfileActionClicks(container) {
   });
 }
 
+function renderProfileMemberCard(person, relationship = "") {
+  const displayName = formatDisplayName(person.name);
+  const birthYear = parseYear(person.birth);
+  const age = !person.death ? calcAge(parseDateValue(person.birth)) : null;
+  const yearsLabel = lang === "en" ? "years" : "tahun";
+  const diedLabel = lang === "en" ? "Died" : "Meninggal";
+  const meta = person.death
+    ? `${diedLabel} ${formatDateDisplay(person.death)}`
+    : birthYear ? `${birthYear}${age !== null ? ` · ${age} ${yearsLabel}` : ""}` : "";
+  const relation = relationship || person.relation || "";
+  const color = getFamilyBranchColor(person);
+  return `
+    <button class="profile-member-card" type="button" data-person-link="${escapeHtml(person.id)}" style="--member-branch: ${escapeHtml(color)}">
+      <span class="profile-member-avatar">${escapeHtml(initials(getShortDisplayName(displayName)))}</span>
+      <span class="profile-member-copy">
+        <strong>${escapeHtml(displayName)}</strong>
+        <small>${escapeHtml([relation, meta].filter(Boolean).join(" · ") || "-")}</small>
+      </span>
+      <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+    </button>
+  `;
+}
+
+function renderProfileFamilyGroup(title, people, relationship = "") {
+  if (!people.length) return "";
+  return `
+    <section class="profile-family-group">
+      <h4>${escapeHtml(title)} <span>${people.length}</span></h4>
+      <div class="profile-member-grid">
+        ${people.map((person) => renderProfileMemberCard(person, relationship)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderProfilePageActions(person) {
+  const t = i18n[lang] || i18n.ms;
+  const id = escapeHtml(person.id);
+  const pinned = favoritePersonIds.has(person.id);
+  return `
+    <div class="profile-page-actions">
+      <button class="btn profile-page-tree-action" type="button" data-profile-action="focus" data-person-id="${id}">
+        <i data-lucide="scan-search"></i><span>${escapeHtml(t.profileViewTree)}</span>
+      </button>
+      <details class="profile-page-more">
+        <summary><i data-lucide="ellipsis"></i><span>${escapeHtml(t.profileMore)}</span></summary>
+        <div class="profile-page-more-menu">
+          <button class="btn ghost small" type="button" data-profile-action="birthday" data-person-id="${id}"><i data-lucide="cake-slice"></i><span>${escapeHtml(t.profileBirthday)}</span></button>
+          <button class="btn ghost small" type="button" data-profile-action="copy" data-person-id="${id}"><i data-lucide="copy"></i><span>${escapeHtml(t.profileCopyShort)}</span></button>
+          <button class="btn ghost small" type="button" data-profile-action="pin" data-person-id="${id}"><i data-lucide="pin"></i><span>${escapeHtml(pinned ? t.profilePinned : t.profilePin)}</span></button>
+          <button class="btn ghost small" type="button" data-profile-action="relationship" data-person-id="${id}"><i data-lucide="route"></i><span>${escapeHtml(t.profileRelationShort)}</span></button>
+          <button class="btn ghost small" type="button" data-profile-action="share" data-person-id="${id}"><i data-lucide="share-2"></i><span>${escapeHtml(t.profileShareShort)}</span></button>
+          <button class="btn ghost small" type="button" data-profile-action="print" data-person-id="${id}"><i data-lucide="printer"></i><span>${escapeHtml(t.profilePrintShort)}</span></button>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
 function renderProfilePage() {
   if (!profilePageContent) return;
   const person = peopleById.get(profilePagePersonId);
@@ -4633,37 +4738,96 @@ function renderProfilePage() {
   const fullName = formatDisplayName(person.name);
   const displayName = getShortDisplayName(fullName);
   const birthDate = parseDateValue(person.birth);
-  const age = !person.death ? calcAge(birthDate) : null;
+  const deathDate = parseDateValue(person.death);
+  const age = birthDate ? calcAge(birthDate, deathDate || new Date()) : null;
   const statusText = person.death ? (lang === "en" ? "Deceased" : "Meninggal") : (lang === "en" ? "Living" : "Masih hidup");
-  if (profilePageTitle) profilePageTitle.textContent = fullName || t.profileOpen;
-  if (profilePageSubtitle) profilePageSubtitle.textContent = person.relation || "";
+  const family = getIndividualFamily(person.id);
+  const stats = getFamilyCountSummary(person.id);
+  const totalDescendants = stats.children + stats.grandchildren + stats.greatGrandchildren;
+  const dateLine = person.birth && person.death
+    ? formatText(t.profileBornDied, { birth: formatDateDisplay(person.birth), death: formatDateDisplay(person.death) })
+    : person.birth
+      ? formatText(t.profileBorn, { birth: formatDateDisplay(person.birth) })
+      : person.death ? formatText(t.profileDied, { death: formatDateDisplay(person.death) }) : "";
+  if (profilePageTitle) profilePageTitle.textContent = t.profilePageKicker;
+  if (profilePageSubtitle) profilePageSubtitle.textContent = "";
   profilePageContent.innerHTML = `
-    <section class="profile-page-hero">
-      <span class="profile-page-avatar">${escapeHtml(initials(displayName || fullName))}</span>
-      <div>
-        <h3>${escapeHtml(displayName || fullName)}</h3>
-        <span>${escapeHtml(person.relation || "-")}</span>
+    <section class="profile-identity" id="profile-overview">
+      <div class="profile-identity-avatar">${escapeHtml(initials(displayName || fullName))}</div>
+      <div class="profile-identity-copy">
+        <p class="kicker">${escapeHtml(t.profilePageKicker)}</p>
+        <h1>${escapeHtml(fullName || displayName || t.profileOpen)}</h1>
+        <p class="profile-identity-role">${escapeHtml(person.relation || "-")}</p>
+        <p class="profile-identity-dates">${escapeHtml(dateLine || t.datesUnknown)}${age !== null ? ` · ${escapeHtml(formatText(t.profileLifespan, { age }))}` : ""}</p>
+        <span class="profile-status ${person.death ? "is-deceased" : "is-living"}">${escapeHtml(statusText)}</span>
       </div>
     </section>
-    ${renderFamilyCountSummary(person)}
-    ${renderProfileActions(person, { fullPage: true })}
-    <div class="profile-page-details">
-      <section class="profile-info-grid">
-        <div class="profile-info-tile"><strong>${escapeHtml(t.modalFullName)}</strong><span>${escapeHtml(fullName || "-")}</span></div>
-        <div class="profile-info-tile"><strong>${escapeHtml(t.firstNameLabel)}</strong><span>${escapeHtml(displayName || "-")}</span></div>
-        <div class="profile-info-tile"><strong>${escapeHtml(t.genderLabel)}</strong><span>${escapeHtml(getGenderLabel(person))}</span></div>
-        <div class="profile-info-tile"><strong>Status</strong><span>${escapeHtml(statusText)}</span></div>
-        <div class="profile-info-tile"><strong>${escapeHtml(t.modalRelation)}</strong><span>${escapeHtml(person.relation || "-")}</span></div>
-        <div class="profile-info-tile"><strong>${escapeHtml(t.modalBirth)}</strong><span>${escapeHtml(formatDateDisplay(person.birth) || "-")}${age !== null ? ` (${escapeHtml(t.ageLabel)}: ${age})` : ""}</span></div>
-        <div class="profile-info-tile"><strong>${escapeHtml(t.modalDeath)}</strong><span>${escapeHtml(formatDateDisplay(person.death) || "-")}</span></div>
-        <div class="profile-info-tile"><strong>${escapeHtml(t.modalNote)}</strong><span>${escapeHtml(person.note || "-")}</span></div>
-      </section>
-      <div>
+    <section class="profile-summary-strip" aria-label="${escapeHtml(t.profileFamilyStats)}">
+      <div><strong>${stats.children || "-"}</strong><span>${escapeHtml(t.profileChildrenCount)}</span></div>
+      <div><strong>${stats.grandchildren || "-"}</strong><span>${escapeHtml(t.profileGrandchildrenCount)}</span></div>
+      <div><strong>${stats.greatGrandchildren || "-"}</strong><span>${escapeHtml(t.profileGreatGrandchildrenCount)}</span></div>
+      <div><strong>${totalDescendants || "-"}</strong><span>${escapeHtml(t.profileTotalDescendants)}</span></div>
+    </section>
+    ${renderProfilePageActions(person)}
+    <nav class="profile-section-nav" aria-label="${escapeHtml(t.profileOverview)}">
+      <a href="#profile-overview">${escapeHtml(t.profileOverview)}</a>
+      <a href="#profile-family">${escapeHtml(t.profileFamilySection)}</a>
+      <a href="#profile-ancestors">${escapeHtml(t.profileAncestorsSection)}</a>
+      <a href="#profile-descendants">${escapeHtml(t.profileDescendantsSection)}</a>
+      <a href="#profile-information">${escapeHtml(t.profileInformationSection)}</a>
+    </nav>
+    <div class="profile-page-columns">
+      <main class="profile-page-main">
+        <section class="profile-content-section" id="profile-family">
+          <div class="profile-section-heading"><p class="kicker">${escapeHtml(t.profileFamilySection)}</p><h2>${escapeHtml(t.profileFamilySection)}</h2></div>
+          <div class="profile-family-groups">
+            ${renderProfileFamilyGroup(t.profileSpouses, family.spouses)}
+            ${renderProfileFamilyGroup(t.profileParents, family.parents)}
+            ${renderProfileFamilyGroup(t.profileSiblings, family.siblings)}
+            ${renderProfileFamilyGroup(t.profileChildren, family.children)}
+          </div>
+          ${!family.spouses.length && !family.parents.length && !family.siblings.length && !family.children.length ? `<p class="profile-empty-state">${escapeHtml(t.profileNoFamily)}</p>` : ""}
+        </section>
+        <section class="profile-content-section" id="profile-ancestors">
+          <div class="profile-section-heading"><p class="kicker">${escapeHtml(t.profileAncestorsSection)}</p><h2>${escapeHtml(t.profileAncestorsSection)}</h2></div>
+          <div class="profile-family-groups">
+            ${renderProfileFamilyGroup(t.profileParents, family.parents)}
+            ${renderProfileFamilyGroup(t.profileGrandparents, family.grandparents)}
+            ${renderProfileFamilyGroup(t.profileGreatGrandparents, family.greatGrandparents)}
+          </div>
+          ${!family.parents.length && !family.grandparents.length && !family.greatGrandparents.length ? `<p class="profile-empty-state">${escapeHtml(t.profileNoAncestors)}</p>` : ""}
+        </section>
+        <section class="profile-content-section" id="profile-descendants">
+          <div class="profile-section-heading"><p class="kicker">${escapeHtml(t.profileDescendantsSection)}</p><h2>${escapeHtml(t.profileDescendantsSection)}</h2></div>
+          <div class="profile-descendant-branches">
+            ${family.children.map((child) => {
+              const children = uniquePeople(getChildIds(child.id));
+              const further = children.reduce((sum, member) => sum + getDescendantIds(member.id).length, 0);
+              return `<details class="profile-descendant-branch"><summary><span class="profile-branch-summary"><strong>${escapeHtml(formatDisplayName(child.name))}</strong><small>${children.length} ${escapeHtml(t.profileBranchDescendants)}${further ? ` · ${further} ${escapeHtml(t.profileFurtherDescendants)}` : ""}</small></span><i data-lucide="chevron-down"></i></summary><div class="profile-branch-content"><div class="profile-member-grid">${children.map((member) => renderProfileMemberCard(member, t.profileChildren)).join("")}</div></div></details>`;
+            }).join("")}
+          </div>
+          ${!family.children.length ? `<p class="profile-empty-state">${escapeHtml(t.profileNoDescendants)}</p>` : ""}
+        </section>
+      </main>
+      <aside class="profile-page-sidebar">
+        <section class="profile-information-panel" id="profile-information">
+          <div class="profile-section-heading"><p class="kicker">${escapeHtml(t.profileInformationSection)}</p><h2>${escapeHtml(t.profileInformationSection)}</h2></div>
+          <dl class="profile-definition-list">
+            <div><dt>${escapeHtml(t.modalFullName)}</dt><dd>${escapeHtml(fullName || "-")}</dd></div>
+            <div><dt>${escapeHtml(t.firstNameLabel)}</dt><dd>${escapeHtml(displayName || "-")}</dd></div>
+            <div><dt>${escapeHtml(t.genderLabel)}</dt><dd>${escapeHtml(getGenderLabel(person))}</dd></div>
+            <div><dt>${escapeHtml(t.modalRelation)}</dt><dd>${escapeHtml(person.relation || "-")}</dd></div>
+            <div><dt>${escapeHtml(t.modalBirth)}</dt><dd>${escapeHtml(formatDateDisplay(person.birth) || "-")}</dd></div>
+            ${person.death ? `<div><dt>${escapeHtml(t.modalDeath)}</dt><dd>${escapeHtml(formatDateDisplay(person.death))}</dd></div>` : ""}
+            <div><dt>Status</dt><dd>${escapeHtml(statusText)}</dd></div>
+            ${age !== null ? `<div><dt>${escapeHtml(t.ageLabel)}</dt><dd>${age} ${escapeHtml(lang === "en" ? "years" : "tahun")}</dd></div>` : ""}
+          </dl>
+        </section>
         ${renderLineageBreadcrumb(person)}
-        ${person.story ? `<section class="profile-story-card"><strong>${escapeHtml(t.modalStory)}</strong><p>${escapeHtml(person.story)}</p></section>` : ""}
-      </div>
+        ${person.note ? `<section class="profile-note-panel"><h2>${escapeHtml(t.modalNote)}</h2><p>${escapeHtml(person.note)}</p></section>` : ""}
+        ${person.story ? `<section class="profile-note-panel"><h2>${escapeHtml(t.modalStory)}</h2><p>${escapeHtml(person.story)}</p></section>` : ""}
+      </aside>
     </div>
-    ${renderIndividualLineage(person)}
   `;
   bindPersonLinkClicks(profilePageContent);
   bindProfileActionClicks(profilePageContent);

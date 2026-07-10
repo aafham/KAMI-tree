@@ -24,6 +24,235 @@
   --ring-strong: 0 0 0 4px rgba(79, 138, 106, 0.25);
 }
 
+/* Final profile-page precedence: keep the archive layout above legacy profile rules. */
+.profile-page {
+  width: min(1260px, calc(100% - 40px));
+  margin: 24px auto 96px;
+}
+
+.profile-page-shell {
+  padding: 28px;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--bg-soft) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  box-shadow: 0 18px 48px rgba(31, 42, 36, 0.08);
+}
+
+.profile-page-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.profile-page-head h2 {
+  margin: 0;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.profile-page-head .page-heading-sub:empty {
+  display: none;
+}
+
+.profile-page-content {
+  display: grid;
+  gap: 18px;
+  padding-top: 22px;
+}
+
+.profile-page-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.profile-page-main,
+.profile-page-sidebar {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.profile-page-sidebar {
+  position: sticky;
+  top: 58px;
+}
+
+.profile-content-section,
+.profile-information-panel,
+.profile-note-panel,
+.profile-page-sidebar .lineage-breadcrumb {
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+  border-radius: 20px;
+  background: var(--card);
+}
+
+.profile-section-heading h2 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.15;
+}
+
+.profile-family-groups,
+.profile-descendant-branches {
+  display: grid;
+  gap: 20px;
+  margin-top: 22px;
+}
+
+.profile-family-group h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.profile-family-group h4 span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 13%, var(--card));
+  font-size: 12px;
+}
+
+.profile-member-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.profile-member-card {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--member-branch, var(--primary)) 22%, transparent);
+  border-left: 3px solid var(--member-branch, var(--primary));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--member-branch, var(--primary)) 5%, var(--card));
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.profile-member-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+  border-color: color-mix(in srgb, var(--member-branch, var(--primary)) 48%, transparent);
+}
+
+.profile-member-card > svg {
+  color: var(--primary);
+}
+
+.profile-member-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.profile-member-copy strong,
+.profile-member-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-member-copy strong { font-size: 14px; }
+.profile-member-copy small { color: var(--muted); font-size: 12px; }
+
+.profile-empty-state {
+  margin: 18px 0 0;
+  padding: 14px;
+  border: 1px dashed color-mix(in srgb, var(--primary) 24%, transparent);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.profile-definition-list {
+  display: grid;
+  gap: 0;
+  margin: 20px 0 0;
+}
+
+.profile-definition-list div {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid color-mix(in srgb, var(--primary) 11%, transparent);
+}
+
+.profile-definition-list dt { color: var(--muted); font-size: 13px; }
+.profile-definition-list dd { margin: 0; font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+
+.profile-page-sidebar .lineage-breadcrumb {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.profile-page-sidebar .lineage-breadcrumb > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.profile-note-panel h2 { margin: 0 0 8px; font-size: 18px; }
+.profile-note-panel p { margin: 0; color: var(--muted); white-space: pre-wrap; }
+
+.profile-descendant-branch {
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 4%, var(--card));
+  overflow: hidden;
+}
+
+.profile-descendant-branch summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.profile-descendant-branch summary::-webkit-details-marker { display: none; }
+.profile-branch-summary { display: grid; gap: 2px; }
+.profile-branch-summary small { color: var(--muted); font-size: 12px; }
+.profile-descendant-branch summary > svg { color: var(--primary); transition: transform 0.18s ease; }
+.profile-descendant-branch[open] summary > svg { transform: rotate(180deg); }
+.profile-branch-content { padding: 0 16px 16px; }
+
+@media (max-width: 900px) {
+  .profile-page-columns { grid-template-columns: 1fr; }
+  .profile-page-sidebar { position: static; }
+}
+
+@media (max-width: 720px) {
+  .profile-page { width: auto; margin: 0 0 calc(84px + env(safe-area-inset-bottom)); }
+  .profile-page-shell { padding: 18px 14px 28px; border: 0; border-radius: 0; box-shadow: none; }
+  .profile-page-head { padding-bottom: 14px; }
+  .profile-page-columns { grid-template-columns: 1fr; }
+  .profile-page-sidebar { position: static; }
+  .profile-member-grid { grid-template-columns: 1fr; }
+}
+
 [data-theme="dark"] {
   --bg: #0d1512;
   --bg-soft: #121c18;
@@ -4770,6 +4999,550 @@ body.hide-tags .person-tags {
   }
 }
 
+/* Desktop family archive profile. This intentionally uses a separate structure from the Tree side panel. */
+.profile-page {
+  width: min(1260px, calc(100% - 40px));
+  margin: 24px auto 96px;
+}
+
+.profile-page-shell {
+  padding: 28px;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--bg-soft) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  box-shadow: 0 18px 48px rgba(31, 42, 36, 0.08);
+}
+
+.profile-page-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.profile-page-head h2 {
+  margin: 0;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.profile-page-head .page-heading-sub:empty {
+  display: none;
+}
+
+.profile-page-content {
+  display: grid;
+  gap: 18px;
+  padding-top: 22px;
+}
+
+.profile-identity {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--member-branch, var(--primary)) 25%, transparent);
+  border-left: 5px solid var(--member-branch, var(--primary));
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--member-branch, var(--primary)) 8%, var(--card));
+}
+
+.profile-identity-avatar {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--primary);
+  font-size: 25px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.profile-identity-copy .kicker,
+.profile-section-heading .kicker {
+  margin: 0 0 4px;
+  color: var(--primary);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.profile-identity-copy h1 {
+  max-width: 26ch;
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: clamp(34px, 4vw, 46px);
+  line-height: 1.04;
+  overflow-wrap: anywhere;
+}
+
+.profile-identity-role,
+.profile-identity-dates {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.profile-identity-role {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.profile-status {
+  display: inline-flex;
+  width: max-content;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.profile-status.is-living {
+  color: #246b4d;
+  background: rgba(159, 235, 194, 0.48);
+}
+
+.profile-status.is-deceased {
+  color: #9a302e;
+  background: rgba(242, 173, 169, 0.42);
+}
+
+.profile-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+  border-radius: 18px;
+  background: var(--card);
+}
+
+.profile-summary-strip div {
+  display: grid;
+  gap: 2px;
+  min-height: 72px;
+  align-content: center;
+  padding: 8px 12px;
+  border-left: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+}
+
+.profile-summary-strip strong {
+  font-family: "Fraunces", serif;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.profile-summary-strip span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.profile-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 5%, var(--card));
+}
+
+.profile-page-tree-action {
+  min-height: 44px;
+}
+
+.profile-page-more {
+  position: relative;
+}
+
+.profile-page-more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+.profile-page-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-page-more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(132px, 1fr));
+  gap: 7px;
+  width: 300px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow-strong);
+}
+
+.profile-page-more-menu .btn {
+  min-height: 42px;
+  justify-content: flex-start;
+}
+
+.profile-section-nav {
+  position: sticky;
+  top: 12px;
+  z-index: 12;
+  display: flex;
+  gap: 4px;
+  width: max-content;
+  max-width: 100%;
+  padding: 5px;
+  overflow-x: auto;
+  border: 1px solid color-mix(in srgb, var(--primary) 13%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.profile-section-nav a {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.profile-section-nav a:hover,
+.profile-section-nav a:focus-visible {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+}
+
+.profile-page-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.profile-page-main,
+.profile-page-sidebar {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.profile-content-section,
+.profile-information-panel,
+.profile-note-panel,
+.profile-page-sidebar .lineage-breadcrumb {
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+  border-radius: 20px;
+  background: var(--card);
+}
+
+.profile-section-heading h2 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.15;
+}
+
+.profile-family-groups {
+  display: grid;
+  gap: 20px;
+  margin-top: 22px;
+}
+
+.profile-family-group h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.profile-family-group h4 span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 13%, var(--card));
+  font-size: 12px;
+}
+
+.profile-member-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.profile-member-card {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--member-branch, var(--primary)) 22%, transparent);
+  border-left: 3px solid var(--member-branch, var(--primary));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--member-branch, var(--primary)) 5%, var(--card));
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.profile-member-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+  border-color: color-mix(in srgb, var(--member-branch, var(--primary)) 48%, transparent);
+}
+
+.profile-member-card:focus-visible,
+.profile-page-more summary:focus-visible,
+.profile-section-nav a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  outline-offset: 2px;
+}
+
+.profile-member-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--member-branch, var(--primary));
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.profile-member-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.profile-member-copy strong,
+.profile-member-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-member-copy strong {
+  font-size: 14px;
+}
+
+.profile-member-copy small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.profile-member-card > svg {
+  color: var(--primary);
+}
+
+.profile-empty-state {
+  margin: 18px 0 0;
+  padding: 14px;
+  border: 1px dashed color-mix(in srgb, var(--primary) 24%, transparent);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.profile-page-sidebar {
+  position: sticky;
+  top: 58px;
+}
+
+.profile-definition-list {
+  display: grid;
+  gap: 0;
+  margin: 20px 0 0;
+}
+
+.profile-definition-list div {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid color-mix(in srgb, var(--primary) 11%, transparent);
+}
+
+.profile-definition-list dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.profile-definition-list dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.profile-page-sidebar .lineage-breadcrumb {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.profile-page-sidebar .lineage-breadcrumb > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.profile-note-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.profile-note-panel p {
+  margin: 0;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+.profile-descendant-branches {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.profile-descendant-branch {
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 4%, var(--card));
+  overflow: hidden;
+}
+
+.profile-descendant-branch summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.profile-descendant-branch summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-branch-summary {
+  display: grid;
+  gap: 2px;
+}
+
+.profile-branch-summary small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.profile-descendant-branch summary > svg {
+  color: var(--primary);
+  transition: transform 0.18s ease;
+}
+
+.profile-descendant-branch[open] summary > svg {
+  transform: rotate(180deg);
+}
+
+.profile-branch-content {
+  padding: 0 16px 16px;
+}
+
+@media (max-width: 900px) {
+  .profile-page-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .profile-page {
+    width: auto;
+    margin: 0 0 calc(84px + env(safe-area-inset-bottom));
+  }
+
+  .profile-page-shell {
+    padding: 18px 14px 28px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .profile-page-head {
+    padding-bottom: 14px;
+  }
+
+  .profile-identity {
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .profile-identity-avatar {
+    width: 62px;
+    height: 62px;
+    font-size: 18px;
+  }
+
+  .profile-identity-copy h1 {
+    font-size: 28px;
+  }
+
+  .profile-summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-page-actions {
+    flex-wrap: wrap;
+  }
+
+  .profile-page-more-menu {
+    right: 0;
+    left: auto;
+    width: min(300px, calc(100vw - 48px));
+  }
+
+  .profile-section-nav {
+    width: 100%;
+  }
+
+  .profile-member-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Birthday planner: keep the yearly view visual-only and show the selected month's people beside the planner. */
 #birthday-month-lists {
   display: none !important;
@@ -7706,4 +8479,150 @@ body[data-view="profile"] .content-grid {
   .settings-about-card:last-child {
     grid-column: auto;
   }
+}
+
+/* Final desktop profile layout. Keep this after legacy profile rules. */
+.profile-page {
+  width: min(1260px, calc(100% - 40px));
+  margin: 24px auto 96px;
+}
+
+.profile-page-shell {
+  padding: 28px;
+  border: 1px solid var(--line, #d6e3dd);
+  border-radius: 24px;
+  background: var(--surface, #fbfaf7);
+  box-shadow: 0 18px 48px rgba(35, 67, 54, .10);
+}
+
+.profile-page-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line, #d6e3dd);
+}
+
+.profile-page-head > div { min-width: 0; }
+.profile-page-head h2 {
+  margin: 2px 0 0;
+  font: 700 22px/1.15 var(--font-sans, "Source Sans 3", sans-serif);
+}
+.profile-page-head .page-heading-sub:empty { display: none; }
+.profile-page-content { display: grid; gap: 18px; padding-top: 22px; }
+
+.profile-page-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, .85fr);
+  align-items: start;
+  gap: 18px;
+}
+
+.profile-page-main,
+.profile-page-sidebar { display: grid; gap: 18px; min-width: 0; }
+.profile-page-sidebar { position: sticky; top: 18px; }
+
+.profile-content-section,
+.profile-information-panel,
+.profile-note-panel,
+.profile-page-sidebar .lineage-breadcrumb {
+  padding: 22px;
+  border: 1px solid var(--line, #d6e3dd);
+  border-radius: 18px;
+  background: var(--surface-raised, #fff);
+}
+
+.profile-section-heading { margin-bottom: 18px; }
+.profile-section-heading .kicker { margin: 0 0 5px; }
+.profile-section-heading h2 {
+  margin: 0;
+  font: 700 26px/1.15 var(--font-serif, Fraunces, serif);
+}
+.profile-family-groups { display: grid; gap: 20px; }
+.profile-family-group { display: grid; gap: 10px; }
+.profile-family-group h4 {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-size: 16px;
+}
+.profile-family-group h4 span,
+.profile-descendant-branch summary small {
+  color: var(--muted, #64736d);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.profile-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.profile-member-card {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--member-branch, #6b9f82) 32%, var(--line, #d6e3dd));
+  border-left: 4px solid var(--member-branch, #6b9f82);
+  border-radius: 14px;
+  background: var(--surface, #fbfaf7);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.profile-member-card:hover,
+.profile-member-card:focus-visible { transform: translateY(-2px); box-shadow: 0 9px 20px rgba(35, 67, 54, .10); }
+.profile-member-card > i { width: 16px; color: var(--member-branch, #6b9f82); }
+.profile-member-avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--member-branch, #6b9f82) 28%, #fff);
+  color: var(--ink, #213129);
+  font-weight: 800;
+  font-size: 12px;
+}
+.profile-member-copy { display: grid; min-width: 0; gap: 3px; }
+.profile-member-copy strong,
+.profile-member-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-member-copy strong { font-size: 15px; }
+.profile-member-copy small { color: var(--muted, #64736d); font-size: 12px; }
+.profile-empty-state { margin: 0; color: var(--muted, #64736d); }
+
+.profile-definition-list { display: grid; gap: 0; margin: 0; }
+.profile-definition-list > div {
+  display: grid;
+  grid-template-columns: minmax(100px, .7fr) minmax(0, 1.3fr);
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line, #d6e3dd);
+}
+.profile-definition-list > div:last-child { border-bottom: 0; }
+.profile-definition-list dt { color: var(--muted, #64736d); font-size: 13px; font-weight: 700; }
+.profile-definition-list dd { margin: 0; font-weight: 650; overflow-wrap: anywhere; }
+.profile-note-panel h2 { margin: 0 0 8px; font-size: 17px; }
+.profile-note-panel p { margin: 0; color: var(--muted, #64736d); line-height: 1.55; }
+
+.profile-descendant-branches { display: grid; gap: 10px; }
+.profile-descendant-branch { border: 1px solid var(--line, #d6e3dd); border-radius: 14px; background: var(--surface, #fbfaf7); overflow: hidden; }
+.profile-descendant-branch summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 16px; cursor: pointer; list-style: none; }
+.profile-descendant-branch summary::-webkit-details-marker { display: none; }
+.profile-branch-summary { display: grid; gap: 3px; }
+.profile-branch-content { padding: 0 12px 12px; }
+
+@media (max-width: 900px) {
+  .profile-page-columns { grid-template-columns: 1fr; }
+  .profile-page-sidebar { position: static; }
+}
+
+@media (max-width: 720px) {
+  .profile-page { width: auto; margin: 0 0 calc(84px + env(safe-area-inset-bottom)); }
+  .profile-page-shell { padding: 18px 14px 28px; border: 0; border-radius: 0; box-shadow: none; }
+  .profile-page-head { padding-bottom: 14px; }
+  .profile-page-columns { grid-template-columns: 1fr; }
+  .profile-page-sidebar { position: static; }
+  .profile-member-grid { grid-template-columns: 1fr; }
 }
