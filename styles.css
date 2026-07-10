@@ -4770,7 +4770,8 @@ body.hide-tags .person-tags {
 }
 
 @media (max-width: 640px) {
-  :root {
+:root {
+  --ui-font-scale: 1;
     --card-width: 180px;
     --card-gap: 12px;
   }

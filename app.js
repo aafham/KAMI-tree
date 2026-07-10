@@ -96,6 +96,7 @@ const bottomSheet = document.getElementById("bottom-sheet");
 const settingsModal = document.getElementById("settings-modal");
 const settingsCompact = document.getElementById("settings-compact");
 const settingsCardScale = document.getElementById("setting-card-scale");
+const settingsFontScale = document.getElementById("setting-font-scale");
 const settingsMinimap = document.getElementById("settings-minimap");
 const settingsDrag = document.getElementById("settings-drag");
 const settingsReset = document.getElementById("setting-reset-settings");
@@ -238,6 +239,7 @@ let recentPersonIds = [];
 let themePreset = "default";
 let showLines = true;
 let cardScale = 1;
+let fontScale = 1;
 let minimapEnabled = true;
 let dragToPan = true;
 let defaultView = "tree";
@@ -453,11 +455,14 @@ const i18n = {
     modalNote: "Catatan",
     modalStory: "Cerita",
     lineageTitle: "Salasilah Individu",
+    lineageGreatGrandparents: "Moyang",
     lineageGrandparents: "Atok / Nenek",
     lineageParents: "Mak / Ayah",
     lineageSiblings: "Adik-beradik",
     lineageSpouses: "Pasangan",
     lineageChildren: "Anak",
+    lineageGrandchildren: "Cucu",
+    lineageGreatGrandchildren: "Cicit",
     lineageNone: "Tiada data",
     modalFullName: "Nama penuh",
     modalImage: "URL gambar",
@@ -547,6 +552,8 @@ const i18n = {
     themeSunset: "Sunset",
     exportMenu: "Download",
     settingsTitle: "Tetapan",
+    settingsKicker: "Tetapan App",
+    settingsSubtitle: "Ubah paparan, navigasi, bahasa, tema dan data website.",
     settingsDisplay: "Paparan",
     settingsNav: "Navigasi",
     settingsTools: "Alat",
@@ -559,6 +566,7 @@ const i18n = {
     settingsCompact: "Compact Mode",
     settingsCompactHint: "Padatkan kad tree untuk lihat lebih banyak ahli.",
     settingsCardSize: "Saiz Kad",
+    settingsFontSize: "Saiz Tulisan",
     settingsSizeSmall: "Kecil",
     settingsSizeNormal: "Normal",
     settingsSizeLarge: "Besar",
@@ -764,11 +772,14 @@ const i18n = {
     modalNote: "Notes",
     modalStory: "Story",
     lineageTitle: "Individual Lineage",
+    lineageGreatGrandparents: "Great-grandparents",
     lineageGrandparents: "Grandparents",
     lineageParents: "Parents",
     lineageSiblings: "Siblings",
     lineageSpouses: "Spouses",
     lineageChildren: "Children",
+    lineageGrandchildren: "Grandchildren",
+    lineageGreatGrandchildren: "Great-grandchildren",
     lineageNone: "No data",
     modalFullName: "Full name",
     modalImage: "Image URL",
@@ -858,6 +869,8 @@ const i18n = {
     themeSunset: "Sunset",
     exportMenu: "Download",
     settingsTitle: "Settings",
+    settingsKicker: "App Settings",
+    settingsSubtitle: "Change display, navigation, language, theme and website data.",
     settingsDisplay: "Display",
     settingsNav: "Navigation",
     settingsTools: "Tools",
@@ -870,6 +883,7 @@ const i18n = {
     settingsCompact: "Compact Mode",
     settingsCompactHint: "Tighten tree cards to show more family members.",
     settingsCardSize: "Card Size",
+    settingsFontSize: "Text Size",
     settingsSizeSmall: "Small",
     settingsSizeNormal: "Normal",
     settingsSizeLarge: "Large",
@@ -1129,6 +1143,13 @@ function updateStats() {
       if (statUpcomingMeta) statUpcomingMeta.textContent = meta;
     }
   }
+}
+
+function applyFontScale() {
+  const next = Math.min(1.2, Math.max(0.9, Number(fontScale) || 1));
+  fontScale = next;
+  document.documentElement.style.setProperty("--ui-font-scale", String(next));
+  document.documentElement.style.fontSize = `${16 * next}px`;
 }
 
 function populateTimelineFilters() {
@@ -1655,6 +1676,7 @@ function initFromData(data) {
   if (prefs.themePreset) themePreset = prefs.themePreset;
   if (prefs.showLines !== undefined) showLines = Boolean(prefs.showLines);
   if (prefs.cardScale) cardScale = Number(prefs.cardScale) || 1;
+  if (prefs.fontScale) fontScale = Number(prefs.fontScale) || 1;
   if (prefs.minimapEnabled !== undefined) minimapEnabled = Boolean(prefs.minimapEnabled);
   if (prefs.dragToPan !== undefined) dragToPan = Boolean(prefs.dragToPan);
   if (prefs.showBirthdate !== undefined) showBirthdate = Boolean(prefs.showBirthdate);
@@ -1667,6 +1689,7 @@ function initFromData(data) {
   if (!GENERATION_FILTER_ENABLED) hiddenGenerations.clear();
 
   applyCardScale();
+  applyFontScale();
   buildLayout();
   updateStats();
   renderQuickPeople();
@@ -1696,6 +1719,7 @@ function initFromData(data) {
   applyDetailsVisibility();
   if (themePresetSelect) themePresetSelect.value = themePreset;
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
+  if (settingsFontScale) settingsFontScale.value = String(fontScale);
   if (settingsResetSelf) settingsResetSelf.textContent = (i18n[lang] || i18n.ms).resetSelf;
   if (settingsCompact) settingsCompact.checked = compactMode;
   if (settingsMinimap) settingsMinimap.checked = minimapEnabled;
@@ -1846,6 +1870,7 @@ function savePrefs() {
     themePreset,
     showLines,
     cardScale,
+    fontScale,
     minimapEnabled,
     dragToPan,
     showBirthdate,
@@ -4075,6 +4100,14 @@ function getIndividualFamily(personId) {
     if (grandUnion.partner2) grandparentIds.push(grandUnion.partner2);
   });
 
+  const greatGrandparentIds = [];
+  grandparentIds.forEach((grandparentId) => {
+    const greatGrandUnion = getParentUnion(grandparentId);
+    if (!greatGrandUnion) return;
+    if (greatGrandUnion.partner1) greatGrandparentIds.push(greatGrandUnion.partner1);
+    if (greatGrandUnion.partner2) greatGrandparentIds.push(greatGrandUnion.partner2);
+  });
+
   const spouseIds = [];
   const childIds = [];
   (treeData?.unions || []).forEach((union) => {
@@ -4084,12 +4117,18 @@ function getIndividualFamily(personId) {
     (union.children || []).forEach((childId) => childIds.push(childId));
   });
 
+  const grandchildIds = childIds.flatMap((childId) => getChildIds(childId));
+  const greatGrandchildIds = grandchildIds.flatMap((grandchildId) => getChildIds(grandchildId));
+
   return {
+    greatGrandparents: uniquePeople(greatGrandparentIds),
     grandparents: uniquePeople(grandparentIds),
     parents: uniquePeople(parentIds),
     siblings: uniquePeople(siblingIds),
     spouses: uniquePeople(spouseIds),
-    children: uniquePeople(childIds)
+    children: uniquePeople(childIds),
+    grandchildren: uniquePeople(grandchildIds),
+    greatGrandchildren: uniquePeople(greatGrandchildIds)
   };
 }
 
@@ -4332,6 +4371,10 @@ function renderIndividualLineage(person) {
     <section class="lineage-section">
       <h3>${escapeHtml(t.lineageTitle)}</h3>
       <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageGreatGrandparents)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.greatGrandparents)}</div>
+      </div>
+      <div class="lineage-row">
         <strong>${escapeHtml(t.lineageGrandparents)}</strong>
         <div class="lineage-list">${renderPersonChips(family.grandparents)}</div>
       </div>
@@ -4350,6 +4393,14 @@ function renderIndividualLineage(person) {
       <div class="lineage-row">
         <strong>${escapeHtml(t.lineageChildren)}</strong>
         <div class="lineage-list">${renderPersonChips(family.children)}</div>
+      </div>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageGrandchildren)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.grandchildren)}</div>
+      </div>
+      <div class="lineage-row">
+        <strong>${escapeHtml(t.lineageGreatGrandchildren)}</strong>
+        <div class="lineage-list">${renderPersonChips(family.greatGrandchildren)}</div>
       </div>
     </section>
   `;
@@ -6017,6 +6068,14 @@ if (settingsReset) {
   });
 }
 
+if (settingsFontScale) {
+  settingsFontScale.addEventListener("input", () => {
+    fontScale = Number(settingsFontScale.value) || 1;
+    applyFontScale();
+    savePrefs();
+  });
+}
+
 if (settingsResetSelf) {
   settingsResetSelf.addEventListener("click", () => {
     const t = i18n[lang] || i18n.ms;
@@ -6646,6 +6705,7 @@ function applyLanguage() {
   if (settingsBtn) settingsBtn.textContent = t.settingsTitle;
   if (themePresetSelect) themePresetSelect.value = themePreset;
   if (settingsCardScale) settingsCardScale.value = String(cardScale);
+  if (settingsFontScale) settingsFontScale.value = String(fontScale);
   if (settingsCompact) settingsCompact.checked = compactMode;
   if (settingsMinimap) settingsMinimap.checked = minimapEnabled;
   if (settingsDrag) settingsDrag.checked = dragToPan;
