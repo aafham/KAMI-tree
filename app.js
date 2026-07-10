@@ -2022,14 +2022,26 @@ function toggleFavoritePerson(personId) {
   renderQuickPeople();
 }
 
+function getPersonPhoto(person) {
+  if (!person) return "";
+  return person.id === "p1" ? "IMG_7626.jpg" : (person.photo || "");
+}
+
+function renderAvatarMarkup(person, className, label = "", style = "") {
+  const photo = getPersonPhoto(person);
+  const shortName = getShortDisplayName(person?.name || "");
+  const alt = label || formatDisplayName(person?.name || shortName);
+  const styleAttr = style ? ` style="${escapeHtml(style)}"` : "";
+  return `<span class="${escapeHtml(className)}${photo ? " has-person-photo" : ""}"${styleAttr}>${photo ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(alt)}" loading="lazy" />` : ""}<span class="avatar-initials">${escapeHtml(initials(shortName || person?.name || ""))}</span></span>`;
+}
+
 function renderQuickPersonChip(person) {
   const shortName = getShortDisplayName(person.name);
-  const avatarText = initials(shortName || person.name || "");
   const accent = generationColor(person.generation || 1);
   const name = getShortDisplayName(person.name);
   return `
     <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
-      <span class="quick-person-avatar" style="--chip-accent: ${escapeHtml(accent)}">${escapeHtml(avatarText)}</span>
+      ${renderAvatarMarkup(person, "quick-person-avatar", name, `--chip-accent: ${accent}`)}
       <span>${escapeHtml(name)}</span>
     </button>
   `;
@@ -2219,7 +2231,7 @@ function renderDataHealthPanel() {
             <div class="data-health-people">
               ${issue.people.slice(0, 14).map((person) => `
                 <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
-                  <span class="quick-person-avatar">${escapeHtml(initials(getShortDisplayName(person.name)))}</span>
+                  ${renderAvatarMarkup(person, "quick-person-avatar", getShortDisplayName(person.name))}
                   <span>
                     ${escapeHtml(getShortDisplayName(person.name))}
                     ${getDataHealthSuggestion(issue, person) ? `<small>${escapeHtml(getDataHealthSuggestion(issue, person))}</small>` : ""}
@@ -2865,9 +2877,11 @@ function createPersonCard(person, depth) {
   const avatar = document.createElement("div");
   avatar.className = "avatar";
   avatar.style.setProperty("--gen-ring", generationColor(depth));
-  if (person.photo) {
+  const personPhoto = getPersonPhoto(person);
+  if (personPhoto) {
+    avatar.classList.add("has-person-photo");
     const img = document.createElement("img");
-    img.src = person.photo;
+    img.src = personPhoto;
     img.alt = displayName || person.name || "";
     avatar.appendChild(img);
   } else {
@@ -3162,7 +3176,7 @@ function renderTimeline() {
         <strong>${escapeHtml(String(yearLabel))}</strong>
         <span aria-hidden="true"></span>
       </div>
-      <div class="timeline-avatar">${escapeHtml(initials(shortName || displayName))}</div>
+      ${renderAvatarMarkup(person, "timeline-avatar", shortName || displayName)}
       <div class="timeline-body">
         <div class="timeline-name">${escapeHtml(shortName || displayName)}</div>
         <div class="timeline-meta">${metaParts.map(escapeHtml).join(" | ")}</div>
@@ -3296,7 +3310,7 @@ function renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today) {
     <div class="birthday-featured-actions">
       ${nextEntries.slice(0, 3).map((entry) => `
         <button class="birthday-mini-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-          <span class="birthday-mini-avatar">${escapeHtml(initials(getShortDisplayName(entry.person.name)))}</span>
+          ${renderAvatarMarkup(entry.person, "birthday-mini-avatar", getShortDisplayName(entry.person.name))}
           <span>${escapeHtml(getShortDisplayName(entry.person.name))}</span>
         </button>
       `).join("")}
@@ -3498,7 +3512,7 @@ function renderBirthdaySearchResults() {
     </div>
     ${visibleMatches.map((entry) => `
     <button class="birthday-person birthday-person--search" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-      <span class="birthday-search-avatar">${escapeHtml(initials(getShortDisplayName(entry.person.name)))}</span>
+      ${renderAvatarMarkup(entry.person, "birthday-search-avatar", getShortDisplayName(entry.person.name))}
       <span class="birthday-person-main">
         <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
         <small>${escapeHtml(formatDisplayName(entry.person.name))}</small>
@@ -3768,7 +3782,7 @@ function renderDirectoryPage() {
     return `
       <article class="directory-card" style="--branch-color: ${escapeHtml(branchColor)}">
         <button class="directory-person" type="button" data-person-link="${escapeHtml(person.id)}">
-          <span class="directory-avatar">${escapeHtml(initials(shortName))}</span>
+          ${renderAvatarMarkup(person, "directory-avatar", shortName)}
           <span class="directory-main">
             <strong>${escapeHtml(fullName || shortName)}</strong>
             ${shortName && fullName !== shortName ? `<small>${escapeHtml(shortName)}</small>` : ""}
@@ -4399,7 +4413,7 @@ function renderPersonChips(people) {
   if (!people.length) return `<span class="lineage-empty">${escapeHtml(t.lineageNone)}</span>`;
   return people.map((person) => `
     <button class="lineage-chip" type="button" data-person-link="${escapeHtml(person.id)}">
-      <span>${escapeHtml(initials(getShortDisplayName(person.name)))}</span>
+      ${renderAvatarMarkup(person, "lineage-chip-avatar", getShortDisplayName(person.name))}
       ${escapeHtml(getShortDisplayName(person.name))}
     </button>
   `).join("");
@@ -4698,7 +4712,7 @@ function renderProfileMemberCard(person, relationship = "") {
   const color = getFamilyBranchColor(person);
   return `
     <button class="profile-member-card" type="button" data-person-link="${escapeHtml(person.id)}" style="--member-branch: ${escapeHtml(color)}">
-      <span class="profile-member-avatar">${escapeHtml(initials(getShortDisplayName(displayName)))}</span>
+      ${renderAvatarMarkup(person, "profile-member-avatar", getShortDisplayName(displayName))}
       <span class="profile-member-copy">
         <strong>${escapeHtml(displayName)}</strong>
         <small>${escapeHtml([relation, meta].filter(Boolean).join(" · ") || "-")}</small>
@@ -4759,7 +4773,7 @@ function renderProfilePage() {
   const t = i18n[lang] || i18n.ms;
   const fullName = formatDisplayName(person.name);
   const displayName = getShortDisplayName(fullName);
-  const profilePhoto = person.id === "p1" ? "IMG_7626.jpg" : (person.photo || "");
+  const profilePhoto = getPersonPhoto(person);
   const birthDate = parseDateValue(person.birth);
   const deathDate = parseDateValue(person.death);
   const age = birthDate ? calcAge(birthDate, deathDate || new Date()) : null;
@@ -4776,7 +4790,7 @@ function renderProfilePage() {
   if (profilePageSubtitle) profilePageSubtitle.textContent = "";
   profilePageContent.innerHTML = `
     <section class="profile-identity" id="profile-overview">
-      <div class="profile-identity-avatar${profilePhoto ? " has-profile-photo" : ""}"${profilePhoto ? ` role="button" tabindex="0" aria-label="Lihat gambar ${escapeHtml(displayName || fullName)}"` : ""}>
+      <div class="profile-identity-avatar${profilePhoto ? " has-profile-photo has-person-photo" : ""}"${profilePhoto ? ` role="button" tabindex="0" aria-label="Lihat gambar ${escapeHtml(displayName || fullName)}"` : ""}>
         ${profilePhoto ? `<img src="${escapeHtml(profilePhoto)}" alt="${escapeHtml(fullName || displayName)}" loading="lazy" />` : ""}
         <span>${escapeHtml(initials(displayName || fullName))}</span>
       </div>

@@ -257,6 +257,114 @@
   .profile-member-grid { grid-template-columns: 1fr; }
 }
 
+/* Final accessibility pass: these rules intentionally sit last so legacy theme
+   layers cannot move the mobile navigation or reduce contrast. */
+.photo-lightbox { z-index: 4000 !important; }
+
+.has-person-photo {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--primary, #4d8b6b) !important;
+  background: var(--card, #fff);
+}
+.has-person-photo > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.has-person-photo > .avatar-initials,
+.has-person-photo > span:not(.profile-member-copy):not(.birthday-person-main) { display: none; }
+[data-theme="dark"] .has-person-photo { border-color: #fff !important; }
+
+.quick-person-avatar.has-person-photo,
+.timeline-avatar.has-person-photo,
+.directory-avatar.has-person-photo,
+.birthday-mini-avatar.has-person-photo,
+.birthday-search-avatar.has-person-photo,
+.lineage-chip-avatar.has-person-photo,
+.profile-member-avatar.has-person-photo { flex: 0 0 auto; }
+
+.lineage-chip-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  margin-right: 4px;
+  background: color-mix(in srgb, var(--primary) 18%, var(--card));
+  font-size: 10px;
+  font-weight: 800;
+}
+.lineage-chip-avatar > img { border-radius: inherit; }
+.profile-identity-avatar.has-person-photo { border-width: 3px !important; }
+
+/* The family-photo toggle is desktop-only. Mobile navigation must always stay
+   fixed at the bottom, independently from the photo state. */
+@media (max-width: 720px) {
+  .web-nav-photo-toggle,
+  .home-family-photo-toggle { display: none !important; }
+  .web-nav,
+  body[data-nav-surface="home"].has-family-photo .web-nav,
+  body[data-nav-surface="home"] .web-nav {
+    position: fixed !important;
+    top: auto !important;
+    right: 10px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    left: 10px !important;
+    z-index: 1800 !important;
+    transform: none !important;
+  }
+}
+
+/* Dark-mode profile and birthday contrast. Bright alert cards deliberately use
+   dark text in both themes so the next birthday remains readable. */
+[data-theme="dark"] .profile-page-shell,
+[data-theme="dark"] .profile-content-section,
+[data-theme="dark"] .profile-information-panel,
+[data-theme="dark"] .profile-note-panel,
+[data-theme="dark"] .profile-page-sidebar .lineage-breadcrumb,
+[data-theme="dark"] .profile-descendant-branch,
+[data-theme="dark"] .profile-member-card {
+  background: #182821 !important;
+  border-color: rgba(220, 235, 226, .18) !important;
+  color: #f4f8f5 !important;
+}
+[data-theme="dark"] .profile-definition-list > div { border-color: rgba(220, 235, 226, .16); }
+[data-theme="dark"] .profile-definition-list dt,
+[data-theme="dark"] .profile-member-copy small,
+[data-theme="dark"] .profile-note-panel p,
+[data-theme="dark"] .profile-empty-state,
+[data-theme="dark"] .profile-family-group h4 span,
+[data-theme="dark"] .profile-descendant-branch summary small { color: rgba(236, 243, 238, .72) !important; }
+[data-theme="dark"] .profile-definition-list dd,
+[data-theme="dark"] .profile-member-copy strong,
+[data-theme="dark"] .profile-content-section h2,
+[data-theme="dark"] .profile-information-panel h2 { color: #f7fbf8 !important; }
+
+.birthday-person.is-upcoming-person,
+[data-theme="dark"] .birthday-person.is-upcoming-person {
+  background: linear-gradient(135deg, #fff1ed, #ffe0dc) !important;
+  border-color: #ef2f27 !important;
+  color: #202a25 !important;
+}
+.birthday-person.is-upcoming-person .birthday-person-main strong,
+.birthday-person.is-upcoming-person .birthday-person-main span,
+.birthday-person.is-upcoming-person .birthday-person-main small,
+[data-theme="dark"] .birthday-person.is-upcoming-person .birthday-person-main strong,
+[data-theme="dark"] .birthday-person.is-upcoming-person .birthday-person-main span,
+[data-theme="dark"] .birthday-person.is-upcoming-person .birthday-person-main small {
+  color: #26352d !important;
+}
+
+/* The pale family photo needs dark ink even when the app theme is dark. */
+[data-theme="dark"] body[data-nav-surface="home"].has-family-photo .home-hero .brand h1,
+[data-theme="dark"] body[data-nav-surface="home"].has-family-photo .home-hero .brand p,
+[data-theme="dark"] body[data-nav-surface="home"].has-family-photo .home-hero .kicker {
+  color: #17251e !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .55);
+}
+
 /* Full Home photograph: crop the empty ceiling, retain the family, and keep cards readable. */
 body[data-nav-surface="home"] .app::before {
   top: 0;
