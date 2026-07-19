@@ -1384,7 +1384,7 @@ function updateStats() {
       const next = new Date(todayMid.getFullYear(), birthDate.getMonth(), birthDate.getDate());
       if (next < todayMid) next.setFullYear(next.getFullYear() + 1);
       const diff = next.getTime() - todayMid.getTime();
-      const upcomingName = getShortDisplayName(person.name);
+      const upcomingName = getPersonDisplayName(person);
       if (diff < bestDiff) {
         bestDiff = diff;
         bestMatches.length = 0;
@@ -2228,16 +2228,16 @@ function getPersonPhoto(person) {
 
 function renderAvatarMarkup(person, className, label = "", style = "") {
   const photo = getPersonPhoto(person);
-  const shortName = getShortDisplayName(person?.name || "");
+  const shortName = getPersonDisplayName(person);
   const alt = label || formatDisplayName(person?.name || shortName);
   const styleAttr = style ? ` style="${escapeHtml(style)}"` : "";
   return `<span class="${escapeHtml(className)}${photo ? " has-person-photo" : ""}"${styleAttr}>${photo ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(alt)}" loading="lazy" />` : ""}<span class="avatar-initials">${escapeHtml(initials(shortName || person?.name || ""))}</span></span>`;
 }
 
 function renderQuickPersonChip(person) {
-  const shortName = getShortDisplayName(person.name);
+  const shortName = getPersonDisplayName(person);
   const accent = generationColor(person.generation || 1);
-  const name = getShortDisplayName(person.name);
+  const name = getPersonDisplayName(person);
   return `
     <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
       ${renderAvatarMarkup(person, "quick-person-avatar", name, `--chip-accent: ${accent}`)}
@@ -2298,7 +2298,7 @@ function getDataHealthIssues() {
   if (!treeData?.people) return [];
   const displayCounts = new Map();
   treeData.people.forEach((person) => {
-    const key = getShortDisplayName(person.name).toLowerCase();
+    const key = getPersonDisplayName(person).toLowerCase();
     displayCounts.set(key, (displayCounts.get(key) || 0) + 1);
   });
   const depthMap = getPersonDepthMap();
@@ -2321,7 +2321,7 @@ function getDataHealthIssues() {
     {
       key: "duplicate",
       title: t.dataHealthDuplicateName,
-      people: treeData.people.filter((person) => (displayCounts.get(getShortDisplayName(person.name).toLowerCase()) || 0) > 1)
+      people: treeData.people.filter((person) => (displayCounts.get(getPersonDisplayName(person).toLowerCase()) || 0) > 1)
     }
   ];
 }
@@ -2353,7 +2353,7 @@ function exportDataHealthCsv() {
       rows.push({
         issue: issue.title,
         id: person.id,
-        displayName: getShortDisplayName(person.name),
+        displayName: getPersonDisplayName(person),
         fullName: formatDisplayName(person.name),
         suggestion: getDataHealthSuggestion(issue, person)
       });
@@ -2430,9 +2430,9 @@ function renderDataHealthPanel() {
             <div class="data-health-people">
               ${issue.people.slice(0, 14).map((person) => `
                 <button class="quick-person-chip" type="button" data-person-link="${escapeHtml(person.id)}">
-                  ${renderAvatarMarkup(person, "quick-person-avatar", getShortDisplayName(person.name))}
+                  ${renderAvatarMarkup(person, "quick-person-avatar", getPersonDisplayName(person))}
                   <span>
-                    ${escapeHtml(getShortDisplayName(person.name))}
+                    ${escapeHtml(getPersonDisplayName(person))}
                     ${getDataHealthSuggestion(issue, person) ? `<small>${escapeHtml(getDataHealthSuggestion(issue, person))}</small>` : ""}
                   </span>
                 </button>
@@ -3090,7 +3090,7 @@ function createPersonCard(person, depth) {
   const nameWrap = document.createElement("div");
   const name = document.createElement("div");
   name.className = "person-name";
-  const firstName = formatDisplayName(person.firstName || getShortDisplayName(displayName || person.name || "") || person.name || "");
+  const firstName = getPersonDisplayName(person) || displayName || person.name || "";
   name.textContent = firstName || displayName || person.name || "";
   const gender = getPersonGender(person);
   const genderPill = document.createElement("div");
@@ -3358,7 +3358,7 @@ function renderTimeline() {
     const hasBirth = Boolean(person.birth);
     const hasDeath = Boolean(person.death);
     const displayName = formatDisplayName(person.name);
-    const shortName = getShortDisplayName(displayName);
+    const shortName = getPersonDisplayName(person);
     item.setAttribute("aria-label", `${t.profileOpen}: ${shortName || displayName}`);
     const birthYear = parseYear(person.birth);
     const yearLabel = birthYear || "----";
@@ -3479,7 +3479,7 @@ function renderBirthdayPage() {
 function renderBirthdaySummary(entries, byDate, nextBirthdayKey, today) {
   if (!birthdaySummary) return;
   const nextEntries = byDate.get(nextBirthdayKey) || [];
-  const nextName = nextEntries.length ? getShortDisplayName(nextEntries[0].person.name) : "-";
+  const nextName = nextEntries.length ? getPersonDisplayName(nextEntries[0].person) : "-";
   const nextMeta = nextEntries.length ? formatBirthdayCountdown(nextEntries[0], today) : (lang === "en" ? "No birthday recorded" : "Tiada birthday direkodkan");
   birthdaySummary.innerHTML = `
     <span>${entries.length} ${lang === "en" ? "birthdays" : "birthday"}</span>
@@ -3496,7 +3496,7 @@ function renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today) {
     return;
   }
   const first = nextEntries[0];
-  const names = nextEntries.map((entry) => getShortDisplayName(entry.person.name));
+  const names = nextEntries.map((entry) => getPersonDisplayName(entry.person));
   const nameText = names.length > 1 ? `${names[0]} +${names.length - 1}` : names[0];
   const fullNameText = formatDisplayName(first.person.name);
   birthdayFeatured.innerHTML = `
@@ -3509,8 +3509,8 @@ function renderBirthdayFeatured(entries, byDate, nextBirthdayKey, today) {
     <div class="birthday-featured-actions">
       ${nextEntries.slice(0, 3).map((entry) => `
         <button class="birthday-mini-person" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-          ${renderAvatarMarkup(entry.person, "birthday-mini-avatar", getShortDisplayName(entry.person.name))}
-          <span>${escapeHtml(getShortDisplayName(entry.person.name))}</span>
+          ${renderAvatarMarkup(entry.person, "birthday-mini-avatar", getPersonDisplayName(entry.person))}
+          <span>${escapeHtml(getPersonDisplayName(entry.person))}</span>
         </button>
       `).join("")}
       <button class="btn small" type="button" data-birthday-jump="${escapeHtml(nextBirthdayKey)}">${lang === "en" ? "View in calendar" : "Lihat dalam kalendar"}</button>
@@ -3574,7 +3574,7 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
       <button class="${classes}" type="button" data-planner-date="${key}" ${dayEntries.length ? "" : "disabled"} aria-expanded="${isOpen ? "true" : "false"}">
         <span class="planner-day-number">${day}</span>
         ${dayEntries.length ? `<span class="planner-day-count">${dayEntries.length}</span>` : ""}
-        ${dayEntries.slice(0, 2).map((entry) => `<em>${escapeHtml(getShortDisplayName(entry.person.name))}</em>`).join("")}
+        ${dayEntries.slice(0, 2).map((entry) => `<em>${escapeHtml(getPersonDisplayName(entry.person))}</em>`).join("")}
       </button>
     `;
   }).join("");
@@ -3617,7 +3617,7 @@ function renderBirthdayPlanner(byMonth, byDate, currentDateKey, nextBirthdayKey,
             <button class="birthday-person birthday-person--numbered${isUpcoming ? " is-upcoming-person" : ""}" type="button" data-person-link="${escapeHtml(entry.person.id)}">
               <span class="birthday-number">${index + 1}</span>
               <span class="birthday-person-main">
-                <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
+                <strong>${escapeHtml(getPersonDisplayName(entry.person))}</strong>
                 <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry, today))}</span>
               </span>
             </button>
@@ -3680,7 +3680,7 @@ function renderBirthdayMonthDetail(monthIndex, byDate) {
     const dayEntries = byDate.get(key) || [];
     return dayEntries.map((entry) => `
       <button class="birthday-person compact" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-        <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
+        <strong>${escapeHtml(getPersonDisplayName(entry.person))}</strong>
         <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry))}</span>
       </button>
     `).join("");
@@ -3711,9 +3711,9 @@ function renderBirthdaySearchResults() {
     </div>
     ${visibleMatches.map((entry) => `
     <button class="birthday-person birthday-person--search" type="button" data-person-link="${escapeHtml(entry.person.id)}">
-      ${renderAvatarMarkup(entry.person, "birthday-search-avatar", getShortDisplayName(entry.person.name))}
+      ${renderAvatarMarkup(entry.person, "birthday-search-avatar", getPersonDisplayName(entry.person))}
       <span class="birthday-person-main">
-        <strong>${escapeHtml(getShortDisplayName(entry.person.name))}</strong>
+        <strong>${escapeHtml(getPersonDisplayName(entry.person))}</strong>
         <small>${escapeHtml(formatDisplayName(entry.person.name))}</small>
         <span>${escapeHtml(formatBirthdayDate(entry))} · ${escapeHtml(formatBirthdayCountdown(entry))}</span>
       </span>
@@ -3964,7 +3964,7 @@ function renderDirectoryPage() {
     return;
   }
   directoryList.innerHTML = people.map(({ person, depth, gender }) => {
-    const shortName = getShortDisplayName(person.name);
+    const shortName = getPersonDisplayName(person);
     const fullName = formatDisplayName(person.name);
     const branchColor = getFamilyBranchColor(person, depth);
     const birthDate = parseDateValue(person.birth);
@@ -4090,7 +4090,7 @@ function personCsvRow(person, extra = {}) {
   const age = birthDate && !person.death ? calcAge(birthDate) : "";
   return {
     id: person.id,
-    displayName: getShortDisplayName(person.name),
+    displayName: getPersonDisplayName(person),
     fullName: formatDisplayName(person.name),
     relation: person.relation || "",
     generation: depth,
@@ -4226,6 +4226,11 @@ function getShortDisplayName(value) {
   if (!displayName) return "";
   const split = splitNameByBin(displayName);
   return split.first || displayName;
+}
+
+function getPersonDisplayName(person) {
+  const explicitDisplayName = formatDisplayName(person?.displayName);
+  return explicitDisplayName || getShortDisplayName(person?.name || "");
 }
 
 function detectGenderFromName(fullName) {
@@ -4612,8 +4617,8 @@ function renderPersonChips(people) {
   if (!people.length) return `<span class="lineage-empty">${escapeHtml(t.lineageNone)}</span>`;
   return people.map((person) => `
     <button class="lineage-chip" type="button" data-person-link="${escapeHtml(person.id)}">
-      ${renderAvatarMarkup(person, "lineage-chip-avatar", getShortDisplayName(person.name))}
-      ${escapeHtml(getShortDisplayName(person.name))}
+      ${renderAvatarMarkup(person, "lineage-chip-avatar", getPersonDisplayName(person))}
+      ${escapeHtml(getPersonDisplayName(person))}
     </button>
   `).join("");
 }
@@ -4911,7 +4916,7 @@ function renderProfileMemberCard(person, relationship = "") {
   const color = getFamilyBranchColor(person);
   return `
     <button class="profile-member-card" type="button" data-person-link="${escapeHtml(person.id)}" style="--member-branch: ${escapeHtml(color)}">
-      ${renderAvatarMarkup(person, "profile-member-avatar", getShortDisplayName(displayName))}
+      ${renderAvatarMarkup(person, "profile-member-avatar", getPersonDisplayName(person))}
       <span class="profile-member-copy">
         <strong>${escapeHtml(displayName)}</strong>
         <small>${escapeHtml([relation, meta].filter(Boolean).join(" · ") || "-")}</small>
@@ -4971,7 +4976,7 @@ function renderProfilePage() {
   }
   const t = i18n[lang] || i18n.ms;
   const fullName = formatDisplayName(person.name);
-  const displayName = getShortDisplayName(fullName);
+  const displayName = getPersonDisplayName(person);
   const profilePhoto = getPersonPhoto(person);
   const birthDate = parseDateValue(person.birth);
   const deathDate = parseDateValue(person.death);
@@ -5178,7 +5183,7 @@ function openModal(person) {
   const age = !person.death ? calcAge(birthDate) : null;
   const ageText = age !== null ? ` (${t.ageLabel}: ${age})` : "";
   const displayName = formatDisplayName(person.name);
-  const shortName = getShortDisplayName(displayName);
+  const shortName = getPersonDisplayName(person);
   const statusText = person.death
     ? (lang === "en" ? "Deceased" : "Meninggal")
     : (lang === "en" ? "Living" : "Masih hidup");
@@ -5891,7 +5896,7 @@ function renderMobileSearchResults() {
   mobileSearchResults.innerHTML = results.map((person) => `
     <button class="mobile-search-result" type="button" data-person-link="${escapeHtml(person.id)}">
       <strong>${escapeHtml(formatDisplayName(person.name))}</strong>
-      ${formatDisplayName(person.name) !== getShortDisplayName(person.name) ? `<small>${escapeHtml(getShortDisplayName(person.name))}</small>` : ""}
+      ${formatDisplayName(person.name) !== getPersonDisplayName(person) ? `<small>${escapeHtml(getPersonDisplayName(person))}</small>` : ""}
       <span>${escapeHtml(person.relation || formatDates(person.birth, person.death))}</span>
     </button>
   `).join("");
