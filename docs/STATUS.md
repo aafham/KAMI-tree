@@ -1,6 +1,6 @@
 # KAMI Tree Website Checklist
 
-Status dikemas kini pada 2026-07-10. Fokus checklist ini ialah website; Flutter app diurus dalam projek berasingan.
+Status dikemas kini pada 2026-07-22. Fokus checklist ini ialah website; Flutter app diurus dalam projek berasingan. Rujuk [audit semasa](AUDIT_2026-07-22.md) untuk risiko privasi dan housekeeping.
 
 ## Navigasi Dan Home
 
@@ -60,6 +60,9 @@ Status dikemas kini pada 2026-07-10. Fokus checklist ini ialah website; Flutter 
 
 - [x] `node --check app.js` lulus.
 - [x] `node scripts/validate-data.js data.json` lulus dengan amaran data.
+- [x] Import, cache dan reset JSON disahkan sebelum data browser diganti.
+- [x] `dataVersion` dikemas kini kepada `2026-07-22`.
+- [x] Dokumentasi aktif kini berada dalam folder `docs/` dan semakan standard boleh dijalankan dengan `npm run check`.
 - [ ] Lengkapkan tarikh lahir `p45` apabila disahkan keluarga.
 - [ ] Semak visual deployment Vercel pada desktop, Android Chrome, dan iPhone Safari selepas deploy terakhir.
 - [ ] Pertimbangkan sistem admin/database apabila data mula diubah oleh lebih daripada seorang penyelenggara.

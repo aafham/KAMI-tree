@@ -1,0 +1,18 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.log
+
+# Node and browser-test outputs
+node_modules/
+playwright-report/
+test-results/
+blob-report/
+
+# Local audit and recovery scratch files. Do not commit family screenshots or
+# browser-storage captures without an explicit privacy review.
+audit-shots/
+tmp-*.json
+tmp-*.spec.js

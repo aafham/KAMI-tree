@@ -4,6 +4,19 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 
 **Website:** [kami-tree.vercel.app](https://kami-tree.vercel.app/)
 
+> Audit dan housekeeping terakhir: **22 Julai 2026** · data semasa: **2026-07-22**
+
+## Status Dan Progress
+
+| Bahagian | Progress | Keadaan semasa | Baki utama |
+| --- | ---: | --- | --- |
+| Fungsi website keluarga | **100%** | Tree, profil, carian, direktori, birthday, timeline, tetapan dan export/import berfungsi; semakan kod/data lulus. | Ujian visual peranti sebenar selepas deployment. |
+| Ketahanan data browser | **95%** | Import, cache dan reset data kini disahkan sebelum disimpan. | Sahkan tarikh lahir `p45` apabila keluarga mengesahkannya. |
+| Housekeeping repository | **90%** | Dokumentasi, ignore rules dan arahan semakan dikemas kini. | Archive screenshot audit/foto lama di luar Git selepas backup privasi disahkan. |
+| Privasi sebenar untuk public | **20%** | PIN mengunci UI sahaja. | Data contoh atau backend/log masuk diperlukan sebelum data keluarga boleh dianggap private secara teknikal. |
+
+Butiran audit, risiko dan keputusan yang masih diperlukan ada di [docs/AUDIT_2026-07-22.md](docs/AUDIT_2026-07-22.md).
+
 ## Tujuan Website
 
 - Memaparkan salasilah keluarga secara visual dari generasi awal hingga generasi terkini.
@@ -306,8 +319,7 @@ Buka `http://localhost:5500`.
 ## Semakan Developer
 
 ```powershell
-node --check app.js
-node scripts\validate-data.js data.json
+npm run check
 ```
 
 ## Struktur Projek
@@ -320,7 +332,10 @@ node scripts\validate-data.js data.json
 - `IMG_7640.JPG` - foto keluarga untuk latar Home.
 - `IMG_7626.jpg` - gambar Aishah pada profil dan avatar berkaitan.
 - `scripts/validate-data.js` - validator data salasilah.
-- `CHECKLIST.md` - status kerja dan penambahbaikan website.
+- `docs/STATUS.md` - status kerja dan penambahbaikan website.
+- `docs/AUDIT_2026-07-22.md` - audit semasa, risiko dan baki tindakan.
+- `docs/archive/` - dokumen handoff sejarah yang bukan arahan pembangunan semasa.
+- `audit-shots/` - bukti visual audit lama; ia mengandungi paparan data keluarga dan tidak patut dijadikan bahan public.
 
 ## Deployment
 
@@ -328,4 +343,4 @@ Website dideploy melalui Vercel. Selepas push ke branch `main`, tunggu deploymen
 
 https://kami-tree.vercel.app/
 
-Dokumentasi dikemas kini: 2026-07-10.
+Dokumentasi dikemas kini: 2026-07-22.

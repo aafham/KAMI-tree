@@ -2063,16 +2063,17 @@ async function recoverEmptyViewAsync() {
   recoveryAttempted = true;
   try {
     localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(DATA_KEY);
   } catch {
     // ignore storage errors
   }
   try {
     const res = await fetch(`data.json?ts=${Date.now()}`);
+    if (!res.ok) throw new Error(`Unable to load data (${res.status})`);
     const data = await res.json();
+    assertValidTreeData(data);
     treeData = data;
-    storeData();
     initFromData(data);
+    storeData();
   } catch {
     // ignore fetch errors
   }
@@ -2095,18 +2096,22 @@ if (!treeCanvas || !treeCanvas.children.length) {
 }
 
 fetch(`data.json?v=${Date.now()}`, { cache: "no-store" })
-  .then((res) => res.json())
+  .then((res) => {
+    if (!res.ok) throw new Error(`Unable to load data (${res.status})`);
+    return res.json();
+  })
   .then((data) => {
+    assertValidTreeData(data);
     treeCanvas.textContent = "";
     treeData = data;
-    storeData();
     stored = data;
     initFromData(data);
+    storeData();
     ensureTreeVisible();
     if (!treeCanvas.children.length) {
       treeData = data;
-      storeData();
       initFromData(data);
+      storeData();
       return;
     }
   })
@@ -2377,12 +2382,10 @@ function importJsonData() {
   if (!raw) return;
   try {
     const data = JSON.parse(raw);
-    if (!Array.isArray(data.people) || !Array.isArray(data.unions)) {
-      throw new Error("Invalid data shape");
-    }
+    assertValidTreeData(data);
     treeData = data;
-    storeData();
     initFromData(data);
+    storeData();
     alert(lang === "en" ? "Data imported." : "Data berjaya diimport.");
   } catch {
     alert(lang === "en" ? "Invalid JSON backup." : "Backup JSON tidak sah.");
@@ -2390,13 +2393,19 @@ function importJsonData() {
 }
 
 async function resetJsonData() {
-  localStorage.removeItem(DATA_KEY);
-  const res = await fetch(`data.json?ts=${Date.now()}`);
-  const data = await res.json();
-  treeData = data;
-  storeData();
-  initFromData(data);
-  alert(lang === "en" ? "Original data restored." : "Data asal digunakan semula.");
+  const t = i18n[lang] || i18n.ms;
+  try {
+    const res = await fetch(`data.json?ts=${Date.now()}`);
+    if (!res.ok) throw new Error(`Unable to load data (${res.status})`);
+    const data = await res.json();
+    assertValidTreeData(data);
+    treeData = data;
+    initFromData(data);
+    storeData();
+    alert(lang === "en" ? "Original data restored." : "Data asal digunakan semula.");
+  } catch {
+    alert(t.loadFail);
+  }
 }
 
 function renderDataHealthPanel() {
@@ -2457,7 +2466,10 @@ function loadStoredData() {
     const raw = localStorage.getItem(DATA_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw);
-    if (!Array.isArray(data.people) || !Array.isArray(data.unions)) return null;
+    if (validateTreeData(data).length) {
+      localStorage.removeItem(DATA_KEY);
+      return null;
+    }
     return data;
   } catch {
     return null;
@@ -7249,6 +7261,10 @@ function validateTreeData(data) {
   }
   const ids = new Set();
   data.people.forEach((person) => {
+    if (!person || typeof person !== "object" || Array.isArray(person)) {
+      errors.push(i18n[lang].errStructure);
+      return;
+    }
     if (!person.id) errors.push(i18n[lang].errPersonNoId);
     if (ids.has(person.id)) errors.push(formatText(i18n[lang].errDuplicateId, { id: person.id }));
     ids.add(person.id);
@@ -7256,6 +7272,10 @@ function validateTreeData(data) {
 
   const childMap = new Map();
   data.unions.forEach((union) => {
+    if (!union || typeof union !== "object" || Array.isArray(union)) {
+      errors.push(i18n[lang].errStructure);
+      return;
+    }
     if (!union.id) errors.push(i18n[lang].errUnionNoId);
     if (union.partner1 && !ids.has(union.partner1)) {
       errors.push(formatText(i18n[lang].errPartner1Missing, { id: union.partner1 }));
@@ -7263,7 +7283,11 @@ function validateTreeData(data) {
     if (union.partner2 && !ids.has(union.partner2)) {
       errors.push(formatText(i18n[lang].errPartner2Missing, { id: union.partner2 }));
     }
-    (union.children || []).forEach((childId) => {
+    if (!Array.isArray(union.children)) {
+      errors.push(i18n[lang].errStructure);
+      return;
+    }
+    union.children.forEach((childId) => {
       if (!ids.has(childId)) errors.push(formatText(i18n[lang].errChildMissing, { id: childId }));
       if (!childMap.has(childId)) childMap.set(childId, []);
       childMap.get(childId).push(union.id);
@@ -7276,6 +7300,14 @@ function validateTreeData(data) {
     }
   });
   return errors;
+}
+
+function assertValidTreeData(data) {
+  const errors = validateTreeData(data);
+  if (errors.length) {
+    throw new Error(errors.join(" | "));
+  }
+  return data;
 }
 
 function syncMobileLabels() {

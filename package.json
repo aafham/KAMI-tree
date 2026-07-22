@@ -1,0 +1,11 @@
+{
+  "name": "kami-tree-web",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Static KAMI Tree website validation commands.",
+  "scripts": {
+    "check:js": "node --check app.js",
+    "check:data": "node scripts/validate-data.js data.json",
+    "check": "npm run check:js && npm run check:data"
+  }
+}
