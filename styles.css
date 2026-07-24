@@ -5974,11 +5974,6 @@ body.hide-tags .person-tags {
   font-weight: 800;
 }
 
-.profile-status.is-living {
-  color: #246b4d;
-  background: rgba(159, 235, 194, 0.48);
-}
-
 .profile-status.is-deceased {
   color: #9a302e;
   background: rgba(242, 173, 169, 0.42);

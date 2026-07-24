@@ -497,7 +497,7 @@ const i18n = {
     homeGlobalSearchHint: "Cari nama, relation, cabang dan birthday.",
     globalSearchKicker: "Carian Keluarga",
     globalSearchTitle: "Cari Apa Saja",
-    globalSearchSubtitle: "Cari nama, nickname, relation, cabang, jantina, status atau birthday.",
+    globalSearchSubtitle: "Cari nama, nickname, relation, cabang, jantina atau birthday.",
     directorySubtitle: "Cari dan buka maklumat ahli keluarga dengan cepat.",
     timelineKicker: "Sejarah Keluarga",
     timelineSubtitle: "Ahli keluarga disusun mengikut tahun dan pilihan timeline.",
@@ -579,7 +579,7 @@ const i18n = {
     directoryKicker: "Senarai Keluarga",
     directoryTitle: "Family Directory",
     directorySearchLabel: "Cari ahli",
-    directorySearchPlaceholder: "Cari nama, nickname, cabang, relation...",
+    directorySearchPlaceholder: "Cari nama, nickname, cabang, relation, dalam kenangan...",
     directoryGeneration: "Generasi",
     directoryGender: "Jantina",
     directoryBirthdayMonth: "Bulan Birthday",
@@ -588,10 +588,9 @@ const i18n = {
     directoryAllBranches: "Semua cabang",
     directoryRootBranch: "Root / Generasi asal",
     directoryBranchLabel: "Cabang {name}",
-    directoryStatus: "Status",
-    directoryAllStatuses: "Semua status",
-    directoryLiving: "Masih hidup",
-    directoryDeceased: "Meninggal",
+    directoryStatus: "Paparan ahli",
+    directoryAllStatuses: "Semua ahli",
+    directoryDeceased: "Dalam kenangan",
     directoryIncomplete: "Data belum lengkap",
     directorySort: "Susun",
     directorySortGeneration: "Ikut Generasi",
@@ -852,7 +851,7 @@ const i18n = {
     homeGlobalSearchHint: "Search names, relations, branches and birthdays.",
     globalSearchKicker: "Family Search",
     globalSearchTitle: "Search Everything",
-    globalSearchSubtitle: "Search names, nicknames, relations, branches, gender, status or birthdays.",
+    globalSearchSubtitle: "Search names, nicknames, relations, branches, gender or birthdays.",
     directorySubtitle: "Find and open family member details quickly.",
     timelineKicker: "Family History",
     timelineSubtitle: "Family members arranged by year and timeline filters.",
@@ -936,7 +935,7 @@ const i18n = {
     directoryKicker: "Family List",
     directoryTitle: "Family Directory",
     directorySearchLabel: "Search members",
-    directorySearchPlaceholder: "Search name, nickname, branch, relation...",
+    directorySearchPlaceholder: "Search name, nickname, branch, relation, in memory...",
     directoryGeneration: "Generation",
     directoryGender: "Gender",
     directoryBirthdayMonth: "Birthday Month",
@@ -945,10 +944,9 @@ const i18n = {
     directoryAllBranches: "All branches",
     directoryRootBranch: "Root / Original generation",
     directoryBranchLabel: "{name} branch",
-    directoryStatus: "Status",
-    directoryAllStatuses: "All statuses",
-    directoryLiving: "Living",
-    directoryDeceased: "Deceased",
+    directoryStatus: "Member view",
+    directoryAllStatuses: "All members",
+    directoryDeceased: "In memory",
     directoryIncomplete: "Incomplete data",
     directorySort: "Sort",
     directorySortGeneration: "By Generation",
@@ -3904,6 +3902,10 @@ function renderDirectoryPage() {
   if (!directoryList || !directorySummary || !treeData?.people) return;
   const t = i18n[lang] || i18n.ms;
   populateDirectoryFilters();
+  if (!["all", "deceased", "incomplete"].includes(directoryFilters.status)) {
+    directoryFilters.status = "all";
+    if (directoryStatusSelect) directoryStatusSelect.value = "all";
+  }
   updateDirectoryMoreState();
   const queryTerms = expandSearchTerms(directoryFilters.query || "");
   const generation = directoryFilters.generation || "all";
@@ -3980,7 +3982,8 @@ function renderDirectoryPage() {
     const fullName = formatDisplayName(person.name);
     const branchColor = getFamilyBranchColor(person, depth);
     const birthDate = parseDateValue(person.birth);
-    const age = birthDate && !person.death ? calcAge(birthDate) : null;
+    const isInMemory = getPersonStatus(person) === "deceased";
+    const age = birthDate && !isInMemory ? calcAge(birthDate) : null;
     const badges = [
       depth ? `${t.legendGeneration} ${depth}` : "",
       gender === "male" ? t.genderMale : gender === "female" ? t.genderFemale : "",
@@ -3988,7 +3991,7 @@ function renderDirectoryPage() {
       age !== null ? `${t.ageLabel}: ${age}` : "",
       person.relation || "",
       getBranchName(person.branchId),
-      getPersonStatus(person) === "deceased" ? t.directoryDeceased : t.directoryLiving
+      isInMemory ? t.directoryDeceased : ""
     ].filter(Boolean);
     return `
       <article class="directory-card" style="--branch-color: ${escapeHtml(branchColor)}">
@@ -4266,8 +4269,9 @@ function getGenderLabel(person) {
 
 function getPersonStatus(person) {
   if (!person) return "unknown";
+  if (person.death) return "deceased";
   if (person.status) return person.status;
-  return person.death ? "deceased" : "living";
+  return "living";
 }
 
 function isPersonDataIncomplete(person) {
@@ -4795,7 +4799,7 @@ function printPersonProfile(person) {
       <div class="meta">${escapeHtml(person.relation || "")}</div>
       <div class="grid">
         <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalBirth)}</strong>${escapeHtml(formatDateDisplay(person.birth) || "-")}</div>
-        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalDeath)}</strong>${escapeHtml(formatDateDisplay(person.death) || "-")}</div>
+        ${person.death ? `<div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalDeath)}</strong>${escapeHtml(formatDateDisplay(person.death))}</div>` : ""}
         <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileChildrenCount)}</strong>${summary.children || "-"}</div>
         <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileGrandchildrenCount)}</strong>${summary.grandchildren || "-"}</div>
         <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileGreatGrandchildrenCount)}</strong>${summary.greatGrandchildren || "-"}</div>
@@ -4992,8 +4996,9 @@ function renderProfilePage() {
   const profilePhoto = getPersonPhoto(person);
   const birthDate = parseDateValue(person.birth);
   const deathDate = parseDateValue(person.death);
+  const isInMemory = getPersonStatus(person) === "deceased";
   const age = birthDate ? calcAge(birthDate, deathDate || new Date()) : null;
-  const statusText = person.death ? (lang === "en" ? "Deceased" : "Meninggal") : (lang === "en" ? "Living" : "Masih hidup");
+  const statusText = isInMemory ? t.directoryDeceased : "";
   const family = getIndividualFamily(person.id);
   const stats = getFamilyCountSummary(person.id);
   const totalDescendants = stats.children + stats.grandchildren + stats.greatGrandchildren;
@@ -5015,7 +5020,7 @@ function renderProfilePage() {
         <h1>${escapeHtml(fullName || displayName || t.profileOpen)}</h1>
         <p class="profile-identity-role">${escapeHtml(person.relation || "-")}</p>
         <p class="profile-identity-dates">${escapeHtml(dateLine || t.datesUnknown)}${age !== null ? ` · ${escapeHtml(formatText(t.profileLifespan, { age }))}` : ""}</p>
-        <span class="profile-status ${person.death ? "is-deceased" : "is-living"}">${escapeHtml(statusText)}</span>
+        ${isInMemory ? `<span class="profile-status is-deceased">${escapeHtml(statusText)}</span>` : ""}
       </div>
     </section>
     <section class="profile-summary-strip" aria-label="${escapeHtml(t.profileFamilyStats)}">
@@ -5077,7 +5082,7 @@ function renderProfilePage() {
             <div><dt>${escapeHtml(t.modalRelation)}</dt><dd>${escapeHtml(person.relation || "-")}</dd></div>
             <div><dt>${escapeHtml(t.modalBirth)}</dt><dd>${escapeHtml(formatDateDisplay(person.birth) || "-")}</dd></div>
             ${person.death ? `<div><dt>${escapeHtml(t.modalDeath)}</dt><dd>${escapeHtml(formatDateDisplay(person.death))}</dd></div>` : ""}
-            <div><dt>Status</dt><dd>${escapeHtml(statusText)}</dd></div>
+            ${isInMemory ? `<div><dt>${escapeHtml(t.directoryStatus)}</dt><dd>${escapeHtml(statusText)}</dd></div>` : ""}
             ${age !== null ? `<div><dt>${escapeHtml(t.ageLabel)}</dt><dd>${age} ${escapeHtml(lang === "en" ? "years" : "tahun")}</dd></div>` : ""}
           </dl>
         </section>
@@ -5192,13 +5197,12 @@ function openModal(person) {
   if (storyPanel) storyPanel.hidden = false;
   setStoryPanelOpen(true);
   const birthDate = parseDateValue(person.birth);
-  const age = !person.death ? calcAge(birthDate) : null;
+  const isInMemory = getPersonStatus(person) === "deceased";
+  const age = !isInMemory ? calcAge(birthDate) : null;
   const ageText = age !== null ? ` (${t.ageLabel}: ${age})` : "";
   const displayName = formatDisplayName(person.name);
   const shortName = getPersonDisplayName(person);
-  const statusText = person.death
-    ? (lang === "en" ? "Deceased" : "Meninggal")
-    : (lang === "en" ? "Living" : "Masih hidup");
+  const statusText = isInMemory ? t.directoryDeceased : "";
   storyTitle.textContent = formatDisplayName(person.name);
   storyContent.innerHTML = `
     <section class="profile-hero-card">
@@ -5211,10 +5215,10 @@ function openModal(person) {
     </section>
     <section class="profile-info-grid">
       <div class="profile-info-tile"><strong>${escapeHtml(t.genderLabel)}</strong><span>${escapeHtml(getGenderLabel(person))}</span></div>
-      <div class="profile-info-tile"><strong>Status</strong><span>${escapeHtml(statusText)}</span></div>
+      ${isInMemory ? `<div class="profile-info-tile"><strong>${escapeHtml(t.directoryStatus)}</strong><span>${escapeHtml(statusText)}</span></div>` : ""}
       <div class="profile-info-tile"><strong>${escapeHtml(t.modalRelation)}</strong><span>${escapeHtml(person.relation || "-")}</span></div>
       <div class="profile-info-tile"><strong>${escapeHtml(t.modalBirth)}</strong><span>${escapeHtml(formatDateDisplay(person.birth) || "-")}${escapeHtml(ageText)}</span></div>
-      <div class="profile-info-tile"><strong>${escapeHtml(t.modalDeath)}</strong><span>${escapeHtml(formatDateDisplay(person.death) || "-")}</span></div>
+      ${person.death ? `<div class="profile-info-tile"><strong>${escapeHtml(t.modalDeath)}</strong><span>${escapeHtml(formatDateDisplay(person.death))}</span></div>` : ""}
       <div class="profile-info-tile"><strong>${escapeHtml(t.modalNote)}</strong><span>${escapeHtml(person.note || "-")}</span></div>
     </section>
     ${person.story ? `<section class="profile-story-card"><strong>${escapeHtml(t.modalStory)}</strong><p>${escapeHtml(person.story)}</p></section>` : ""}
@@ -5344,7 +5348,7 @@ function openTimelineInlineDetail(person, itemEl) {
           ${ageText ? `<div class="timeline-detail-age">${ageText}</div>` : ""}
         </span>
       </div>
-      <div class="timeline-detail-row"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death) || "-"}</span></div>
+      ${person.death ? `<div class="timeline-detail-row"><strong>${t.modalDeath}</strong><span>${formatDateDisplay(person.death)}</span></div>` : ""}
       <div class="timeline-detail-row"><strong>${t.modalNote}</strong><span>${person.note || "-"}</span></div>
       <div class="timeline-detail-row"><strong>${t.modalStory}</strong><span>${person.story || "-"}</span></div>
       ${renderLineageBreadcrumb(person)}
@@ -6149,9 +6153,11 @@ function expandSearchTerms(query) {
     female: ["perempuan"],
     hidup: ["living", "masih hidup"],
     living: ["hidup", "masih hidup"],
-    meninggal: ["deceased", "wafat", "mati"],
-    deceased: ["meninggal", "wafat"],
-    mati: ["meninggal", "deceased"],
+    meninggal: ["deceased", "wafat", "mati", "dalam kenangan", "in memory"],
+    deceased: ["meninggal", "wafat", "dalam kenangan", "in memory"],
+    mati: ["meninggal", "deceased", "dalam kenangan"],
+    "dalam kenangan": ["deceased", "meninggal", "wafat", "in memory"],
+    "in memory": ["deceased", "meninggal", "dalam kenangan"],
     suami: ["husband", "pasangan"],
     isteri: ["wife", "pasangan"],
     pasangan: ["suami", "isteri", "spouse"],
@@ -6194,7 +6200,7 @@ function getPersonSearchText(person) {
     gender === "female" ? "perempuan female" : "",
     status,
     status === "living" ? "hidup living masih hidup" : "",
-    status === "deceased" ? "meninggal deceased wafat mati" : "",
+    status === "deceased" ? "meninggal deceased wafat mati dalam kenangan in memory" : "",
     getBranchName(person.branchId),
     person.branchId,
     isPersonDataIncomplete(person) ? "data tak lengkap incomplete" : ""

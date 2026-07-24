@@ -120,7 +120,7 @@ Carian menyokong:
 - Hubungan keluarga.
 - Cabang keluarga.
 - Jantina.
-- Status hidup atau meninggal.
+- Maklumat pemergian, jika direkodkan.
 - Bulan birthday.
 
 Setiap hasil boleh membuka profil atau fokus terus ke Tree.
@@ -130,7 +130,8 @@ Setiap hasil boleh membuka profil atau fokus terus ke Tree.
 Direktori menyediakan senarai semua ahli keluarga dalam format kad.
 
 - Cari menggunakan nama, nickname, cabang atau hubungan.
-- Tapis mengikut generasi, jantina, bulan birthday, cabang, status dan susunan.
+- Tapis mengikut generasi, jantina, bulan birthday, cabang, paparan ahli dan susunan.
+- Paparan ahli menyediakan `Semua ahli`, `Dalam kenangan` dan `Data belum lengkap`.
 - Tukar paparan grid atau senarai jika tersedia.
 - Export `Directory CSV` untuk rujukan.
 - Tekan kad ahli untuk buka profil.
@@ -170,7 +171,7 @@ Timeline menyusun ahli keluarga mengikut tahun kelahiran.
 
 - Tahun besar dipaparkan di kiri.
 - Avatar, nama, jantina, hubungan, generasi dan maklumat lahir dipaparkan pada kad.
-- Status meninggal ditanda merah untuk mudah dilihat.
+- Ahli dalam kenangan mempunyai gaya visual berbeza untuk mudah dikenal pasti.
 - Search dan filter mengikut generasi, bulan lahir, jantina serta susunan.
 - `Tapis lagi` membuka pilihan tambahan.
 - Tekan kad untuk buka profil individu.
@@ -181,7 +182,8 @@ Profil penuh memaparkan maklumat seseorang dengan lebih teratur.
 
 - Nama penuh dan nama paparan.
 - Gambar profil, jika disediakan.
-- Hubungan, jantina, status, tarikh lahir, tarikh meninggal, umur dan catatan.
+- Hubungan, jantina, tarikh lahir, tarikh meninggal jika direkodkan, umur dan catatan.
+- Penanda `Dalam kenangan` hanya dipaparkan bagi ahli yang mempunyai rekod pemergian.
 - Statistik anak, cucu, cicit dan jumlah keturunan.
 - Laluan salasilah.
 - Mak/ayah, pasangan, adik-beradik, anak, cucu dan cicit.
@@ -303,6 +305,7 @@ Menerangkan tujuan KAMI Tree, fungsi utama dan versi data.
 ## Data Dan Privasi Browser
 
 - Data asal keluarga berada dalam `data.json`.
+- Nilai teknikal `status` kekal sebagai `living` atau `deceased` untuk keserasian import, eksport dan validasi; paparan kepada pengguna hanya menunjukkan `Dalam kenangan` apabila berkaitan.
 - Favourite, tema, bahasa, zoom, tetapan dan Diri Saya disimpan pada browser/peranti semasa sahaja.
 - Peranti atau browser lain tidak berkongsi pilihan tersebut secara automatik.
 - `Clear Cache` membuang pilihan tempatan, tetapi data asal daripada `data.json` kekal selepas reload.
