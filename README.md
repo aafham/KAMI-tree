@@ -6,6 +6,49 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 
 > Audit dan housekeeping terakhir: **22 Julai 2026** · data semasa: **2026-09-05**
 
+## Progress UI Website — Batch 1, 5 September 2026
+
+Empat keutamaan daripada audit UI 5 September diselesaikan. Skop kekal pada
+website; reka bentuk asas, hosting Vercel, data keluarga dan kedua-dua app tidak
+diubah. Ini bukan tanda semua cadangan audit sudah selesai.
+
+- [x] **Carian telefon:** panel muat dalam viewport, input kekal 52px, hasil tidak
+  meregang apabila hanya seorang ditemui, dan senarai panjang scroll di dalam
+  panel. Header dipadatkan apabila ruang menegak rendah.
+- [x] **Kontras dark mode:** warna teks berasingan untuk permukaan primary cerah;
+  butang, tab aktif dan penanda birthday menggunakan pasangan warna yang sesuai.
+  Butang ghost, latar gelap dan hover profil dikekalkan mengikut permukaannya.
+- [x] **Navigasi utama:** Home, Tree, Direktori, Birthday dan Timeline bermula di
+  atas selepas dipilih; kad birthday Home turut dikemas kini. Tiada reset global
+  dalam render yang mengganggu fokus ahli, pilihan tarikh atau Back profil.
+- [x] **Tetapan:** butang Tutup/Close kekal kelihatan ketika panel discroll;
+  klik label/ikon, backdrop dan Escape menggunakan laluan penutupan yang sama.
+  Sorotan serta `aria-current` mengikut panel yang benar-benar aktif. Fokus
+  dipulangkan kepada pembuka apabila ditutup, tanpa mencuri fokus ketika tukar menu.
+
+### Pengesahan batch ini
+
+- `npm run check`: semakan sintaks, data dan **10/10 ujian regresi navigasi/Tetapan**
+  lulus. Ujian state menggunakan kod fungsi sebenar dengan DOM ringkas; bukan
+  pengganti ujian browser.
+- Browser Chromium: carian kosong/satu/banyak hasil, lima menu utama, Tutup/Escape,
+  label BM/EN serta empat preset warna gelap diperiksa pada telefon, tablet dan desktop.
+  Matriks lulus: **320×640, 390×844, 800×900, 1440×900, 390×360 dan 844×390**.
+- Amaran data lama `p45` tiada tarikh lahir kekal. Tiada rekod keluarga diubah.
+- URL versi CSS/JavaScript dinaikkan supaya browser mengambil pembaikan baharu.
+- Tiada dakwaan ujian telefon fizikal, keyboard Android/iOS atau pematuhan WCAG
+  menyeluruh. Bukti screenshot keluarga disimpan di luar repo.
+
+### Baki audit UI — belum dibuat
+
+- [ ] Minimap Tree tersembunyi dan saiz teks Overview terlalu kecil.
+- [ ] Saiz tulisan yang konsisten serta label navigasi tablet yang aksesibel.
+- [ ] Padatkan Home, toolbar Direktori/Birthday/Timeline dan tindakan profil.
+- [ ] Selaraskan panel profil carian dengan halaman profil Direktori.
+- [ ] Label umur/angka kosong profil, istilah BM/EN dan mesej awal carian.
+- [ ] Fokus keyboard penuh, semantik penapis desktop dan fokus planner birthday.
+- [ ] Housekeeping CSS berperingkat dan optimasi gambar web.
+
 ## Kemas Kini Data — 5 September 2026
 
 - Pasangan **Umar Abdul Aziz bin Noor Azri** dalam cabang keluarga **Noor Azri** ditambah: **Nur Nabihah binti Yusnasri**, lahir **13 November 2005**.
@@ -16,6 +59,9 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 - Selepas deployment, muat semula website ketika online untuk menerima data baharu; tidak perlu padam tetapan browser.
 
 ## Status Dan Progress
+
+Jadual berikut ialah anggaran sejarah audit 22 Julai, bukan ukuran kelulusan UI
+terkini. Progress UI semasa ditunjukkan dalam checklist di atas.
 
 | Bahagian | Progress | Keadaan semasa | Baki utama |
 | --- | ---: | --- | --- |

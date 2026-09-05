@@ -6,6 +6,7 @@
   "scripts": {
     "check:js": "node --check app.js",
     "check:data": "node scripts/validate-data.js data.json",
-    "check": "npm run check:js && npm run check:data"
+    "test": "node --test scripts/ui-regressions.test.js",
+    "check": "npm run check:js && npm run check:data && npm test"
   }
 }

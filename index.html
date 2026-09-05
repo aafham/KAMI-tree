@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260710ae" />
-  <link rel="stylesheet" href="final-fixes.css?v=20260711b" />
+  <link rel="stylesheet" href="styles.css?v=20260905ui1" />
+  <link rel="stylesheet" href="final-fixes.css?v=20260905ui1" />
 </head>
 <body class="is-access-locked">
   <div class="app" id="app" data-theme="light">
@@ -498,7 +498,9 @@
   <div class="settings-modal" id="settings-modal" aria-hidden="true">
     <div class="settings-backdrop" data-settings-close="true"></div>
     <div class="settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <button class="settings-close" type="button" aria-label="Tutup" data-settings-close="true">×</button>
+      <div class="settings-dismiss-row">
+        <button class="settings-close" type="button" data-settings-close="true"><span aria-hidden="true">×</span><span data-i18n="modalClose">Tutup</span></button>
+      </div>
       <div class="settings-header page-heading">
         <div>
           <p class="kicker" data-i18n="settingsKicker">Tetapan App</p>
@@ -717,6 +719,6 @@
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="app.js?v=20260722a" defer></script>
+  <script src="app.js?v=20260905ui1" defer></script>
 </body>
 </html>

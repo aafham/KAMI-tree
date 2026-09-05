@@ -101,6 +101,7 @@ const miniZoomFitBtn = document.getElementById("mini-zoom-fit");
 const settingsBtn = document.getElementById("settings-btn");
 const bottomSheet = document.getElementById("bottom-sheet");
 const settingsModal = document.getElementById("settings-modal");
+let settingsReturnFocus = null;
 const settingsCompact = document.getElementById("settings-compact");
 const settingsCardScale = document.getElementById("setting-card-scale");
 const settingsFontScale = document.getElementById("setting-font-scale");
@@ -241,7 +242,7 @@ function lockFamilyAccess() {
   familyAccessTimer = null;
   setFamilyAccessExpiry(0);
   document.body.classList.add("is-access-locked");
-  closeSettingsModal?.();
+  closeSettingsModal?.({ restoreFocus: false });
   closeStoryPanel?.();
   if (viewMode !== "tree" || navSurface !== "home") {
     navSurface = "home";
@@ -1300,18 +1301,24 @@ function applyHomeControlsVisibility() {
 }
 
 function openSettingsModal() {
-  if (!settingsModal) return;
+  if (!settingsModal || settingsModal.classList.contains("is-open")) return;
+  settingsReturnFocus = document.activeElement;
   settingsModal.classList.add("is-open");
   settingsModal.setAttribute("aria-hidden", "false");
-  webNavButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.webNav === "settings"));
+  updateViewSwitch();
+  settingsModal.querySelector(".settings-close")?.focus({ preventScroll: true });
   refreshIcons(settingsModal);
 }
 
-function closeSettingsModal() {
-  if (!settingsModal) return;
+function closeSettingsModal({ restoreFocus = true } = {}) {
+  if (!settingsModal || !settingsModal.classList.contains("is-open")) return;
   settingsModal.classList.remove("is-open");
   settingsModal.setAttribute("aria-hidden", "true");
   updateViewSwitch();
+  if (restoreFocus && settingsReturnFocus?.isConnected) {
+    settingsReturnFocus.focus({ preventScroll: true });
+  }
+  settingsReturnFocus = null;
 }
 
 function toggleControlsCollapsed(nextState) {
@@ -1594,8 +1601,9 @@ function updateViewSwitch() {
   if (mobileTimelineBtn) mobileTimelineBtn.classList.toggle("is-active", viewMode === "timeline");
   const activeView = viewMode === "tree" || viewMode === "profile" ? navSurface : viewMode;
   document.body.dataset.navSurface = activeView;
+  const activeNavigation = settingsModal?.classList.contains("is-open") ? "settings" : activeView;
   webNavButtons.forEach((button) => {
-    const isActive = button.dataset.webNav === activeView;
+    const isActive = button.dataset.webNav === activeNavigation;
     button.classList.toggle("is-active", isActive);
     if (isActive) button.setAttribute("aria-current", "page");
     else button.removeAttribute("aria-current");
@@ -5414,8 +5422,15 @@ function runAction(actionId) {
   if (btn) btn.click();
 }
 
+function scrollToPageStart() {
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
 function openDirectoryView() {
-  if (viewMode === "directory") return;
+  if (viewMode === "directory") {
+    scrollToPageStart();
+    return;
+  }
   navSurface = "directory";
   viewMode = "directory";
   applyViewMode();
@@ -5423,6 +5438,7 @@ function openDirectoryView() {
   updateViewSwitch();
   savePrefs();
   updateUrlState();
+  scrollToPageStart();
 }
 
 function openHomeSurface() {
@@ -5437,7 +5453,7 @@ function openHomeSurface() {
   updateViewSwitch();
   savePrefs();
   updateUrlState();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  scrollToPageStart();
 }
 
 function openTreeSurface() {
@@ -5451,15 +5467,13 @@ function openTreeSurface() {
   updateViewSwitch();
   savePrefs();
   updateUrlState();
-  requestAnimationFrame(() => {
-    document.querySelector(".tree-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
+  scrollToPageStart();
 }
 
 webNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const target = button.dataset.webNav;
-    if (target !== "settings" && settingsModal?.classList.contains("is-open")) closeSettingsModal();
+    if (target !== "settings" && settingsModal?.classList.contains("is-open")) closeSettingsModal({ restoreFocus: false });
     if (target === "home") return openHomeSurface();
     if (target === "tree") return openTreeSurface();
     if (target === "directory") return openDirectoryView();
@@ -5470,6 +5484,7 @@ webNavButtons.forEach((button) => {
       updateViewSwitch();
       savePrefs();
       updateUrlState();
+      scrollToPageStart();
       return;
     }
     if (target === "timeline") {
@@ -5479,6 +5494,7 @@ webNavButtons.forEach((button) => {
       updateViewSwitch();
       savePrefs();
       updateUrlState();
+      scrollToPageStart();
       return;
     }
     if (target === "settings") openSettingsModal();
@@ -5552,6 +5568,8 @@ if (birthdayCard) {
     applyViewMode();
     updateViewSwitch();
     savePrefs();
+    updateUrlState();
+    scrollToPageStart();
   });
   birthdayCard.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
@@ -5561,6 +5579,8 @@ if (birthdayCard) {
     applyViewMode();
     updateViewSwitch();
     savePrefs();
+    updateUrlState();
+    scrollToPageStart();
   });
 }
 
@@ -6612,7 +6632,7 @@ if (settingsBtn) {
 
 if (settingsModal) {
   settingsModal.addEventListener("click", (event) => {
-    if (!event.target.dataset.settingsClose) return;
+    if (!event.target.closest("[data-settings-close]")) return;
     closeSettingsModal();
   });
   settingsModal.querySelectorAll("[data-settings-tab]").forEach((tab) => {
@@ -6886,8 +6906,7 @@ window.addEventListener("resize", () => {
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   if (settingsModal && settingsModal.classList.contains("is-open")) {
-    settingsModal.classList.remove("is-open");
-    settingsModal.setAttribute("aria-hidden", "true");
+    closeSettingsModal();
   }
 });
 

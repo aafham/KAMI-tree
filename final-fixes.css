@@ -148,6 +148,24 @@ body[data-theme="light"][data-nav-surface="home"].has-family-photo:not(.home-con
   }
 }
 
+/* Dark Home stays light-on-dark over the photo, and dark-on-primary only
+   when its primary action actually has a bright background. */
+body[data-theme="dark"][data-nav-surface="home"]:not(.has-family-photo) .home-feature-entry:first-child,
+body[data-theme="dark"][data-nav-surface="home"] .home-feature-entry:first-child:hover,
+body[data-theme="dark"][data-nav-surface="home"] .home-feature-entry:first-child:focus-visible {
+  color: var(--on-primary);
+}
+body[data-theme="dark"][data-nav-surface="home"]:not(.has-family-photo) .home-feature-entry:first-child :is(strong, small, .home-feature-icon, svg),
+body[data-theme="dark"][data-nav-surface="home"] .home-feature-entry:first-child:hover :is(strong, small, .home-feature-icon, svg),
+body[data-theme="dark"][data-nav-surface="home"] .home-feature-entry:first-child:focus-visible :is(strong, small, .home-feature-icon, svg) {
+  color: var(--on-primary);
+}
+
+@media (max-height: 500px) {
+  .global-search-overlay .mobile-search-head p { display: none; }
+  .global-search-overlay .mobile-search-head h2 { font-size: 26px; }
+}
+
 /* Family access gate: Home stays available, while family details require the
    shared four-digit PIN. */
 body.is-access-locked .tree-section,
