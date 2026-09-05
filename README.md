@@ -4,7 +4,16 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 
 **Website:** [kami-tree.vercel.app](https://kami-tree.vercel.app/)
 
-> Audit dan housekeeping terakhir: **22 Julai 2026** · data semasa: **2026-07-22**
+> Audit dan housekeeping terakhir: **22 Julai 2026** · data semasa: **2026-09-05**
+
+## Kemas Kini Data — 5 September 2026
+
+- Pasangan **Umar Abdul Aziz bin Noor Azri** dalam cabang keluarga **Noor Azri** ditambah: **Nur Nabihah binti Yusnasri**, lahir **13 November 2005**.
+- Rekod `p71` dihubungkan dengan Umar (`p59`) melalui pasangan `u16`; tiada anak atau tarikh perkahwinan ditambah kerana belum diberikan.
+- Jumlah data kini **69 ahli dan 16 pasangan**. Rekod keluarga sedia ada dikekalkan.
+- Perubahan ini untuk **website sahaja**; app KAMI Tree main dan KAMI 2.0 tidak diubah.
+- Pengesahan: `npm run check` lulus; pautan pasangan dua hala, sambungan salasilah, birthday `13 Nov` dalam BM/EN dan pemeliharaan semua rekod lama disemak. Amaran lama `p45` tiada tarikh lahir masih kekal; tiada tarikh diteka.
+- Selepas deployment, muat semula website ketika online untuk menerima data baharu; tidak perlu padam tetapan browser.
 
 ## Status Dan Progress
 
@@ -346,4 +355,4 @@ Website dideploy melalui Vercel. Selepas push ke branch `main`, tunggu deploymen
 
 https://kami-tree.vercel.app/
 
-Dokumentasi dikemas kini: 2026-07-22.
+Dokumentasi dikemas kini: 2026-09-05.
