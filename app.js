@@ -3122,11 +3122,12 @@ function createPersonCard(person, depth) {
   if (person.birth) {
     const birthDate = parseDateValue(person.birth);
     const age = !person.death ? calcAge(birthDate) : null;
-    birthLine.textContent = `${i18n[lang].bornPrefix}${formatDateDisplay(person.birth)}`;
+    birthLine.textContent = formatBirthDateDisplay(person.birth);
+    meta.appendChild(birthLine);
     if (age !== null) {
       const ageLine = document.createElement("div");
       ageLine.className = "person-age";
-      ageLine.textContent = `${i18n[lang].ageLabel}: ${age}`;
+      ageLine.textContent = formatAgeDisplay(age);
       meta.appendChild(ageLine);
     }
   } else {
@@ -3134,7 +3135,6 @@ function createPersonCard(person, depth) {
   }
   const deathLine = document.createElement("div");
   deathLine.textContent = person.death ? `${i18n[lang].diedPrefix}${formatDateDisplay(person.death)}` : "";
-  if (birthLine.textContent) meta.appendChild(birthLine);
   if (deathLine.textContent) meta.appendChild(deathLine);
   nameWrap.appendChild(name);
   nameWrap.appendChild(genderPill);
@@ -3382,10 +3382,9 @@ function renderTimeline() {
     const yearLabel = birthYear || "----";
     const genderLabel = getGenderLabel(person);
     const relationLabel = localizeTagText(person.relation || "", lang);
-    const birthMeta = hasBirth ? `${t.bornPrefix}${formatDateDisplay(person.birth)}` : t.datesUnknown;
-    const ageMeta = age !== null ? `${age} ${lang === "en" ? "years old" : "tahun"}` : "";
+    const birthMeta = hasBirth ? formatBirthDateDisplay(person.birth) : t.datesUnknown;
     const generationMeta = depth ? `Gen ${depth}` : "";
-    const metaParts = [birthMeta, ageMeta, genderLabel, relationLabel, generationMeta].filter(Boolean);
+    const metaParts = [genderLabel, relationLabel, generationMeta].filter(Boolean);
     const deathLine = hasDeath ? `${t.diedPrefix}${formatDateDisplay(person.death)}` : "";
     const noteLine = localizeTagText(person.note || "", lang);
     item.innerHTML = `
@@ -3396,6 +3395,7 @@ function renderTimeline() {
       ${renderAvatarMarkup(person, "timeline-avatar", shortName || displayName)}
       <div class="timeline-body">
         <div class="timeline-name">${escapeHtml(shortName || displayName)}</div>
+        <div class="timeline-meta birth-age-stack"><span>${escapeHtml(birthMeta)}</span>${age !== null ? `<span>${escapeHtml(formatAgeDisplay(age))}</span>` : ""}</div>
         <div class="timeline-meta">${metaParts.map(escapeHtml).join(" | ")}</div>
         ${deathLine ? `<div class="timeline-death">${escapeHtml(deathLine)}</div>` : ""}
         ${noteLine ? `<div class="timeline-relation">${escapeHtml(noteLine)}</div>` : ""}
@@ -3995,8 +3995,6 @@ function renderDirectoryPage() {
     const badges = [
       depth ? `${t.legendGeneration} ${depth}` : "",
       gender === "male" ? t.genderMale : gender === "female" ? t.genderFemale : "",
-      person.birth ? `${t.modalBirth}: ${formatDateDisplay(person.birth)}` : "",
-      age !== null ? `${t.ageLabel}: ${age}` : "",
       person.relation || "",
       getBranchName(person.branchId),
       isInMemory ? t.directoryDeceased : ""
@@ -4009,6 +4007,7 @@ function renderDirectoryPage() {
             <strong>${escapeHtml(fullName || shortName)}</strong>
             ${shortName && fullName !== shortName ? `<small>${escapeHtml(shortName)}</small>` : ""}
             ${person.nickname && person.nickname !== shortName ? `<small>${escapeHtml(person.nickname)}</small>` : ""}
+            ${person.birth ? renderBirthAgeMarkup(person.birth, age) : ""}
             <span class="directory-badges">
               ${badges.map((badge) => `<span class="directory-badge">${escapeHtml(badge)}</span>`).join("")}
             </span>
@@ -4227,6 +4226,30 @@ function formatDateDisplay(value) {
   return str;
 }
 
+// Birth dates use full month names; storage, exports and event dates keep their
+// existing formats. Year-only records must not invent a day or month.
+function formatBirthDateDisplay(value) {
+  if (!value) return "";
+  const str = String(value).trim();
+  if (!str || /^\d{4}$/.test(str)) return str;
+  const date = value instanceof Date ? value : parseDateValue(str);
+  if (!date || Number.isNaN(date.getTime())) return str;
+  const months = lang === "en"
+    ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    : ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+  return `${String(date.getDate()).padStart(2, "0")}.${months[date.getMonth()]}.${date.getFullYear()}`;
+}
+
+function formatAgeDisplay(age) {
+  if (age === null || age === undefined || age === "" || !Number.isFinite(age) || age < 0) return "";
+  const t = i18n[lang] || i18n.ms;
+  return `${t.ageLabel}: ${age} ${lang === "en" ? (age === 1 ? "year" : "years") : "tahun"}`;
+}
+
+function renderBirthAgeMarkup(birth, age) {
+  return `<span class="birth-age-stack"><span class="birth-date-value">${escapeHtml(formatBirthDateDisplay(birth) || "-")}</span>${formatAgeDisplay(age) ? `<span class="birth-age-value">${escapeHtml(formatAgeDisplay(age))}</span>` : ""}</span>`;
+}
+
 function splitNameByBin(fullName) {
   const name = String(fullName || "").trim();
   if (!name) return { first: "", last: "" };
@@ -4374,12 +4397,12 @@ function formatDisplayName(value) {
 function formatDates(birth, death) {
   const t = i18n[lang] || i18n.ms;
   if (!birth && !death) return t.datesUnknown;
-  if (birth && death) return `${formatDateDisplay(birth)} - ${formatDateDisplay(death)}`;
+  if (birth && death) return `${formatBirthDateDisplay(birth)} - ${formatDateDisplay(death)}`;
   if (birth) {
     const birthDate = parseDateValue(birth);
     const age = !death ? calcAge(birthDate) : null;
-    const ageText = age !== null ? ` (${t.ageLabel}: ${age})` : "";
-    return `${t.bornPrefix}${formatDateDisplay(birth)}${ageText}`;
+    const ageText = age !== null ? `\n${formatAgeDisplay(age)}` : "";
+    return `${formatBirthDateDisplay(birth)}${ageText}`;
   }
   return `${t.diedPrefix}${formatDateDisplay(death)}`;
 }
@@ -4769,8 +4792,8 @@ function getProfileShareText(person) {
   return [
     formatDisplayName(person.name),
     person.relation ? `${t.modalRelation}: ${person.relation}` : "",
-    person.birth ? `${t.modalBirth}: ${formatDateDisplay(person.birth)}` : "",
-    age !== "" ? `${t.ageLabel}: ${age}` : "",
+    person.birth ? `${t.modalBirth}: ${formatBirthDateDisplay(person.birth)}` : "",
+    formatAgeDisplay(age),
     person.death ? `${t.modalDeath}: ${formatDateDisplay(person.death)}` : "",
     person.note ? `${t.modalNote}: ${person.note}` : ""
   ].filter(Boolean).join("\n");
@@ -4799,6 +4822,7 @@ function printPersonProfile(person) {
         .meta { color: #56635d; margin-bottom: 24px; }
         .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         .box { border: 1px solid #d8e5dd; border-radius: 14px; padding: 14px; }
+        .birth-age-stack > span { display: block; margin-top: 4px; }
         strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; color: #4f8a6a; }
       </style>
     </head>
@@ -4806,7 +4830,7 @@ function printPersonProfile(person) {
       <h1>${escapeHtml(formatDisplayName(person.name))}</h1>
       <div class="meta">${escapeHtml(person.relation || "")}</div>
       <div class="grid">
-        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalBirth)}</strong>${escapeHtml(formatDateDisplay(person.birth) || "-")}</div>
+        <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalBirth)}</strong>${renderBirthAgeMarkup(person.birth, !person.death ? calcAge(parseDateValue(person.birth)) : null)}</div>
         ${person.death ? `<div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).modalDeath)}</strong>${escapeHtml(formatDateDisplay(person.death))}</div>` : ""}
         <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileChildrenCount)}</strong>${summary.children || "-"}</div>
         <div class="box"><strong>${escapeHtml((i18n[lang] || i18n.ms).profileGrandchildrenCount)}</strong>${summary.grandchildren || "-"}</div>
@@ -4929,13 +4953,11 @@ function bindProfileActionClicks(container) {
 
 function renderProfileMemberCard(person, relationship = "") {
   const displayName = formatDisplayName(person.name);
-  const birthYear = parseYear(person.birth);
   const age = !person.death ? calcAge(parseDateValue(person.birth)) : null;
-  const yearsLabel = lang === "en" ? "years" : "tahun";
   const diedLabel = lang === "en" ? "Died" : "Meninggal";
   const meta = person.death
     ? `${diedLabel} ${formatDateDisplay(person.death)}`
-    : birthYear ? `${birthYear}${age !== null ? ` · ${age} ${yearsLabel}` : ""}` : "";
+    : "";
   const relation = relationship || person.relation || "";
   const color = getFamilyBranchColor(person);
   return `
@@ -4943,6 +4965,7 @@ function renderProfileMemberCard(person, relationship = "") {
       ${renderAvatarMarkup(person, "profile-member-avatar", getPersonDisplayName(person))}
       <span class="profile-member-copy">
         <strong>${escapeHtml(displayName)}</strong>
+        ${person.birth ? renderBirthAgeMarkup(person.birth, age) : ""}
         <small>${escapeHtml([relation, meta].filter(Boolean).join(" · ") || "-")}</small>
       </span>
       <i data-lucide="arrow-up-right" aria-hidden="true"></i>
@@ -5011,9 +5034,9 @@ function renderProfilePage() {
   const stats = getFamilyCountSummary(person.id);
   const totalDescendants = stats.children + stats.grandchildren + stats.greatGrandchildren;
   const dateLine = person.birth && person.death
-    ? formatText(t.profileBornDied, { birth: formatDateDisplay(person.birth), death: formatDateDisplay(person.death) })
+    ? formatText(t.profileBornDied, { birth: formatBirthDateDisplay(person.birth), death: formatDateDisplay(person.death) })
     : person.birth
-      ? formatText(t.profileBorn, { birth: formatDateDisplay(person.birth) })
+      ? formatBirthDateDisplay(person.birth)
       : person.death ? formatText(t.profileDied, { death: formatDateDisplay(person.death) }) : "";
   if (profilePageTitle) profilePageTitle.textContent = t.profilePageKicker;
   if (profilePageSubtitle) profilePageSubtitle.textContent = "";
@@ -5027,7 +5050,7 @@ function renderProfilePage() {
         <p class="kicker">${escapeHtml(t.profilePageKicker)}</p>
         <h1>${escapeHtml(fullName || displayName || t.profileOpen)}</h1>
         <p class="profile-identity-role">${escapeHtml(person.relation || "-")}</p>
-        <p class="profile-identity-dates">${escapeHtml(dateLine || t.datesUnknown)}${age !== null ? ` · ${escapeHtml(formatText(t.profileLifespan, { age }))}` : ""}</p>
+        <p class="profile-identity-dates birth-age-stack"><span>${escapeHtml(dateLine || t.datesUnknown)}</span>${age !== null ? `<span>${escapeHtml(isInMemory ? formatText(t.profileLifespan, { age }) : formatAgeDisplay(age))}</span>` : ""}</p>
         ${isInMemory ? `<span class="profile-status is-deceased">${escapeHtml(statusText)}</span>` : ""}
       </div>
     </section>
@@ -5088,10 +5111,10 @@ function renderProfilePage() {
             <div><dt>${escapeHtml(t.firstNameLabel)}</dt><dd>${escapeHtml(displayName || "-")}</dd></div>
             <div><dt>${escapeHtml(t.genderLabel)}</dt><dd>${escapeHtml(getGenderLabel(person))}</dd></div>
             <div><dt>${escapeHtml(t.modalRelation)}</dt><dd>${escapeHtml(person.relation || "-")}</dd></div>
-            <div><dt>${escapeHtml(t.modalBirth)}</dt><dd>${escapeHtml(formatDateDisplay(person.birth) || "-")}</dd></div>
+            <div><dt>${escapeHtml(t.modalBirth)}</dt><dd>${renderBirthAgeMarkup(person.birth, !isInMemory ? age : null)}</dd></div>
             ${person.death ? `<div><dt>${escapeHtml(t.modalDeath)}</dt><dd>${escapeHtml(formatDateDisplay(person.death))}</dd></div>` : ""}
             ${isInMemory ? `<div><dt>${escapeHtml(t.directoryStatus)}</dt><dd>${escapeHtml(statusText)}</dd></div>` : ""}
-            ${age !== null ? `<div><dt>${escapeHtml(t.ageLabel)}</dt><dd>${age} ${escapeHtml(lang === "en" ? "years" : "tahun")}</dd></div>` : ""}
+            ${isInMemory && age !== null ? `<div><dt>${escapeHtml(t.ageLabel)}</dt><dd>${age} ${escapeHtml(lang === "en" ? "years" : "tahun")}</dd></div>` : ""}
           </dl>
         </section>
         ${renderLineageBreadcrumb(person)}
@@ -5207,7 +5230,6 @@ function openModal(person) {
   const birthDate = parseDateValue(person.birth);
   const isInMemory = getPersonStatus(person) === "deceased";
   const age = !isInMemory ? calcAge(birthDate) : null;
-  const ageText = age !== null ? ` (${t.ageLabel}: ${age})` : "";
   const displayName = formatDisplayName(person.name);
   const shortName = getPersonDisplayName(person);
   const statusText = isInMemory ? t.directoryDeceased : "";
@@ -5225,7 +5247,7 @@ function openModal(person) {
       <div class="profile-info-tile"><strong>${escapeHtml(t.genderLabel)}</strong><span>${escapeHtml(getGenderLabel(person))}</span></div>
       ${isInMemory ? `<div class="profile-info-tile"><strong>${escapeHtml(t.directoryStatus)}</strong><span>${escapeHtml(statusText)}</span></div>` : ""}
       <div class="profile-info-tile"><strong>${escapeHtml(t.modalRelation)}</strong><span>${escapeHtml(person.relation || "-")}</span></div>
-      <div class="profile-info-tile"><strong>${escapeHtml(t.modalBirth)}</strong><span>${escapeHtml(formatDateDisplay(person.birth) || "-")}${escapeHtml(ageText)}</span></div>
+      <div class="profile-info-tile profile-info-tile--birth"><strong>${escapeHtml(t.modalBirth)}</strong>${renderBirthAgeMarkup(person.birth, age)}</div>
       ${person.death ? `<div class="profile-info-tile"><strong>${escapeHtml(t.modalDeath)}</strong><span>${escapeHtml(formatDateDisplay(person.death))}</span></div>` : ""}
       <div class="profile-info-tile"><strong>${escapeHtml(t.modalNote)}</strong><span>${escapeHtml(person.note || "-")}</span></div>
     </section>
@@ -5339,7 +5361,7 @@ function openTimelineInlineDetail(person, itemEl) {
   const t = i18n[lang] || i18n.ms;
   const birthDate = parseDateValue(person.birth);
   const age = !person.death ? calcAge(birthDate) : null;
-  const ageText = age !== null ? `${t.ageLabel}: ${age}` : "";
+  const ageText = formatAgeDisplay(age);
   const detail = document.createElement("div");
   detail.className = "timeline-detail";
   detail.innerHTML = `
@@ -5352,7 +5374,7 @@ function openTimelineInlineDetail(person, itemEl) {
       <div class="timeline-detail-row">
         <strong>${t.modalBirth}</strong>
         <span>
-          <div>${formatDateDisplay(person.birth) || "-"}</div>
+          <div>${escapeHtml(formatBirthDateDisplay(person.birth) || "-")}</div>
           ${ageText ? `<div class="timeline-detail-age">${ageText}</div>` : ""}
         </span>
       </div>

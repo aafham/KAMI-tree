@@ -6,6 +6,23 @@ KAMI Tree ialah website salasilah keluarga interaktif untuk menyimpan, melihat d
 
 > Audit dan housekeeping terakhir: **22 Julai 2026** · data semasa: **2026-09-05**
 
+## Paparan Tarikh Lahir dan Umur — 6 September 2026
+
+- [x] Tarikh lahir menggunakan nama bulan penuh dan titik: `21.November.1994`.
+- [x] Umur berada pada baris di bawah: `Umur: 32 tahun` (English: `Age: 32 years`).
+- [x] Diselaraskan pada panel profil Tree/carian, halaman profil, kad Tree,
+  Direktori, Timeline, kad ahli dalam profil serta teks kongsi/cetak profil.
+- [x] Jubin tarikh lahir pada panel profil menggunakan lebar penuh supaya tarikh
+  panjang tidak bersesak dalam dua kolum. Warna dan tema sedia ada dikekalkan.
+- [x] Umur kekal tahun semasa tolak tahun lahir; tiada tarikh atau rekod keluarga
+  diubah. Rekod tahun sahaja tidak diberi hari/bulan rekaan. Paparan kematian,
+  tarikh acara birthday berulang dan format export CSV dikekalkan.
+- [x] `npm run check` lulus: sintaks, 69 ahli/16 pasangan dan **17/17 ujian**.
+  Ujian meliputi BM/EN, bulan penuh, umur 0/1/32, tarikh kosong, tahun sahaja,
+  keselamatan teks import serta susunan tarikh sebelum umur. Amaran lama `p45`
+  tanpa tarikh lahir kekal. Tiada dakwaan ujian visual baharu pada telefon fizikal.
+- URL versi CSS/JavaScript dikemas kini untuk menerima paparan baharu selepas refresh.
+
 ## Progress UI Website — Batch 1, 5 September 2026
 
 Empat keutamaan daripada audit UI 5 September diselesaikan. Skop kekal pada

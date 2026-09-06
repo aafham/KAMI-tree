@@ -97,3 +97,73 @@ test("Selecting Directory again returns to its header", () => {
   h.run("openDirectoryView()");
   assert.equal(h.state.scrollY, 0);
 });
+
+function birthHarness(language = "ms") {
+  const context = vm.createContext({
+    lang: language, Date,
+    i18n: { ms: { ageLabel: "Umur", datesUnknown: "Tiada tarikh" }, en: { ageLabel: "Age", datesUnknown: "No dates" } },
+  });
+  for (const name of ["parseDateValue", "formatDateDisplay", "formatBirthDateDisplay", "formatAgeDisplay", "renderBirthAgeMarkup", "calcAge", "formatDates", "escapeHtml"]) {
+    const start = source.indexOf(`function ${name}(`);
+    assert.ok(start >= 0, `${name} must exist`);
+    vm.runInContext(source.slice(start, source.indexOf("\n}", start) + 2), context);
+  }
+  return (code) => vm.runInContext(code, context);
+}
+
+test("Birth dates use full localized month names and dots", () => {
+  const ms = birthHarness(); const en = birthHarness("en");
+  assert.equal(ms('formatBirthDateDisplay("1994-11-21")'), "21.November.1994");
+  assert.equal(ms('formatBirthDateDisplay("2005-11-13")'), "13.November.2005");
+  assert.equal(ms('formatBirthDateDisplay("2026-08-02")'), "02.Ogos.2026");
+  assert.equal(en('formatBirthDateDisplay("2026-08-02")'), "02.August.2026");
+  for (let month = 1; month <= 12; month += 1) {
+    const iso = `2000-${String(month).padStart(2, "0")}-21`;
+    assert.match(ms(`formatBirthDateDisplay("${iso}")`), /^21\.[A-Za-z]+\.2000$/);
+    assert.match(en(`formatBirthDateDisplay("${iso}")`), /^21\.[A-Za-z]+\.2000$/);
+  }
+});
+
+test("Unknown and year-only birth dates are not invented", () => {
+  const run = birthHarness();
+  assert.equal(run('formatBirthDateDisplay("")'), "");
+  assert.equal(run('formatBirthDateDisplay("1994")'), "1994");
+  assert.equal(run('formatBirthDateDisplay("unknown")'), "unknown");
+  assert.equal(run('formatBirthDateDisplay("29/02/2000")'), "29.Februari.2000");
+});
+
+test("Age stays calendar-year based and includes label and units", () => {
+  const ms = birthHarness(); const en = birthHarness("en");
+  assert.equal(ms('calcAge(parseDateValue("1994-11-21"), new Date(2026, 0, 1))'), 32);
+  assert.equal(ms("formatAgeDisplay(32)"), "Umur: 32 tahun");
+  assert.equal(ms("formatAgeDisplay(0)"), "Umur: 0 tahun");
+  assert.equal(en("formatAgeDisplay(1)"), "Age: 1 year");
+  assert.equal(en("formatAgeDisplay(32)"), "Age: 32 years");
+  for (const value of ["null", "undefined", "NaN", "-1", '\"\"']) assert.equal(ms(`formatAgeDisplay(${value})`), "");
+});
+
+test("Birth date precedes age in separate block children, with no parentheses", () => {
+  const html = birthHarness()('renderBirthAgeMarkup("1994-11-21", 32)');
+  assert.match(html, /birth-date-value">21\.November\.1994<\/span><span class="birth-age-value">Umur: 32 tahun<\/span>/);
+  assert.doesNotMatch(html, /\(Umur/);
+  const css = fs.readFileSync(path.join(__dirname, "..", "styles.css"), "utf8");
+  assert.match(css, /\.birth-age-stack\s*\{[^}]*display:\s*grid/s);
+  assert.match(css, /\.profile-info-tile--birth\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s);
+});
+
+test("Birth markup omits unknown age and escapes imported text", () => {
+  const run = birthHarness();
+  assert.doesNotMatch(run('renderBirthAgeMarkup("", null)'), /birth-age-value/);
+  assert.match(run('renderBirthAgeMarkup("<img src=x>", null)'), /&lt;img src=x&gt;/);
+});
+
+test("Ordinary dates and CSV birth exports retain the existing format", () => {
+  assert.equal(birthHarness()('formatDateDisplay("1994-11-21")'), "21/11/1994");
+  assert.match(source, /birth: formatDateDisplay\(person.birth\)/);
+});
+
+test("Profile panel and full profile use the same stacked birth display", () => {
+  assert.match(source, /profile-info-tile--birth[^\n]*renderBirthAgeMarkup\(person.birth, age\)/);
+  assert.match(source, /<dd>\$\{renderBirthAgeMarkup\(person.birth, !isInMemory \? age : null\)\}/);
+  assert.ok(source.indexOf("meta.appendChild(birthLine)") < source.indexOf("meta.appendChild(ageLine)"));
+});
