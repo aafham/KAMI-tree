@@ -115,8 +115,8 @@ test("Birth dates use full localized month names and dots", () => {
   const ms = birthHarness(); const en = birthHarness("en");
   assert.equal(ms('formatBirthDateDisplay("1994-11-21")'), "21.November.1994");
   assert.equal(ms('formatBirthDateDisplay("2005-11-13")'), "13.November.2005");
-  assert.equal(ms('formatBirthDateDisplay("2026-08-02")'), "02.Ogos.2026");
-  assert.equal(en('formatBirthDateDisplay("2026-08-02")'), "02.August.2026");
+  assert.equal(ms('formatBirthDateDisplay("2026-08-02")'), "2.Ogos.2026");
+  assert.equal(en('formatBirthDateDisplay("2026-08-02")'), "2.August.2026");
   for (let month = 1; month <= 12; month += 1) {
     const iso = `2000-${String(month).padStart(2, "0")}-21`;
     assert.match(ms(`formatBirthDateDisplay("${iso}")`), /^21\.[A-Za-z]+\.2000$/);
